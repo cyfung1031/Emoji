@@ -1,11 +1,11 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'emoji_google'
+    spec.name                     = 'EmojiGoogle'
     spec.version                  = '0.16.0-SNAPSHOT'
-    spec.homepage                 = ''
+    spec.homepage                 = 'https://github.com/vanniktech/Emoji'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = ''
+    spec.summary                  = 'emoji-google'
     spec.vendored_frameworks      = 'build/cocoapods/framework/emoji_google.framework'
     spec.libraries                = 'c++'
                 
@@ -18,7 +18,7 @@ Pod::Spec.new do |spec|
                 
     spec.script_phases = [
         {
-            :name => 'Build emoji_google',
+            :name => 'Build EmojiGoogle',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT

@@ -1,24 +1,24 @@
 Pod::Spec.new do |spec|
-    spec.name                     = 'emoji_ios'
+    spec.name                     = 'EmojiFacebook'
     spec.version                  = '0.16.0-SNAPSHOT'
-    spec.homepage                 = ''
+    spec.homepage                 = 'https://github.com/vanniktech/Emoji'
     spec.source                   = { :http=> ''}
     spec.authors                  = ''
     spec.license                  = ''
-    spec.summary                  = ''
-    spec.vendored_frameworks      = 'build/cocoapods/framework/emoji_ios.framework'
+    spec.summary                  = 'emoji-facebook'
+    spec.vendored_frameworks      = 'build/cocoapods/framework/emoji_facebook.framework'
     spec.libraries                = 'c++'
                 
                 
                 
     spec.pod_target_xcconfig = {
-        'KOTLIN_PROJECT_PATH' => ':emoji-ios',
-        'PRODUCT_MODULE_NAME' => 'emoji_ios',
+        'KOTLIN_PROJECT_PATH' => ':emoji-facebook',
+        'PRODUCT_MODULE_NAME' => 'emoji_facebook',
     }
                 
     spec.script_phases = [
         {
-            :name => 'Build emoji_ios',
+            :name => 'Build EmojiFacebook',
             :execution_position => :before_compile,
             :shell_path => '/bin/sh',
             :script => <<-SCRIPT
