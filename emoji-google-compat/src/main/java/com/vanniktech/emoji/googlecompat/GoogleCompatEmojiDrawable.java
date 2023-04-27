@@ -85,6 +85,7 @@ final class GoogleCompatEmojiDrawable extends Drawable {
     textPaint.setColorFilter(colorFilter);
   }
 
+  @SuppressWarnings("deprecation")
   @Override public int getOpacity() {
     return PixelFormat.UNKNOWN;
   }

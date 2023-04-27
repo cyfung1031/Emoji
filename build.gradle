@@ -1,12 +1,12 @@
 apply plugin: 'com.github.ben-manes.versions'
 apply plugin: 'com.vanniktech.code.quality.tools'
-apply plugin: 'com.vanniktech.android.junit.jacoco'
+apply plugin: 'com.vanniktech.dependency.graph.generator' /* optional */
 
 buildscript {
   ext.versions = [
     espresso: '3.5.1',
     testRules: '1.0.2',
-    kotlin: '1.6.21',
+    kotlin: '1.8.10',
   ]
 
   ext.deps = [
@@ -22,7 +22,7 @@ buildscript {
         'rules': "com.android.support.test:rules:${versions.testRules}",
         'autoService': "com.google.auto.service:auto-service:1.0-rc4",
       ],
-      'material': "com.google.android.material:material:1.1.0-beta01",
+      'material': "com.google.android.material:material:1.2.1",
     ],
     'fastLaneScreenGrab': "tools.fastlane:screengrab:1.2.0",
   ]
@@ -34,10 +34,10 @@ buildscript {
   }
   dependencies {
     classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.22.0'
-    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.16.0'
+    classpath 'com.vanniktech:gradle-dependency-graph-generator-plugin:0.8.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
 
-    classpath 'com.android.tools.build:gradle:7.4.1'
+    classpath 'com.android.tools.build:gradle:7.4.2'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.26.0'
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
   }
@@ -67,11 +67,6 @@ codeQualityTools {
   }
 }
 
-junitJacoco {
-  // Don't care about sample and generated modules
-  ignoreProjects = ['app', 'emoji-ios', 'emoji-google', 'emoji-twitter', 'emoji-compat', 'emoji-kotlin']
-}
-
 subprojects {
   repositories {
     google()
@@ -81,6 +76,9 @@ subprojects {
   gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
       options.compilerArgs << "-Xlint:deprecation"
+      options.compilerArgs << "-Xlint:unchecked"
+      options.compilerArgs << "-Xmaxwarns" << "1000"
+      options.compilerArgs << "-Xmaxerrs" << "1000"
     }
   }
 }
@@ -116,16 +114,9 @@ ext {
   javaVersion = JavaVersion.VERSION_1_8
 }
 
-wrapper {
-  gradleVersion = '5.6.2'
-  distributionType = Wrapper.DistributionType.ALL
-}
-
-subprojects {
-  project.plugins.withId("com.android.library") {
-    // TODO replace with https://issuetracker.google.com/issues/72050365 once released.
-    project.android.libraryVariants.all {
-      it.generateBuildConfigProvider.configure { it.enabled = false }
-    }
+configurations.all {
+  resolutionStrategy {
+    force 'com.google.android.material:material:1.2.1'
+    force 'androidx.appcompat:appcompat:1.1.0'
   }
 }
