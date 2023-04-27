@@ -26,7 +26,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowInsets;
 import android.view.autofill.AutofillManager;
 import android.view.inputmethod.EditorInfo;
@@ -38,9 +37,6 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
@@ -50,9 +46,9 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
+import java.lang.ref.WeakReference;
 
 import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
 import static android.os.Build.VERSION_CODES.O;
 import static androidx.core.view.ViewCompat.requestApplyInsets;
 import static com.vanniktech.emoji.Utils.backspace;
@@ -90,30 +86,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
   int originalImeOptions = -1;
 
   final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper()));
-
-  final ViewTreeObserver.OnGlobalLayoutListener onGlobalLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-    @Override @SuppressWarnings("PMD.CyclomaticComplexity") public void onGlobalLayout() {
-      updateKeyboardState();
-    }
-  };
-
-  final View.OnAttachStateChangeListener onAttachStateChangeListener = new View.OnAttachStateChangeListener() {
-    @Override public void onViewAttachedToWindow(final View v) {
-      start();
-    }
-
-    @Override public void onViewDetachedFromWindow(final View v) {
-      stop();
-
-      popupWindow.setOnDismissListener(null);
-
-      if (SDK_INT < LOLLIPOP) {
-        rootView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
-      }
-
-      rootView.removeOnAttachStateChangeListener(this);
-    }
-  };
 
   final OnEmojiClickListener internalOnEmojiClickListener = new OnEmojiClickListener() {
     @Override public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
@@ -187,59 +159,17 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
       start();
     }
 
-    rootView.addOnAttachStateChangeListener(onAttachStateChangeListener);
-  }
-
-  void updateKeyboardState() {
-    final int keyboardHeight = Utils.getInputMethodHeight(context, rootView);
-
-    if (keyboardHeight > Utils.dpToPx(context, MIN_KEYBOARD_HEIGHT)) {
-      updateKeyboardStateOpened(keyboardHeight);
-    } else {
-      updateKeyboardStateClosed();
-    }
+    rootView.addOnAttachStateChangeListener(new EmojiPopUpOnAttachStateChangeListener(this));
   }
 
   void start() {
-    if (SDK_INT >= LOLLIPOP) {
-      ViewCompat.setOnApplyWindowInsetsListener(context.getWindow().getDecorView(), new OnApplyWindowInsetsListener() {
-        int previousOffset;
-
-        @Override
-        public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
-          final int offset;
-
-          if (insets.getSystemWindowInsetBottom() < insets.getStableInsetBottom()) {
-            offset = insets.getSystemWindowInsetBottom();
-          } else {
-            offset = insets.getSystemWindowInsetBottom() - insets.getStableInsetBottom();
-          }
-
-          if (offset != previousOffset || offset == 0) {
-            previousOffset = offset;
-
-            if (offset > Utils.dpToPx(context, MIN_KEYBOARD_HEIGHT)) {
-              updateKeyboardStateOpened(offset);
-            } else {
-              updateKeyboardStateClosed();
-            }
-          }
-
-          return ViewCompat.onApplyWindowInsets(context.getWindow().getDecorView(), insets);
-        }
-      });
-    } else {
-      rootView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
-      rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
-    }
+    context.getWindow().getDecorView().setOnApplyWindowInsetsListener(new EmojiPopUpOnApplyWindowInsetsListener(this));
   }
 
   void stop() {
     dismiss();
-
-    if (SDK_INT >= LOLLIPOP) {
-      context.getWindow().getDecorView().setOnApplyWindowInsetsListener(null);
-    }
+    context.getWindow().getDecorView().setOnApplyWindowInsetsListener(null);
+    popupWindow.setOnDismissListener(null);
   }
 
   @SuppressWarnings("PMD.CyclomaticComplexity") void updateKeyboardStateOpened(final int keyboardHeight) {
@@ -369,7 +299,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     editText.postDelayed(new Runnable() {
       @Override public void run() {
         popupWindow.showAtLocation(rootView, Gravity.NO_GRAVITY, 0,
-            Utils.getProperHeight(context) + popupWindowHeight);
+                Utils.getProperHeight(context) + popupWindowHeight);
       }
     }, delay);
 
@@ -398,13 +328,12 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     @Nullable OnEmojiBackspaceClickListener onEmojiBackspaceClickListener;
     @Nullable OnEmojiClickListener onEmojiClickListener;
     @Nullable OnEmojiPopupDismissListener onEmojiPopupDismissListener;
-    @NonNull RecentEmoji recentEmoji;
+    @Nullable RecentEmoji recentEmoji;
     @NonNull VariantEmoji variantEmoji;
     int popupWindowHeight;
 
     private Builder(final View rootView) {
       this.rootView = checkNotNull(rootView, "The root View can't be null");
-      this.recentEmoji = new RecentEmojiManager(rootView.getContext());
       this.variantEmoji = new VariantEmojiManager(rootView.getContext());
     }
 
@@ -516,6 +445,10 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
       EmojiManager.getInstance().verifyInstalled();
       checkNotNull(editText, "EditText can't be null");
 
+      if (recentEmoji == null) {
+        recentEmoji = new RecentEmojiManager(rootView.getContext());
+      }
+
       final EmojiPopup emojiPopup = new EmojiPopup(this, editText);
       emojiPopup.onSoftKeyboardCloseListener = onSoftKeyboardCloseListener;
       emojiPopup.onEmojiClickListener = onEmojiClickListener;
@@ -525,6 +458,70 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
       emojiPopup.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
       emojiPopup.popupWindowHeight = Math.max(popupWindowHeight, 0);
       return emojiPopup;
+    }
+  }
+
+  static final class EmojiPopUpOnAttachStateChangeListener implements View.OnAttachStateChangeListener {
+    private final WeakReference<EmojiPopup> emojiPopup;
+
+    EmojiPopUpOnAttachStateChangeListener(final EmojiPopup emojiPopup) {
+      this.emojiPopup = new WeakReference<>(emojiPopup);
+    }
+
+    @Override public void onViewAttachedToWindow(final View v) {
+      final EmojiPopup popup = emojiPopup.get();
+
+      if (popup != null) {
+        popup.start();
+      }
+    }
+
+    @Override public void onViewDetachedFromWindow(final View v) {
+      final EmojiPopup popup = emojiPopup.get();
+
+      if (popup != null) {
+        popup.stop();
+      }
+
+      emojiPopup.clear();
+      v.removeOnAttachStateChangeListener(this);
+    }
+  }
+
+  static final class EmojiPopUpOnApplyWindowInsetsListener implements View.OnApplyWindowInsetsListener {
+    private final WeakReference<EmojiPopup> emojiPopup;
+    int previousOffset;
+
+    EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopup emojiPopup) {
+      this.emojiPopup = new WeakReference<>(emojiPopup);
+    }
+
+    @Override public WindowInsets onApplyWindowInsets(final View v, final WindowInsets insets) {
+      final EmojiPopup popup = emojiPopup.get();
+
+      if (popup != null) {
+        final int offset;
+
+        if (insets.getSystemWindowInsetBottom() < insets.getStableInsetBottom()) {
+          offset = insets.getSystemWindowInsetBottom();
+        } else {
+          offset = insets.getSystemWindowInsetBottom() - insets.getStableInsetBottom();
+        }
+
+        if (offset != previousOffset || offset == 0) {
+          previousOffset = offset;
+
+          if (offset > Utils.dpToPx(popup.context, MIN_KEYBOARD_HEIGHT)) {
+            popup.updateKeyboardStateOpened(offset);
+          } else {
+            popup.updateKeyboardStateClosed();
+          }
+        }
+
+        return popup.context.getWindow().getDecorView().onApplyWindowInsets(insets);
+      }
+
+      return insets;
     }
   }
 }

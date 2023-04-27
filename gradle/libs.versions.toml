@@ -1,5 +1,5 @@
 [versions]
-minSdk = "18"
+minSdk = "16"
 compileSdk = "33"
 targetSdk = "33"
 

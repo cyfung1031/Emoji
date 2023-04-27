@@ -78,7 +78,6 @@ ext {
 
   leakCanaryVersion = '2.10'
 
-  versionCode = VERSION_CODE
   versionName = VERSION_NAME
 
   supportAppCompat = "androidx.appcompat:appcompat:1.1.0"

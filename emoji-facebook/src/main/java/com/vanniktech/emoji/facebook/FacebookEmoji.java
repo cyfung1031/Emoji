@@ -17,6 +17,7 @@
 
 package com.vanniktech.emoji.facebook;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -102,7 +103,7 @@ public class FacebookEmoji extends Emoji {
         strip = (Bitmap) STRIP_REFS[x].get();
         if (strip == null) {
           final Resources resources = context.getResources();
-          final int resId = resources.getIdentifier("emoji_facebook_sheet_" + x,
+          @SuppressLint("DiscouragedApi") final int resId = resources.getIdentifier("emoji_facebook_sheet_" + x,
               "drawable", context.getPackageName());
           strip = BitmapFactory.decodeResource(resources, resId);
           STRIP_REFS[x] = new SoftReference<>(strip);

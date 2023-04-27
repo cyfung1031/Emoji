@@ -48,15 +48,26 @@ final class EmojiSpan extends DynamicDrawableSpan {
                                final int end, final Paint.FontMetricsInt fontMetrics) {
     if (fontMetrics != null) {
       final Paint.FontMetrics paintFontMetrics = paint.getFontMetrics();
-      final float fontHeight = paintFontMetrics.descent - paintFontMetrics.ascent;
-      final float centerY = paintFontMetrics.ascent + fontHeight / 2;
+      final float ascent = paintFontMetrics.ascent;
+      final float descent = paintFontMetrics.descent;
+      final float targetSize = Math.abs(ascent) + Math.abs(descent);
+      final int roundEmojiSize = Math.round(size);
+      // equal size use default font metrics.
+      if (roundEmojiSize == Math.round(targetSize)) {
+        fontMetrics.ascent = (int) ascent;
+        fontMetrics.descent = (int) descent;
+        fontMetrics.top = (int) paintFontMetrics.top;
+        fontMetrics.bottom = (int) paintFontMetrics.bottom;
+      } else {
+        final float fontHeight = paintFontMetrics.descent - paintFontMetrics.ascent;
+        final float centerY = paintFontMetrics.ascent + fontHeight / 2;
 
-      fontMetrics.ascent = (int) (centerY - size / 2);
-      fontMetrics.top = fontMetrics.ascent;
-      fontMetrics.bottom = (int) (centerY + size / 2);
-      fontMetrics.descent = fontMetrics.bottom;
+        fontMetrics.ascent = (int) (centerY - size / 2);
+        fontMetrics.top = fontMetrics.ascent;
+        fontMetrics.bottom = (int) (centerY + size / 2);
+        fontMetrics.descent = fontMetrics.bottom;
+      }
     }
-
     return (int) size;
   }
 

@@ -132,9 +132,9 @@ final class Utils {
     return alternativeInputMethodHeight(rootView);
   }
 
-  @SuppressWarnings("JavaReflectionMemberAccess") @TargetApi(LOLLIPOP) static int getViewBottomInset(final View rootView) {
+  @SuppressWarnings("JavaReflectionMemberAccess") @TargetApi(LOLLIPOP) private static int getViewBottomInset(final View rootView) {
     try {
-      final Field attachInfoField = View.class.getDeclaredField("mAttachInfo");
+      @SuppressLint("PrivateApi") final Field attachInfoField = View.class.getDeclaredField("mAttachInfo");
       attachInfoField.setAccessible(true);
       final Object attachInfo = attachInfoField.get(rootView);
       if (attachInfo != null) {
@@ -150,7 +150,7 @@ final class Utils {
     return 0;
   }
 
-  static int alternativeInputMethodHeight(final View rootView) {
+  private static int alternativeInputMethodHeight(final View rootView) {
     int viewInset = 0;
     if (SDK_INT >= LOLLIPOP) {
       viewInset = getViewBottomInset(rootView);
