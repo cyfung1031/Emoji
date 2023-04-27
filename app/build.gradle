@@ -49,6 +49,7 @@ android {
       }
     }
   }
+  namespace 'com.vanniktech.emoji.sample'
 }
 
 dependencies {

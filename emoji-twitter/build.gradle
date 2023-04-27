@@ -13,6 +13,7 @@ android {
   }
 
   resourcePrefix 'emoji'
+    namespace 'com.vanniktech.emoji.twitter'
 }
 
 dependencies {

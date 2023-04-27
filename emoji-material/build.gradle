@@ -13,6 +13,7 @@ android {
   }
 
   resourcePrefix 'emoji_'
+    namespace 'com.vanniktech.emoji.material'
 }
 
 dependencies {
