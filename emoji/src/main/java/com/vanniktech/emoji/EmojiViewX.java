@@ -93,7 +93,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
     final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper()));
 
-    private Resources resources;
+    Resources resources;
 
     private Handler myHandlerMain;
     private Handler myHandlerSub;
