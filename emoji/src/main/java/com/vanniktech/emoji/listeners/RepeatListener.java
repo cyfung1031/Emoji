@@ -19,6 +19,7 @@ package com.vanniktech.emoji.listeners;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,7 +28,7 @@ public final class RepeatListener implements View.OnTouchListener {
   final long normalInterval;
   final View.OnClickListener clickListener;
 
-  final Handler handler = new Handler();
+  final Handler handler = new Handler(Looper.getMainLooper());
   private final long initialInterval;
   View downView;
 

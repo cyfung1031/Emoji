@@ -68,7 +68,7 @@ dependencies {
   androidTestImplementation deps.support.test.espresso.core
   androidTestImplementation deps.support.test.runner
   androidTestImplementation deps.support.test.rules
-  androidTestImplementation deps.fastLaneScreenGrab
+  androidTestImplementation 'tools.fastlane:screengrab:2.1.1'
   androidTestAnnotationProcessor deps.support.test.autoService
 }
 

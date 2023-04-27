@@ -96,7 +96,7 @@ public final class EmojiImageView extends AppCompatImageView {
     super.onDetachedFromWindow();
 
     if (imageLoadingTask != null) {
-      imageLoadingTask.cancel(true);
+      imageLoadingTask.cancel();
       imageLoadingTask = null;
     }
   }
@@ -109,7 +109,8 @@ public final class EmojiImageView extends AppCompatImageView {
       hasVariants = emoji.getBase().hasVariants();
 
       if (imageLoadingTask != null) {
-        imageLoadingTask.cancel(true);
+        imageLoadingTask.cancel();
+        imageLoadingTask = null;
       }
 
       setOnClickListener(new OnClickListener() {
@@ -128,8 +129,7 @@ public final class EmojiImageView extends AppCompatImageView {
         }
       } : null);
 
-      imageLoadingTask = new ImageLoadingTask(this);
-      imageLoadingTask.execute(emoji);
+      imageLoadingTask = new ImageLoadingTask(this, emoji);
     }
   }
 

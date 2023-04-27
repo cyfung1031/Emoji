@@ -38,6 +38,9 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
@@ -105,7 +108,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
       popupWindow.setOnDismissListener(null);
 
       if (SDK_INT < LOLLIPOP) {
-          rootView.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
+        rootView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
       }
 
       rootView.removeOnAttachStateChangeListener(this);
@@ -199,10 +202,11 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
   void start() {
     if (SDK_INT >= LOLLIPOP) {
-      context.getWindow().getDecorView().setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+      ViewCompat.setOnApplyWindowInsetsListener(context.getWindow().getDecorView(), new OnApplyWindowInsetsListener() {
         int previousOffset;
 
-        @Override public WindowInsets onApplyWindowInsets(final View v, final WindowInsets insets) {
+        @Override
+        public WindowInsetsCompat onApplyWindowInsets(View v, WindowInsetsCompat insets) {
           final int offset;
 
           if (insets.getSystemWindowInsetBottom() < insets.getStableInsetBottom()) {
@@ -221,11 +225,11 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
             }
           }
 
-          return context.getWindow().getDecorView().onApplyWindowInsets(insets);
+          return ViewCompat.onApplyWindowInsets(context.getWindow().getDecorView(), insets);
         }
       });
     } else {
-      rootView.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
+      rootView.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
       rootView.getViewTreeObserver().addOnGlobalLayoutListener(onGlobalLayoutListener);
     }
   }

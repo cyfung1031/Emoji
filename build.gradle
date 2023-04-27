@@ -6,7 +6,7 @@ buildscript {
   ext.versions = [
     espresso: '3.5.1',
     testRules: '1.0.2',
-    kotlin: '1.3.50',
+    kotlin: '1.4.32',
   ]
 
   ext.deps = [
@@ -33,7 +33,7 @@ buildscript {
     gradlePluginPortal()
   }
   dependencies {
-    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.19.0'
+    classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.22.0'
     classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.15.0'
     classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
 
@@ -45,22 +45,25 @@ buildscript {
 
 codeQualityTools {
   lint {
+    lintConfig = rootProject.file("lint.xml")
+    checkAllWarnings = true
     textReport = true
   }
   checkstyle {
-    toolVersion = '8.7'
+    enabled = false // Kotlin only.
   }
   pmd {
-    toolVersion = '6.0.1'
+    enabled = false // Kotlin only.
   }
   ktlint {
     toolVersion = '0.34.2'
+    experimental = true
   }
   detekt {
-    toolVersion = '1.0.1'
+    enabled = false
   }
-  errorProne {
-    toolVersion = '2.1.2'
+  cpd {
+    enabled = false
   }
 }
 
@@ -74,10 +77,16 @@ subprojects {
     google()
     mavenCentral()
   }
+
+  gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+      options.compilerArgs << "-Xlint:deprecation"
+    }
+  }
 }
 
 ext {
-  minSdkVersion = 15
+  minSdkVersion = 16
   compileSdkVersion = 33
   targetSdkVersion = 33
 
@@ -88,7 +97,7 @@ ext {
 
   supportAppCompat = "androidx.appcompat:appcompat:1.1.0"
   supportV4CoreUi = "androidx.legacy:legacy-support-core-ui:1.0.0"
-  supportV4Compat = "androidx.core:core:1.0.0"
+  supportV4Compat = "androidx.core:core:1.7.0"
   supportRecyclerView = "androidx.recyclerview:recyclerview:1.1.0"
   supportCardView = "androidx.cardview:cardview:1.0.0"
   supportAnnotations = "androidx.annotation:annotation:1.0.0"

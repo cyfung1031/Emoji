@@ -14,43 +14,57 @@
  * limitations under the License.
  *
  */
-
 package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import androidx.annotation.Nullable;
 import android.widget.ImageView;
-import com.vanniktech.emoji.emoji.Emoji;
-import java.lang.ref.WeakReference;
 
-final class ImageLoadingTask extends AsyncTask<Emoji, Void, Drawable> {
+import com.vanniktech.emoji.emoji.Emoji;
+
+import java.lang.ref.WeakReference;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+final class ImageLoadingTask {
   private final WeakReference<ImageView> imageViewReference;
   private final WeakReference<Context> contextReference;
+  private final Emoji emoji;
+  private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private Future<?> future;
 
-  ImageLoadingTask(final ImageView imageView) {
+  ImageLoadingTask(final ImageView imageView, final Emoji emoji) {
     imageViewReference = new WeakReference<>(imageView);
     contextReference = new WeakReference<>(imageView.getContext());
+    this.emoji = emoji;
+    future = executor.submit(loadImageRunnable);
   }
 
-  @Override protected Drawable doInBackground(final Emoji... emoji) {
-    final Context context = contextReference.get();
+  private final Runnable loadImageRunnable = new Runnable() {
+    @Override
+    public void run() {
+      final Context context = contextReference.get();
 
-    if (context != null && !isCancelled()) {
-      return emoji[0].getDrawable(context);
-    }
-
-    return null;
-  }
-
-  @Override protected void onPostExecute(@Nullable final Drawable drawable) {
-    if (!isCancelled() && drawable != null) {
-      final ImageView imageView = imageViewReference.get();
-
-      if (imageView != null) {
-        imageView.setImageDrawable(drawable);
+      if (context != null) {
+        final Drawable drawable = emoji.getDrawable(context);
+        imageViewReference.get().post(new Runnable() {
+          @Override
+          public void run() {
+            ImageView imageView = imageViewReference.get();
+            if (imageView != null) {
+              imageView.setImageDrawable(drawable);
+            }
+          }
+        });
       }
+    }
+  };
+
+  void cancel() {
+    if (future != null) {
+      future.cancel(true);
+      future = null;
     }
   }
 }
