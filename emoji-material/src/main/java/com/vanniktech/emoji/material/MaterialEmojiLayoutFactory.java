@@ -38,7 +38,7 @@ public class MaterialEmojiLayoutFactory extends EmojiLayoutFactory {
     if ("Button".equals(name)) {
       return new EmojiMaterialButton(context, attrs);
     } else if ("CheckBox".equals(name)) {
-      return new EmojiMaterialCheckBox(context, attrs);
+      return new EmojiAppCompatCheckBox(context, attrs);
     } else if ("RadioButton".equals(name)) {
       return new EmojiMaterialRadioButton(context, attrs);
     } else {

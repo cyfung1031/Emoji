@@ -1,7 +1,11 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+  id 'com.android.application'
+}
 
 android {
+
+  publishNonDefault true
+
   compileSdkVersion rootProject.ext.compileSdkVersion as int
 
   compileOptions {
@@ -64,13 +68,15 @@ dependencies {
   implementation rootProject.ext.supportAppCompat
   implementation rootProject.ext.supportRecyclerView
 
-  debugImplementation rootProject.ext.leakCanaryDebug
+  debugImplementation libs.leakcanary.android
 
-  androidTestImplementation deps.support.test.espresso.core
-  androidTestImplementation deps.support.test.runner
-  androidTestImplementation deps.support.test.rules
-  androidTestImplementation 'tools.fastlane:screengrab:2.1.1'
-  androidTestAnnotationProcessor deps.support.test.autoService
+
+  androidTestImplementation libs.androidx.test.espresso
+  androidTestImplementation libs.androidx.test.ext
+  androidTestImplementation libs.androidx.test.rules
+  androidTestImplementation libs.falcon
+  androidTestImplementation libs.junitintegrationrules
+  androidTestImplementation libs.espressocoreutils
 }
 
 configurations.all {

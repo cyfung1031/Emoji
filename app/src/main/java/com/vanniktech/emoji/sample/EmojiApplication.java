@@ -28,14 +28,9 @@ import static androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY;
 public class EmojiApplication extends Application {
   @Override public void onCreate() {
     super.onCreate();
-
-    AppCompatDelegate.setDefaultNightMode(MODE_NIGHT_AUTO_BATTERY);
-
+    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
     EmojiManager.install(new IosEmojiProvider());
-
-    if (BuildConfig.DEBUG) {
-      StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
-      StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
-    }
+    StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().build());
+    StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().build());
   }
 }

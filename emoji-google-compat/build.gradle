@@ -1,6 +1,11 @@
-apply plugin: 'com.android.library'
+plugins {
+  id 'com.android.library'
+}
 
 android {
+
+  publishNonDefault true
+
   compileSdkVersion rootProject.ext.compileSdkVersion as int
 
   compileOptions {
@@ -18,7 +23,7 @@ android {
 
 dependencies {
   api project(':emoji')
-  api rootProject.ext.supportEmoji
+  api 'androidx.emoji:emoji-appcompat:1.1.0'
 }
 
 apply plugin: "com.vanniktech.maven.publish"

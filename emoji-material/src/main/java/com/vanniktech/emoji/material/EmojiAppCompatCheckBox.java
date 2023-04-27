@@ -14,7 +14,6 @@
  * limitations under the License.
  *
  */
-
 package com.vanniktech.emoji.material;
 
 import android.content.Context;
@@ -24,23 +23,23 @@ import android.util.AttributeSet;
 import androidx.annotation.CallSuper;
 import androidx.annotation.DimenRes;
 import androidx.annotation.Px;
-import com.google.android.material.checkbox.MaterialCheckBox;
+import androidx.appcompat.widget.AppCompatCheckBox;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiDisplayable;
 
-@SuppressWarnings("CPD-START") public class EmojiMaterialCheckBox extends MaterialCheckBox implements EmojiDisplayable {
+public class EmojiAppCompatCheckBox extends AppCompatCheckBox implements EmojiDisplayable {
   private float emojiSize;
 
-  public EmojiMaterialCheckBox(final Context context) {
+  public EmojiAppCompatCheckBox(final Context context) {
     this(context, null);
   }
 
-  public EmojiMaterialCheckBox(final Context context, final AttributeSet attrs) {
+  public EmojiAppCompatCheckBox(final Context context, final AttributeSet attrs) {
     super(context, attrs);
     emojiSize = Utils.initTextView(this, attrs);
   }
 
-  public EmojiMaterialCheckBox(final Context context, final AttributeSet attrs, final int defStyleAttr) {
+  public EmojiAppCompatCheckBox(final Context context, final AttributeSet attrs, final int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     emojiSize = Utils.initTextView(this, attrs);
   }
