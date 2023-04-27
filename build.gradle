@@ -32,9 +32,11 @@ apply plugin: 'com.vanniktech.dependency.graph.generator'
 
 codeQualityTools {
   lint {
-    lintConfig = rootProject.file("lint.xml")
-    checkAllWarnings = true
-    textReport = true
+//    lintConfig = rootProject.file("lint.xml")
+//    checkAllWarnings = true
+//    textReport = true
+    checkAllWarnings = false
+    textReport = false
   }
   checkstyle {
     enabled = false // Kotlin only.

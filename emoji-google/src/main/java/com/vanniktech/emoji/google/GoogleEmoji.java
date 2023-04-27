@@ -17,6 +17,7 @@
 
 package com.vanniktech.emoji.google;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -95,6 +96,65 @@ public class GoogleEmoji extends Emoji {
     return new BitmapDrawable(context.getResources(), cut);
   }
 
+  // Add this static array at the class level
+  private static final int[] SHEET_RESOURCE_IDS = {
+          R.drawable.emoji_google_sheet_0,
+          R.drawable.emoji_google_sheet_1,
+          R.drawable.emoji_google_sheet_2,
+          R.drawable.emoji_google_sheet_3,
+          R.drawable.emoji_google_sheet_4,
+          R.drawable.emoji_google_sheet_5,
+          R.drawable.emoji_google_sheet_6,
+          R.drawable.emoji_google_sheet_7,
+          R.drawable.emoji_google_sheet_8,
+          R.drawable.emoji_google_sheet_9,
+          R.drawable.emoji_google_sheet_10,
+          R.drawable.emoji_google_sheet_11,
+          R.drawable.emoji_google_sheet_12,
+          R.drawable.emoji_google_sheet_13,
+          R.drawable.emoji_google_sheet_14,
+          R.drawable.emoji_google_sheet_15,
+          R.drawable.emoji_google_sheet_16,
+          R.drawable.emoji_google_sheet_17,
+          R.drawable.emoji_google_sheet_18,
+          R.drawable.emoji_google_sheet_19,
+          R.drawable.emoji_google_sheet_20,
+          R.drawable.emoji_google_sheet_21,
+          R.drawable.emoji_google_sheet_22,
+          R.drawable.emoji_google_sheet_23,
+          R.drawable.emoji_google_sheet_24,
+          R.drawable.emoji_google_sheet_25,
+          R.drawable.emoji_google_sheet_26,
+          R.drawable.emoji_google_sheet_27,
+          R.drawable.emoji_google_sheet_28,
+          R.drawable.emoji_google_sheet_29,
+          R.drawable.emoji_google_sheet_30,
+          R.drawable.emoji_google_sheet_31,
+          R.drawable.emoji_google_sheet_32,
+          R.drawable.emoji_google_sheet_33,
+          R.drawable.emoji_google_sheet_34,
+          R.drawable.emoji_google_sheet_35,
+          R.drawable.emoji_google_sheet_36,
+          R.drawable.emoji_google_sheet_37,
+          R.drawable.emoji_google_sheet_38,
+          R.drawable.emoji_google_sheet_39,
+          R.drawable.emoji_google_sheet_40,
+          R.drawable.emoji_google_sheet_41,
+          R.drawable.emoji_google_sheet_42,
+          R.drawable.emoji_google_sheet_43,
+          R.drawable.emoji_google_sheet_44,
+          R.drawable.emoji_google_sheet_45,
+          R.drawable.emoji_google_sheet_46,
+          R.drawable.emoji_google_sheet_47,
+          R.drawable.emoji_google_sheet_48,
+          R.drawable.emoji_google_sheet_49,
+          R.drawable.emoji_google_sheet_50,
+          R.drawable.emoji_google_sheet_51,
+          R.drawable.emoji_google_sheet_52,
+          R.drawable.emoji_google_sheet_53,
+          R.drawable.emoji_google_sheet_54,
+          R.drawable.emoji_google_sheet_55
+  };
   private Bitmap loadStrip(final Context context) {
     Bitmap strip = (Bitmap) STRIP_REFS[x].get();
     if (strip == null) {
@@ -102,8 +162,7 @@ public class GoogleEmoji extends Emoji {
         strip = (Bitmap) STRIP_REFS[x].get();
         if (strip == null) {
           final Resources resources = context.getResources();
-          final int resId = resources.getIdentifier("emoji_google_sheet_" + x,
-              "drawable", context.getPackageName());
+          final int resId = SHEET_RESOURCE_IDS[x]; // Replace getIdentifier with array indexing
           strip = BitmapFactory.decodeResource(resources, resId);
           STRIP_REFS[x] = new SoftReference<>(strip);
         }

@@ -30,7 +30,7 @@ import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.SingleEmojiTrait;
 
 public class CustomViewActivity extends AppCompatActivity {
-  @Override protected void onCreate(final Bundle savedInstanceState) {
+  @Override protected void onCreate(@Nullable final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     final CustomView customView = new CustomView(this, null);

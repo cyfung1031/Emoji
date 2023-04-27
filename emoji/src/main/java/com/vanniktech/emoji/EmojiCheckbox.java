@@ -23,22 +23,23 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import androidx.annotation.CallSuper;
 import androidx.annotation.DimenRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Px;
 import androidx.appcompat.widget.AppCompatCheckBox;
 
 @SuppressWarnings("CPD-START") public class EmojiCheckbox extends AppCompatCheckBox implements EmojiDisplayable {
   private float emojiSize;
 
-  public EmojiCheckbox(final Context context) {
+  public EmojiCheckbox(@NonNull final Context context) {
     this(context, null);
   }
 
-  public EmojiCheckbox(final Context context, final AttributeSet attrs) {
+  public EmojiCheckbox(@NonNull final Context context, @NonNull final AttributeSet attrs) {
     super(context, attrs);
     emojiSize = Utils.initTextView(this, attrs);
   }
 
-  public EmojiCheckbox(final Context context, final AttributeSet attrs, final int defStyleAttr) {
+  public EmojiCheckbox(@NonNull final Context context, @NonNull final AttributeSet attrs, @NonNull final int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     emojiSize = Utils.initTextView(this, attrs);
   }

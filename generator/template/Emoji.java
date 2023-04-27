@@ -94,6 +94,67 @@ public class <%= name %> extends Emoji {
     BITMAP_CACHE.put(key, cut);
     return new BitmapDrawable(context.getResources(), cut);
   }
+  
+    
+    // Add this static array at the class level
+    private static final int[] SHEET_RESOURCE_IDS = {
+        R.drawable.emoji_<%= package %>_sheet_0,
+        R.drawable.emoji_<%= package %>_sheet_1,
+        R.drawable.emoji_<%= package %>_sheet_2,
+        R.drawable.emoji_<%= package %>_sheet_3,
+        R.drawable.emoji_<%= package %>_sheet_4,
+        R.drawable.emoji_<%= package %>_sheet_5,
+        R.drawable.emoji_<%= package %>_sheet_6,
+        R.drawable.emoji_<%= package %>_sheet_7,
+        R.drawable.emoji_<%= package %>_sheet_8,
+        R.drawable.emoji_<%= package %>_sheet_9,
+        R.drawable.emoji_<%= package %>_sheet_10,
+        R.drawable.emoji_<%= package %>_sheet_11,
+        R.drawable.emoji_<%= package %>_sheet_12,
+        R.drawable.emoji_<%= package %>_sheet_13,
+        R.drawable.emoji_<%= package %>_sheet_14,
+        R.drawable.emoji_<%= package %>_sheet_15,
+        R.drawable.emoji_<%= package %>_sheet_16,
+        R.drawable.emoji_<%= package %>_sheet_17,
+        R.drawable.emoji_<%= package %>_sheet_18,
+        R.drawable.emoji_<%= package %>_sheet_19,
+        R.drawable.emoji_<%= package %>_sheet_20,
+        R.drawable.emoji_<%= package %>_sheet_21,
+        R.drawable.emoji_<%= package %>_sheet_22,
+        R.drawable.emoji_<%= package %>_sheet_23,
+        R.drawable.emoji_<%= package %>_sheet_24,
+        R.drawable.emoji_<%= package %>_sheet_25,
+        R.drawable.emoji_<%= package %>_sheet_26,
+        R.drawable.emoji_<%= package %>_sheet_27,
+        R.drawable.emoji_<%= package %>_sheet_28,
+        R.drawable.emoji_<%= package %>_sheet_29,
+        R.drawable.emoji_<%= package %>_sheet_30,
+        R.drawable.emoji_<%= package %>_sheet_31,
+        R.drawable.emoji_<%= package %>_sheet_32,
+        R.drawable.emoji_<%= package %>_sheet_33,
+        R.drawable.emoji_<%= package %>_sheet_34,
+        R.drawable.emoji_<%= package %>_sheet_35,
+        R.drawable.emoji_<%= package %>_sheet_36,
+        R.drawable.emoji_<%= package %>_sheet_37,
+        R.drawable.emoji_<%= package %>_sheet_38,
+        R.drawable.emoji_<%= package %>_sheet_39,
+        R.drawable.emoji_<%= package %>_sheet_40,
+        R.drawable.emoji_<%= package %>_sheet_41,
+        R.drawable.emoji_<%= package %>_sheet_42,
+        R.drawable.emoji_<%= package %>_sheet_43,
+        R.drawable.emoji_<%= package %>_sheet_44,
+        R.drawable.emoji_<%= package %>_sheet_45,
+        R.drawable.emoji_<%= package %>_sheet_46,
+        R.drawable.emoji_<%= package %>_sheet_47,
+        R.drawable.emoji_<%= package %>_sheet_48,
+        R.drawable.emoji_<%= package %>_sheet_49,
+        R.drawable.emoji_<%= package %>_sheet_50,
+        R.drawable.emoji_<%= package %>_sheet_51,
+        R.drawable.emoji_<%= package %>_sheet_52,
+        R.drawable.emoji_<%= package %>_sheet_53,
+        R.drawable.emoji_<%= package %>_sheet_54,
+        R.drawable.emoji_<%= package %>_sheet_55
+    };
 
   private Bitmap loadStrip(final Context context) {
     Bitmap strip = (Bitmap) STRIP_REFS[x].get();
@@ -102,8 +163,7 @@ public class <%= name %> extends Emoji {
         strip = (Bitmap) STRIP_REFS[x].get();
         if (strip == null) {
           final Resources resources = context.getResources();
-          final int resId = resources.getIdentifier("emoji_<%= package %>_sheet_" + x,
-              "drawable", context.getPackageName());
+          final int resId = SHEET_RESOURCE_IDS[x]; // Replace getIdentifier with array indexing
           strip = BitmapFactory.decodeResource(resources, resId);
           STRIP_REFS[x] = new SoftReference<>(strip);
         }

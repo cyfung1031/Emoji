@@ -26,6 +26,8 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.provider.FontRequest;
@@ -54,7 +56,7 @@ import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
   ImageView emojiButton;
   EmojiCompat emojiCompat;
 
-  @Override protected void onCreate(final Bundle savedInstanceState) {
+  @Override protected void onCreate(@Nullable final Bundle savedInstanceState) {
     getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
     super.onCreate(savedInstanceState);
 

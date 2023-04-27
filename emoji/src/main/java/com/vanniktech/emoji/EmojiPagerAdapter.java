@@ -86,6 +86,8 @@ public final class EmojiPagerAdapter extends PagerAdapter {
   }
 
   int numberOfRecentEmojis() {
+    if(recentEmoji == null) return 0;
+    if(!hasRecentEmoji()) return 0;
     return recentEmoji.getRecentEmojis().size();
   }
 

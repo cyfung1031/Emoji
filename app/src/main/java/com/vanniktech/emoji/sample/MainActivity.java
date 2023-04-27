@@ -30,6 +30,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.provider.FontRequest;
@@ -62,7 +64,7 @@ import static android.view.View.VISIBLE;
   ImageView emojiButton;
   EmojiCompat emojiCompat;
 
-  @Override @SuppressLint("SetTextI18n") protected void onCreate(final Bundle savedInstanceState) {
+  @Override @SuppressLint("SetTextI18n") protected void onCreate(@Nullable final Bundle savedInstanceState) {
     getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
     super.onCreate(savedInstanceState);
 
