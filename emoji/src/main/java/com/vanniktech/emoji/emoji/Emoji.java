@@ -18,15 +18,18 @@
 package com.vanniktech.emoji.emoji;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.res.ResourcesCompat;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -37,33 +40,33 @@ import static java.util.Collections.emptyList;
 
   @NonNull private final String unicode;
   @NonNull private final String[] shortcodes;
-  @DrawableRes private final int resource;
+  @DrawableRes private final int iconResId;
   private final boolean isDuplicate;
   @NonNull private final List<Emoji> variants;
   @Nullable private Emoji base;
 
   public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
-               @DrawableRes final int resource, final boolean isDuplicate) {
-    this(codePoints, shortcodes, resource, isDuplicate, new Emoji[0]);
+               @DrawableRes final int iconResId, final boolean isDuplicate) {
+    this(codePoints, shortcodes, iconResId, isDuplicate, new Emoji[0]);
   }
 
   public Emoji(final int codePoint, @NonNull final String[] shortcodes,
-               @DrawableRes final int resource, final boolean isDuplicate) {
-    this(codePoint, shortcodes, resource, isDuplicate, new Emoji[0]);
+               @DrawableRes final int iconResId, final boolean isDuplicate) {
+    this(codePoint, shortcodes, iconResId, isDuplicate, new Emoji[0]);
   }
 
   public Emoji(final int codePoint, @NonNull final String[] shortcodes,
-               @DrawableRes final int resource, final boolean isDuplicate,
+               @DrawableRes final int iconResId, final boolean isDuplicate,
                final Emoji... variants) {
-    this(new int[]{codePoint}, shortcodes, resource, isDuplicate, variants);
+    this(new int[]{codePoint}, shortcodes, iconResId, isDuplicate, variants);
   }
 
   public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
-               @DrawableRes final int resource, final boolean isDuplicate,
+               @DrawableRes final int iconResId, final boolean isDuplicate,
                final Emoji... variants) {
     this.unicode = new String(codePoints, 0, codePoints.length);
     this.shortcodes = shortcodes;
-    this.resource = resource;
+    this.iconResId = iconResId;
     this.isDuplicate = isDuplicate;
     this.variants = variants.length == 0 ? EMPTY_EMOJI_LIST : asList(variants);
     for (final Emoji variant : variants) {
@@ -83,12 +86,16 @@ import static java.util.Collections.emptyList;
    * @deprecated Please migrate to getDrawable(). May return -1 in the future for providers that don't use
    * resources.
    */
-  @Deprecated @DrawableRes public int getResource() {
-    return resource;
+  @Deprecated @DrawableRes public int getIconResId() {
+    return iconResId;
   }
 
   @NonNull public Drawable getDrawable(final Context context) {
-    return AppCompatResources.getDrawable(context, resource);
+    return getDrawable(context.getResources());
+  }
+
+  @NonNull public Drawable getDrawable(final Resources resources) {
+    return Objects.requireNonNull(ResourcesCompat.getDrawable(resources, iconResId, null));
   }
 
   public boolean isDuplicate() {
@@ -132,7 +139,7 @@ import static java.util.Collections.emptyList;
 
     final Emoji emoji = (Emoji) o;
 
-    return resource == emoji.resource
+    return iconResId == emoji.iconResId
             && unicode.equals(emoji.unicode)
             && Arrays.equals(shortcodes, emoji.shortcodes)
             && variants.equals(emoji.variants);
@@ -141,7 +148,7 @@ import static java.util.Collections.emptyList;
   @Override public int hashCode() {
     int result = unicode.hashCode();
     result = 31 * result + Arrays.hashCode(shortcodes);
-    result = 31 * result + resource;
+    result = 31 * result + iconResId;
     result = 31 * result + variants.hashCode();
     return result;
   }

@@ -19,6 +19,7 @@ package com.vanniktech.emoji;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -92,22 +93,34 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
     final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper()));
 
+    private Resources resources;
+
+    private Handler myHandlerMain;
+    private Handler myHandlerSub;
+
     final OnEmojiClickListener internalOnEmojiClickListener = new OnEmojiClickListener() {
         @Override public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
             Utils.input(editText, emoji);
 
-            recentEmoji.addEmoji(emoji);
-            variantEmoji.addVariant(emoji);
-            imageView.updateEmoji(emoji);
 
             if (onEmojiClickListener != null) {
                 onEmojiClickListener.onEmojiClick(imageView, emoji);
             }
 
             variantPopup.dismiss();
+            EmojiViewX.this.post(new Runnable() {
+                @Override
+                public void run() {
 
-            recentEmoji.persist();
-            variantEmoji.persist();
+
+                    recentEmoji.addEmoji(emoji);
+                    variantEmoji.addVariant(emoji);
+                    imageView.updateEmoji(resources, emoji);
+
+                    recentEmoji.persist();
+                    variantEmoji.persist();
+                }
+            });
         }
     };
 
@@ -139,7 +152,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     };
 
     public void setup(@NonNull View view){
-        EmojiViewX.Builder builder = EmojiViewX.Builder.fromRootView(view);
+        Builder builder = Builder.fromRootView(view);
 
         this.context = (Activity) view.getContext();
         this.rootView = view.getRootView();
@@ -184,17 +197,24 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
     public EmojiViewX(@NonNull Context context) {
         super(context);
+        init(context);
     }
 
     public EmojiViewX(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public EmojiViewX(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
     }
 
-
+    private void init(final Context context) {
+        resources = context.getResources();
+        myHandlerMain = new Handler(Looper.getMainLooper());
+            myHandlerSub = new Handler(Looper.myLooper());
+    }
 
 
     public void show() {
@@ -489,7 +509,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
         */
     }
 
-    static final class EmojiPopUpOnAttachStateChangeListener implements View.OnAttachStateChangeListener {
+    static final class EmojiPopUpOnAttachStateChangeListener implements OnAttachStateChangeListener {
         private final WeakReference<EmojiPopup> emojiPopup;
 
         EmojiPopUpOnAttachStateChangeListener(final EmojiPopup emojiPopup) {

@@ -68,7 +68,7 @@ public class EmojiTest {
   }
 
   @Test public void getResource() {
-    assertThat(new Emoji(new int[]{ 0x1234, 0x5678 }, new String[]{"test"}, R.drawable.emoji_backspace, false).getResource()).isEqualTo(R.drawable.emoji_backspace);
+    assertThat(new Emoji(new int[]{ 0x1234, 0x5678 }, new String[]{"test"}, R.drawable.emoji_backspace, false).getIconResId()).isEqualTo(R.drawable.emoji_backspace);
   }
 
   @Test public void getLength() {

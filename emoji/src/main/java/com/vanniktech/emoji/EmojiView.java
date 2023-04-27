@@ -19,6 +19,7 @@ package com.vanniktech.emoji;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
 
 import androidx.annotation.CheckResult;
@@ -28,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.content.res.AppCompatResources;
 import android.util.TypedValue;
@@ -63,10 +65,13 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
   private int emojiTabLastSelectedIndex = -1;
 
+  private Resources resources;
+
   @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) public EmojiView(final Context context,
                                                                                             final OnEmojiClickListener onEmojiClickListener,
                                                                                             final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
     super(context);
+    resources = context.getResources(); // be aware of memory leakage
 
     View.inflate(context, R.layout.emoji_view, this);
 
@@ -131,10 +136,11 @@ import static java.util.concurrent.TimeUnit.SECONDS;
     this.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
   }
 
-  private ImageButton inflateButton(final Context context, @DrawableRes final int icon, @StringRes final int categoryName, final ViewGroup parent) {
+  private ImageButton inflateButton(final Context context, @DrawableRes final int btnDrawableResId, @StringRes final int categoryName, final ViewGroup parent) {
     final ImageButton button = (ImageButton) LayoutInflater.from(context).inflate(R.layout.emoji_view_category, parent, false);
 
-    button.setImageDrawable(AppCompatResources.getDrawable(context, icon));
+
+    button.setImageDrawable(ResourcesCompat.getDrawable(resources, btnDrawableResId, null));
     button.setColorFilter(themeIconColor, PorterDuff.Mode.SRC_IN);
     button.setContentDescription(context.getString(categoryName));
 

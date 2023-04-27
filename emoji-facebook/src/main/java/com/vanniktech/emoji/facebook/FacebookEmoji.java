@@ -17,15 +17,15 @@
 
 package com.vanniktech.emoji.facebook;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
 import android.util.LruCache;
+
+import androidx.annotation.NonNull;
 
 import com.vanniktech.emoji.emoji.CacheKey;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -36,7 +36,8 @@ public class FacebookEmoji extends Emoji {
   private static final int CACHE_SIZE = 100;
   private static final int SPRITE_SIZE = 64;
   private static final int SPRITE_SIZE_INC_BORDER = 66;
-  private static final int NUM_STRIPS = 56;
+  private static final int[] SHEET_RESOURCE_IDS = sheetResourceIds();
+  private static final int NUM_STRIPS = SHEET_RESOURCE_IDS.length;
 
   private static final Object LOCK = new Object();
 
@@ -97,64 +98,70 @@ public class FacebookEmoji extends Emoji {
   }
 
   // Add this static array at the class level
-  private static final int[] SHEET_RESOURCE_IDS = {
-          R.drawable.emoji_facebook_sheet_0,
-          R.drawable.emoji_facebook_sheet_1,
-          R.drawable.emoji_facebook_sheet_2,
-          R.drawable.emoji_facebook_sheet_3,
-          R.drawable.emoji_facebook_sheet_4,
-          R.drawable.emoji_facebook_sheet_5,
-          R.drawable.emoji_facebook_sheet_6,
-          R.drawable.emoji_facebook_sheet_7,
-          R.drawable.emoji_facebook_sheet_8,
-          R.drawable.emoji_facebook_sheet_9,
-          R.drawable.emoji_facebook_sheet_10,
-          R.drawable.emoji_facebook_sheet_11,
-          R.drawable.emoji_facebook_sheet_12,
-          R.drawable.emoji_facebook_sheet_13,
-          R.drawable.emoji_facebook_sheet_14,
-          R.drawable.emoji_facebook_sheet_15,
-          R.drawable.emoji_facebook_sheet_16,
-          R.drawable.emoji_facebook_sheet_17,
-          R.drawable.emoji_facebook_sheet_18,
-          R.drawable.emoji_facebook_sheet_19,
-          R.drawable.emoji_facebook_sheet_20,
-          R.drawable.emoji_facebook_sheet_21,
-          R.drawable.emoji_facebook_sheet_22,
-          R.drawable.emoji_facebook_sheet_23,
-          R.drawable.emoji_facebook_sheet_24,
-          R.drawable.emoji_facebook_sheet_25,
-          R.drawable.emoji_facebook_sheet_26,
-          R.drawable.emoji_facebook_sheet_27,
-          R.drawable.emoji_facebook_sheet_28,
-          R.drawable.emoji_facebook_sheet_29,
-          R.drawable.emoji_facebook_sheet_30,
-          R.drawable.emoji_facebook_sheet_31,
-          R.drawable.emoji_facebook_sheet_32,
-          R.drawable.emoji_facebook_sheet_33,
-          R.drawable.emoji_facebook_sheet_34,
-          R.drawable.emoji_facebook_sheet_35,
-          R.drawable.emoji_facebook_sheet_36,
-          R.drawable.emoji_facebook_sheet_37,
-          R.drawable.emoji_facebook_sheet_38,
-          R.drawable.emoji_facebook_sheet_39,
-          R.drawable.emoji_facebook_sheet_40,
-          R.drawable.emoji_facebook_sheet_41,
-          R.drawable.emoji_facebook_sheet_42,
-          R.drawable.emoji_facebook_sheet_43,
-          R.drawable.emoji_facebook_sheet_44,
-          R.drawable.emoji_facebook_sheet_45,
-          R.drawable.emoji_facebook_sheet_46,
-          R.drawable.emoji_facebook_sheet_47,
-          R.drawable.emoji_facebook_sheet_48,
-          R.drawable.emoji_facebook_sheet_49,
-          R.drawable.emoji_facebook_sheet_50,
-          R.drawable.emoji_facebook_sheet_51,
-          R.drawable.emoji_facebook_sheet_52,
-          R.drawable.emoji_facebook_sheet_53,
-          R.drawable.emoji_facebook_sheet_54,
-          R.drawable.emoji_facebook_sheet_55
-  };
+  private static final int[] sheetResourceIds() {
+    return new int[]{
+            R.drawable.emoji_facebook_sheet_0,
+            R.drawable.emoji_facebook_sheet_1,
+            R.drawable.emoji_facebook_sheet_2,
+            R.drawable.emoji_facebook_sheet_3,
+            R.drawable.emoji_facebook_sheet_4,
+            R.drawable.emoji_facebook_sheet_5,
+            R.drawable.emoji_facebook_sheet_6,
+            R.drawable.emoji_facebook_sheet_7,
+            R.drawable.emoji_facebook_sheet_8,
+            R.drawable.emoji_facebook_sheet_9,
+            R.drawable.emoji_facebook_sheet_10,
+            R.drawable.emoji_facebook_sheet_11,
+            R.drawable.emoji_facebook_sheet_12,
+            R.drawable.emoji_facebook_sheet_13,
+            R.drawable.emoji_facebook_sheet_14,
+            R.drawable.emoji_facebook_sheet_15,
+            R.drawable.emoji_facebook_sheet_16,
+            R.drawable.emoji_facebook_sheet_17,
+            R.drawable.emoji_facebook_sheet_18,
+            R.drawable.emoji_facebook_sheet_19,
+            R.drawable.emoji_facebook_sheet_20,
+            R.drawable.emoji_facebook_sheet_21,
+            R.drawable.emoji_facebook_sheet_22,
+            R.drawable.emoji_facebook_sheet_23,
+            R.drawable.emoji_facebook_sheet_24,
+            R.drawable.emoji_facebook_sheet_25,
+            R.drawable.emoji_facebook_sheet_26,
+            R.drawable.emoji_facebook_sheet_27,
+            R.drawable.emoji_facebook_sheet_28,
+            R.drawable.emoji_facebook_sheet_29,
+            R.drawable.emoji_facebook_sheet_30,
+            R.drawable.emoji_facebook_sheet_31,
+            R.drawable.emoji_facebook_sheet_32,
+            R.drawable.emoji_facebook_sheet_33,
+            R.drawable.emoji_facebook_sheet_34,
+            R.drawable.emoji_facebook_sheet_35,
+            R.drawable.emoji_facebook_sheet_36,
+            R.drawable.emoji_facebook_sheet_37,
+            R.drawable.emoji_facebook_sheet_38,
+            R.drawable.emoji_facebook_sheet_39,
+            R.drawable.emoji_facebook_sheet_40,
+            R.drawable.emoji_facebook_sheet_41,
+            R.drawable.emoji_facebook_sheet_42,
+            R.drawable.emoji_facebook_sheet_43,
+            R.drawable.emoji_facebook_sheet_44,
+            R.drawable.emoji_facebook_sheet_45,
+            R.drawable.emoji_facebook_sheet_46,
+            R.drawable.emoji_facebook_sheet_47,
+            R.drawable.emoji_facebook_sheet_48,
+            R.drawable.emoji_facebook_sheet_49,
+            R.drawable.emoji_facebook_sheet_50,
+            R.drawable.emoji_facebook_sheet_51,
+            R.drawable.emoji_facebook_sheet_52,
+            R.drawable.emoji_facebook_sheet_53,
+            R.drawable.emoji_facebook_sheet_54,
+            R.drawable.emoji_facebook_sheet_55,
+            R.drawable.emoji_facebook_sheet_56,
+            R.drawable.emoji_facebook_sheet_57,
+            R.drawable.emoji_facebook_sheet_58,
+            R.drawable.emoji_facebook_sheet_59
+    };
+  }
   private Bitmap loadStrip(final Context context) {
     Bitmap strip = (Bitmap) STRIP_REFS[x].get();
     if (strip == null) {

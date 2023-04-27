@@ -18,6 +18,7 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -145,6 +146,14 @@ public final class EmojiImageView extends AppCompatImageView {
       currentEmoji = emoji;
 
       setImageDrawable(emoji.getDrawable(this.getContext()));
+    }
+  }
+
+  public void updateEmoji(@NonNull Resources resources, @NonNull final Emoji emoji) {
+    if (!emoji.equals(currentEmoji)) {
+      currentEmoji = emoji;
+
+      setImageDrawable(emoji.getDrawable(resources));
     }
   }
 
