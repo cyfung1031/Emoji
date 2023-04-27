@@ -24,6 +24,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowInsets;
@@ -307,7 +308,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     }
   }
 
-  public static final class Builder {
+  public static final class Builder implements EmojiView.EmojiViewBuilder<Builder> {
     @NonNull final View rootView;
     @StyleRes int keyboardAnimationStyle;
     @ColorInt int backgroundColor;
@@ -327,9 +328,92 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
     private Builder(final View rootView) {
       this.rootView = checkNotNull(rootView, "The root View can't be null");
-      this.recentEmoji = new RecentEmojiManager(rootView.getContext());
-      this.variantEmoji = new VariantEmojiManager(rootView.getContext());
+      initByContext(rootView.getContext());
     }
+
+
+    private void initByContext(final Context context) {
+      this.recentEmoji = new RecentEmojiManager(context);
+      this.variantEmoji = new VariantEmojiManager(context);
+    }
+
+
+    // Getter methods
+    @NonNull
+    public View getRootView() {
+      return rootView;
+    }
+
+    @StyleRes
+    public int getKeyboardAnimationStyle() {
+      return keyboardAnimationStyle;
+    }
+
+    @ColorInt
+    public int getBackgroundColor() {
+      return backgroundColor;
+    }
+
+    @ColorInt
+    public int getIconColor() {
+      return iconColor;
+    }
+
+    @ColorInt
+    public int getSelectedIconColor() {
+      return selectedIconColor;
+    }
+
+    @ColorInt
+    public int getDividerColor() {
+      return dividerColor;
+    }
+
+    @Nullable
+    public ViewPager.PageTransformer getPageTransformer() {
+      return pageTransformer;
+    }
+
+    @Nullable
+    public OnEmojiPopupShownListener getOnEmojiPopupShownListener() {
+      return onEmojiPopupShownListener;
+    }
+
+    @Nullable
+    public OnSoftKeyboardCloseListener getOnSoftKeyboardCloseListener() {
+      return onSoftKeyboardCloseListener;
+    }
+
+    @Nullable
+    public OnSoftKeyboardOpenListener getOnSoftKeyboardOpenListener() {
+      return onSoftKeyboardOpenListener;
+    }
+
+    @Nullable
+    public OnEmojiBackspaceClickListener getOnEmojiBackspaceClickListener() {
+      return onEmojiBackspaceClickListener;
+    }
+
+    @Nullable
+    public OnEmojiClickListener getOnEmojiClickListener() {
+      return onEmojiClickListener;
+    }
+
+    @Nullable
+    public OnEmojiPopupDismissListener getOnEmojiPopupDismissListener() {
+      return onEmojiPopupDismissListener;
+    }
+
+    @NonNull
+    public RecentEmoji getRecentEmoji() {
+      return recentEmoji;
+    }
+
+    @NonNull
+    public VariantEmoji getVariantEmoji() {
+      return variantEmoji;
+    }
+
 
     /**
      * @param rootView The root View of your layout.xml which will be used for calculating the height

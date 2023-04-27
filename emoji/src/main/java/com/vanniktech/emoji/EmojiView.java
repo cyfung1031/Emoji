@@ -20,11 +20,14 @@ package com.vanniktech.emoji;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
+
+import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.content.res.AppCompatResources;
 import android.util.TypedValue;
@@ -38,6 +41,10 @@ import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
+import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 import com.vanniktech.emoji.listeners.RepeatListener;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -58,25 +65,25 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
   @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) public EmojiView(final Context context,
                                                                                             final OnEmojiClickListener onEmojiClickListener,
-                                                                                            final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiPopup.Builder builder) {
+                                                                                            final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
     super(context);
 
     View.inflate(context, R.layout.emoji_view, this);
 
     setOrientation(VERTICAL);
-    setBackgroundColor(builder.backgroundColor != 0 ? builder.backgroundColor : Utils.resolveColor(context, R.attr.emojiBackground, R.color.emoji_background));
-    themeIconColor = builder.iconColor != 0 ? builder.iconColor : Utils.resolveColor(context, R.attr.emojiIcons, R.color.emoji_icons);
+    setBackgroundColor(builder.getBackgroundColor() != 0 ? builder.getBackgroundColor() : Utils.resolveColor(context, R.attr.emojiBackground, R.color.emoji_background));
+    themeIconColor = builder.getIconColor() != 0 ? builder.getIconColor() : Utils.resolveColor(context, R.attr.emojiIcons, R.color.emoji_icons);
 
     final TypedValue value = new TypedValue();
     context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
-    themeAccentColor = builder.selectedIconColor != 0 ? builder.selectedIconColor : value.data;
+    themeAccentColor = builder.getSelectedIconColor() != 0 ? builder.getSelectedIconColor() : value.data;
 
     final ViewPager emojisPager = findViewById(R.id.emojiViewPager);
     final View emojiDivider = findViewById(R.id.emojiViewDivider);
-    emojiDivider.setBackgroundColor(builder.dividerColor != 0 ? builder.dividerColor : Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
+    emojiDivider.setBackgroundColor(builder.getDividerColor() != 0 ? builder.getDividerColor() : Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
 
-    if (builder.pageTransformer != null) {
-      emojisPager.setPageTransformer(true, builder.pageTransformer);
+    if (builder.getPageTransformer() != null) {
+      emojisPager.setPageTransformer(true, builder.getPageTransformer());
     }
 
     final LinearLayout emojisTab = findViewById(R.id.emojiViewTab);
@@ -84,7 +91,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
     final EmojiCategory[] categories = EmojiManager.getInstance().getCategories();
 
-    emojiPagerAdapter = new EmojiPagerAdapter(onEmojiClickListener, onEmojiLongClickListener, builder.recentEmoji, builder.variantEmoji);
+    emojiPagerAdapter = new EmojiPagerAdapter(onEmojiClickListener, onEmojiLongClickListener, builder.getRecentEmoji(), builder.getVariantEmoji());
     emojiTabs = new ImageButton[emojiPagerAdapter.recentAdapterItemCount() + categories.length + 1];
 
     if (emojiPagerAdapter.hasRecentEmoji()) {
@@ -174,5 +181,84 @@ import static java.util.concurrent.TimeUnit.SECONDS;
     @Override public void onClick(final View v) {
       emojisPager.setCurrentItem(position);
     }
+  }
+
+  public interface EmojiViewBuilder<TBuilder>{
+
+
+
+    // Getter methods
+    @NonNull
+    public View getRootView();
+
+    @StyleRes
+    public int getKeyboardAnimationStyle();
+
+    @ColorInt
+    public int getBackgroundColor();
+
+    @ColorInt
+    public int getIconColor();
+
+    @ColorInt
+    public int getSelectedIconColor();
+    @ColorInt
+    public int getDividerColor();
+
+    @Nullable
+    public ViewPager.PageTransformer getPageTransformer();
+
+
+    @Nullable
+    public OnEmojiPopupShownListener getOnEmojiPopupShownListener();
+
+    @Nullable
+    public OnSoftKeyboardCloseListener getOnSoftKeyboardCloseListener();
+
+    @Nullable
+    public OnSoftKeyboardOpenListener getOnSoftKeyboardOpenListener();
+
+    @Nullable
+    public OnEmojiBackspaceClickListener getOnEmojiBackspaceClickListener();
+
+
+    @Nullable
+    public OnEmojiClickListener getOnEmojiClickListener();
+
+    @Nullable
+    public OnEmojiPopupDismissListener getOnEmojiPopupDismissListener();
+
+    @NonNull
+    public RecentEmoji getRecentEmoji();
+
+    @NonNull
+    public VariantEmoji getVariantEmoji();
+
+    @CheckResult public TBuilder setOnSoftKeyboardCloseListener(@Nullable final OnSoftKeyboardCloseListener listener);
+
+    @CheckResult public TBuilder setOnEmojiClickListener(@Nullable final OnEmojiClickListener listener);
+    @CheckResult public TBuilder setOnSoftKeyboardOpenListener(@Nullable final OnSoftKeyboardOpenListener listener);
+
+    @CheckResult public TBuilder setOnEmojiPopupShownListener(@Nullable final OnEmojiPopupShownListener listener);
+
+    @CheckResult public TBuilder setOnEmojiPopupDismissListener(@Nullable final OnEmojiPopupDismissListener listener);
+    @CheckResult public TBuilder setOnEmojiBackspaceClickListener(@Nullable final OnEmojiBackspaceClickListener listener);
+    @CheckResult public TBuilder setPopupWindowHeight(final int windowHeight);
+    @CheckResult public TBuilder setRecentEmoji(@NonNull final RecentEmoji recent);
+    @CheckResult public TBuilder setVariantEmoji(@NonNull final VariantEmoji variant);
+
+    @CheckResult public TBuilder setBackgroundColor(@ColorInt final int color);
+
+    @CheckResult public TBuilder setIconColor(@ColorInt final int color);
+
+    @CheckResult public TBuilder setSelectedIconColor(@ColorInt final int color);
+
+    @CheckResult public TBuilder setDividerColor(@ColorInt final int color);
+
+    @CheckResult public TBuilder setKeyboardAnimationStyle(@StyleRes final int animation);
+
+    @CheckResult public TBuilder setPageTransformer(@Nullable final ViewPager.PageTransformer transformer);
+
+
   }
 }
