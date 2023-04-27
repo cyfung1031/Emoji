@@ -6,7 +6,7 @@ buildscript {
   ext.versions = [
     espresso: '3.5.1',
     testRules: '1.0.2',
-    kotlin: '1.4.32',
+    kotlin: '1.6.21',
   ]
 
   ext.deps = [
@@ -34,8 +34,8 @@ buildscript {
   }
   dependencies {
     classpath 'com.vanniktech:gradle-code-quality-tools-plugin:0.22.0'
-    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.15.0'
-    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.8.0'
+    classpath 'com.vanniktech:gradle-android-junit-jacoco-plugin:0.16.0'
+    classpath 'com.vanniktech:gradle-maven-publish-plugin:0.18.0'
 
     classpath 'com.android.tools.build:gradle:4.2.2'
     classpath 'com.github.ben-manes:gradle-versions-plugin:0.26.0'
@@ -56,7 +56,7 @@ codeQualityTools {
     enabled = false // Kotlin only.
   }
   ktlint {
-    toolVersion = '0.34.2'
+    toolVersion = '0.47.1'
     experimental = true
   }
   detekt {
