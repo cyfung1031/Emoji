@@ -17,9 +17,18 @@
 
 package com.vanniktech.emoji;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.PorterDuff;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
@@ -29,15 +38,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
-
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
@@ -49,25 +52,30 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 import com.vanniktech.emoji.listeners.RepeatListener;
 
-@SuppressLint("ViewConstructor") public final class EmojiView extends LinearLayout {
+@SuppressLint("ViewConstructor")
+public final class EmojiView2B extends LinearLayout {
   private static final long INITIAL_INTERVAL = 500; //ms
   private static final int NORMAL_INTERVAL = 50; //ms
 
-  @ColorInt private final int themeAccentColor;
-  @ColorInt private final int themeIconColor;
+  @ColorInt
+  private final int themeAccentColor;
+  @ColorInt
+  private final int themeIconColor;
 
   private final ImageButton[] emojiTabs;
-  private final EmojiView.EmojiPagerAdapter emojiPagerAdapter;
+  private final EmojiView2B.EmojiPagerAdapter emojiPagerAdapter;
 
-  @Nullable OnEmojiBackspaceClickListener onEmojiBackspaceClickListener;
+  @Nullable
+  OnEmojiBackspaceClickListener onEmojiBackspaceClickListener;
 
   private int emojiTabLastSelectedIndex = -1;
 
-
-  @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) public EmojiView(final Context context,
-                                                                                            final OnEmojiClickListener onEmojiClickListener,
-                                                                                            final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
+  @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
+  public EmojiView2B(final Context context,
+                     final OnEmojiClickListener onEmojiClickListener,
+                     final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
     super(context);
+    Resources resources = context.getResources();
 
     View.inflate(context, R.layout.emoji_view, this);
 
@@ -79,23 +87,18 @@ import com.vanniktech.emoji.listeners.RepeatListener;
     context.getTheme().resolveAttribute(R.attr.colorAccent, value, true);
     themeAccentColor = builder.getSelectedIconColor() != 0 ? builder.getSelectedIconColor() : value.data;
 
-    final ViewPager emojisPager = findViewById(R.id.emojiViewPager);
+    final ViewPager2 emojisPager = findViewById(R.id.emojiViewPager);
     final View emojiDivider = findViewById(R.id.emojiViewDivider);
     emojiDivider.setBackgroundColor(builder.getDividerColor() != 0 ? builder.getDividerColor() : Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
 
     if (builder.getPageTransformer() != null) {
-      emojisPager.setPageTransformer(true, builder.getPageTransformer());
+//      emojisPager.setPageTransformer(builder.getPageTransformer());
     }
 
     final LinearLayout emojisTab = findViewById(R.id.emojiViewTab);
-    final ViewPager.OnPageChangeListener pageChangeHandler = new ViewPager.OnPageChangeListener() {
+    final ViewPager2.OnPageChangeCallback pageChangeHandler = new ViewPager2.OnPageChangeCallback() {
       @Override
-      public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        // No-op.
-      }
-
-
-      @Override public void onPageSelected(final int i) {
+      public void onPageSelected(final int i) {
         if (emojiTabLastSelectedIndex != i) {
           final int lastSelectedIndex = emojiTabLastSelectedIndex;
           emojiTabLastSelectedIndex = i;
@@ -113,17 +116,12 @@ import com.vanniktech.emoji.listeners.RepeatListener;
 
         }
       }
-
-      @Override
-      public void onPageScrollStateChanged(int state) {
-        // No-op.
-      }
     };
-    emojisPager.addOnPageChangeListener(pageChangeHandler);
+    emojisPager.registerOnPageChangeCallback(pageChangeHandler);
 
     final EmojiCategory[] categories = EmojiManager.getInstance().getCategories();
 
-    emojiPagerAdapter = new EmojiView.EmojiPagerAdapter(onEmojiClickListener, onEmojiLongClickListener, builder.getRecentEmoji(), builder.getVariantEmoji());
+    emojiPagerAdapter = new EmojiView2B.EmojiPagerAdapter(onEmojiClickListener, onEmojiLongClickListener, builder.getRecentEmoji(), builder.getVariantEmoji());
     emojiTabs = new ImageButton[emojiPagerAdapter.recentAdapterItemCount() + categories.length + 1];
 
     if (emojiPagerAdapter.hasRecentEmoji()) {
@@ -139,25 +137,27 @@ import com.vanniktech.emoji.listeners.RepeatListener;
     handleOnClicks(emojisPager);
 
     emojisPager.setAdapter(emojiPagerAdapter);
+    emojisPager.setOffscreenPageLimit(1);
 
     final int startIndex = emojiPagerAdapter.hasRecentEmoji() ? emojiPagerAdapter.numberOfRecentEmojis() > 0 ? 0 : 1 : 0;
     emojisPager.setCurrentItem(startIndex);
     pageChangeHandler.onPageSelected(startIndex);
   }
 
-  private void handleOnClicks(final ViewPager emojisPager) {
+  private void handleOnClicks(final ViewPager2 emojisPager) {
     for (int i = 0; i < emojiTabs.length - 1; i++) {
       emojiTabs[i].setOnClickListener(new EmojiTabsClickListener(emojisPager, i));
     }
 
-    emojiTabs[emojiTabs.length - 1].setOnTouchListener(new RepeatListener(INITIAL_INTERVAL, NORMAL_INTERVAL, this::onBackSpaceToolButtonRepeatedlyClicked));
-  }
-
-  public void onBackSpaceToolButtonRepeatedlyClicked(final View view) {
-      if (onEmojiBackspaceClickListener != null) {
-        onEmojiBackspaceClickListener.onEmojiBackspaceClicked(view);
+    emojiTabs[emojiTabs.length - 1].setOnTouchListener(new RepeatListener(INITIAL_INTERVAL, NORMAL_INTERVAL, new OnClickListener() {
+      @Override
+      public void onClick(final View view) {
+        if (onEmojiBackspaceClickListener != null) {
+          onEmojiBackspaceClickListener.onEmojiBackspaceClicked(view);
+        }
       }
-    }
+    }));
+  }
 
   public void setOnEmojiBackspaceClickListener(@Nullable final OnEmojiBackspaceClickListener onEmojiBackspaceClickListener) {
     this.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
@@ -175,18 +175,17 @@ import com.vanniktech.emoji.listeners.RepeatListener;
     return button;
   }
 
-
-
   static class EmojiTabsClickListener implements OnClickListener {
-    private final ViewPager emojisPager;
+    private final ViewPager2 emojisPager;
     private final int position;
 
-    EmojiTabsClickListener(final ViewPager emojisPager, final int position) {
+    EmojiTabsClickListener(final ViewPager2 emojisPager, final int position) {
       this.emojisPager = emojisPager;
       this.position = position;
     }
 
-    @Override public void onClick(final View v) {
+    @Override
+    public void onClick(final View v) {
       emojisPager.setCurrentItem(position);
     }
   }
@@ -238,8 +237,7 @@ import com.vanniktech.emoji.listeners.RepeatListener;
 
 
 
-
-  static public final class EmojiPagerAdapter extends PagerAdapter {
+  static final class EmojiPagerAdapter extends RecyclerView.Adapter<EmojiPagerAdapter.EmojiPageViewHolder> {
     private static final int RECENT_POSITION = 0;
 
     private final OnEmojiClickListener listener;
@@ -269,37 +267,6 @@ import com.vanniktech.emoji.listeners.RepeatListener;
       return hasRecentEmoji() ? 1 : 0;
     }
 
-    @Override public int getCount() {
-      return EmojiManager.getInstance().getCategories().length + recentAdapterItemCount();
-    }
-
-    @Override @NonNull public Object instantiateItem(@NonNull final ViewGroup pager, final int position) {
-      final EmojiGridView newView;
-
-      if (hasRecentEmoji() && position == RECENT_POSITION) {
-        newView = new EmojiGridView(pager.getContext()).init(listener, longListener, recentEmoji);
-        recentEmojiGridView = newView;
-      } else {
-        newView = new EmojiGridView(pager.getContext()).init(listener, longListener,
-                EmojiManager.getInstance().getCategories()[position - recentAdapterItemCount()], variantManager);
-      }
-
-      pager.addView(newView);
-      return newView;
-    }
-
-    @Override public void destroyItem(final ViewGroup pager, final int position, @NonNull final Object view) {
-      pager.removeView((View) view);
-
-      if (hasRecentEmoji() && position == RECENT_POSITION) {
-        recentEmojiGridView = null;
-      }
-    }
-
-    @Override public boolean isViewFromObject(final View view, @NonNull final Object object) {
-      return view.equals(object);
-    }
-
     int numberOfRecentEmojis() {
       if(recentEmoji == null) return 0;
       if(!hasRecentEmoji()) return 0;
@@ -309,6 +276,40 @@ import com.vanniktech.emoji.listeners.RepeatListener;
     void invalidateRecentEmojis() {
       if (recentEmojiGridView != null) {
         recentEmojiGridView.invalidateEmojis();
+      }
+    }
+
+    @NonNull
+    @Override
+    public EmojiPageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+      Context context = parent.getContext();
+      EmojiGridView emojiGridView = new EmojiGridView(context);
+      emojiGridView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+      return new EmojiPageViewHolder(emojiGridView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull EmojiPageViewHolder holder, int position) {
+      if (hasRecentEmoji() && position == RECENT_POSITION) {
+        holder.emojiGridView.init(listener, longListener, recentEmoji);
+        recentEmojiGridView = holder.emojiGridView;
+      } else {
+        EmojiCategory category = EmojiManager.getInstance().getCategories()[position - recentAdapterItemCount()];
+        holder.emojiGridView.init(listener, longListener, category, variantManager);
+      }
+    }
+
+    @Override
+    public int getItemCount() {
+      return EmojiManager.getInstance().getCategories().length + recentAdapterItemCount();
+    }
+
+    static class EmojiPageViewHolder extends RecyclerView.ViewHolder {
+      final EmojiGridView emojiGridView;
+
+      EmojiPageViewHolder(EmojiGridView emojiGridView) {
+        super(emojiGridView);
+        this.emojiGridView = emojiGridView;
       }
     }
   }

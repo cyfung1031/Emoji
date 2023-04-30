@@ -27,6 +27,7 @@ import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -278,4 +279,18 @@ final class Utils {
   private Utils() {
     throw new AssertionError("No instances.");
   }
+
+  static public int getSelectableBackgroundResId(){
+
+    // Set background
+    int selectableItemBackgroundBorderlessResourceId;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      selectableItemBackgroundBorderlessResourceId = android.R.attr.selectableItemBackgroundBorderless;
+    } else {
+      // For Android SDK API 16, use the default selectable item background
+      selectableItemBackgroundBorderlessResourceId = android.R.attr.selectableItemBackground;
+    }
+    return selectableItemBackgroundBorderlessResourceId;
+  }
+
 }

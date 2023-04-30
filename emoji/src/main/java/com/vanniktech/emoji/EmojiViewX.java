@@ -62,8 +62,6 @@ import static com.vanniktech.emoji.Utils.backspace;
 import static com.vanniktech.emoji.Utils.checkNotNull;
 
 @SuppressWarnings("PMD.GodClass") public final class EmojiViewX extends FrameLayout implements EmojiResultReceiver.Receiver {
-    static final int MIN_KEYBOARD_HEIGHT = 50;
-    static final int APPLY_WINDOW_INSETS_DURATION = 250;
 
     @Nullable View rootView = null;
     @Nullable Activity context = null;
@@ -75,28 +73,17 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     EditText editText;
 
     boolean isPendingOpen;
-    boolean isKeyboardOpen;
-
-    private int globalKeyboardHeight;
-    private int delay;
 
     @Nullable OnEmojiPopupShownListener onEmojiPopupShownListener;
-    @Nullable OnSoftKeyboardCloseListener onSoftKeyboardCloseListener;
-    @Nullable OnSoftKeyboardOpenListener onSoftKeyboardOpenListener;
 
     @Nullable OnEmojiBackspaceClickListener onEmojiBackspaceClickListener;
     @Nullable OnEmojiClickListener onEmojiClickListener;
-    @Nullable OnEmojiPopupDismissListener onEmojiPopupDismissListener;
-
-    int popupWindowHeight;
     int originalImeOptions = -1;
 
     final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper()));
 
     Resources resources;
 
-    private Handler myHandlerMain;
-    private Handler myHandlerSub;
 
     final OnEmojiClickListener internalOnEmojiClickListener = new OnEmojiClickListener() {
         @Override public void onEmojiClick(@NonNull final EmojiImageView imageView, @NonNull final Emoji emoji) {
@@ -115,7 +102,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
                     recentEmoji.addEmoji(emoji);
                     variantEmoji.addVariant(emoji);
-                    imageView.updateEmoji(resources, emoji);
+                    imageView.updateEmoji(emoji);
 
                     recentEmoji.persist();
                     variantEmoji.persist();
@@ -131,22 +118,11 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
     };
 
     final OnEmojiBackspaceClickListener internalOnEmojiBackspaceClickListener = new OnEmojiBackspaceClickListener() {
-        @Override public void onEmojiBackspaceClick(final View v) {
+        @Override public void onEmojiBackspaceClicked(final View v) {
             backspace(editText);
 
             if (onEmojiBackspaceClickListener != null) {
-                onEmojiBackspaceClickListener.onEmojiBackspaceClick(v);
-            }
-        }
-    };
-
-    final PopupWindow.OnDismissListener onDismissListener = new PopupWindow.OnDismissListener() {
-        @Override public void onDismiss() {
-            if (editText instanceof EmojiEditText && ((EmojiEditText) editText).isKeyboardInputDisabled()) {
-                editText.clearFocus();
-            }
-            if (onEmojiPopupDismissListener != null) {
-                onEmojiPopupDismissListener.onEmojiPopupDismiss();
+                onEmojiBackspaceClickListener.onEmojiBackspaceClicked(v);
             }
         }
     };
@@ -156,12 +132,10 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
         this.context = (Activity) view.getContext();
         this.rootView = view.getRootView();
-        // this.editText = editText;
         this.recentEmoji = builder.getRecentEmoji();
         this.variantEmoji = builder.getVariantEmoji();
 
 
-//        popupWindow = new PopupWindow(context);
         variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
 
         final EmojiView emojiView = new EmojiView(context,
@@ -170,22 +144,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
         emojiView.setOnEmojiBackspaceClickListener(internalOnEmojiBackspaceClickListener);
 
         EmojiViewX.this.addView(emojiView);
-
-//        popupWindow.setContentView(emojiView);
-//        popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-//        popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // To avoid borders and overdraw.
-//        popupWindow.setOnDismissListener(onDismissListener);
-//
-//        if (builder.keyboardAnimationStyle != 0) {
-//            popupWindow.setAnimationStyle(builder.keyboardAnimationStyle);
-//        }
-//
-//        // Root view might already be laid out in which case we need to manually call start()
-//        if (rootView.getParent() != null) {
-//            start();
-//        }
-//
-//        rootView.addOnAttachStateChangeListener(new EmojiPopUpOnAttachStateChangeListener(this));
 
 
 
@@ -212,8 +170,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 
     private void init(final Context context) {
         resources = context.getResources();
-        myHandlerMain = new Handler(Looper.getMainLooper());
-            myHandlerSub = new Handler(Looper.myLooper());
     }
 
 
@@ -317,11 +273,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
             return rootView;
         }
 
-        @StyleRes
-        public int getKeyboardAnimationStyle() {
-            return keyboardAnimationStyle;
-        }
-
         @ColorInt
         public int getBackgroundColor() {
             return backgroundColor;
@@ -345,36 +296,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
         @Nullable
         public ViewPager.PageTransformer getPageTransformer() {
             return pageTransformer;
-        }
-
-        @Nullable
-        public OnEmojiPopupShownListener getOnEmojiPopupShownListener() {
-            return onEmojiPopupShownListener;
-        }
-
-        @Nullable
-        public OnSoftKeyboardCloseListener getOnSoftKeyboardCloseListener() {
-            return onSoftKeyboardCloseListener;
-        }
-
-        @Nullable
-        public OnSoftKeyboardOpenListener getOnSoftKeyboardOpenListener() {
-            return onSoftKeyboardOpenListener;
-        }
-
-        @Nullable
-        public OnEmojiBackspaceClickListener getOnEmojiBackspaceClickListener() {
-            return onEmojiBackspaceClickListener;
-        }
-
-        @Nullable
-        public OnEmojiClickListener getOnEmojiClickListener() {
-            return onEmojiClickListener;
-        }
-
-        @Nullable
-        public OnEmojiPopupDismissListener getOnEmojiPopupDismissListener() {
-            return onEmojiPopupDismissListener;
         }
 
         @NonNull
@@ -426,61 +347,6 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
             return this;
         }
 
-        /**
-         * Set PopUpWindow's height.
-         * If height is not 0 then this value will be used later on. If it is 0 then the keyboard height will
-         * be dynamically calculated and set as {@link PopupWindow} height.
-         * @param windowHeight - the height of {@link PopupWindow}
-         *
-         * @since 0.7.0
-         */
-        @CheckResult public Builder setPopupWindowHeight(final int windowHeight) {
-            this.popupWindowHeight = Math.max(windowHeight, 0);
-            return this;
-        }
-
-        /**
-         * Allows you to pass your own implementation of recent emojis. If not provided the default one
-         * {@link RecentEmojiManager} will be used.
-         *
-         * @since 0.2.0
-         */
-        @CheckResult public Builder setRecentEmoji(@NonNull final RecentEmoji recent) {
-            recentEmoji = checkNotNull(recent, "recent can't be null");
-            return this;
-        }
-
-        /**
-         * Allows you to pass your own implementation of variant emojis. If not provided the default one
-         * {@link VariantEmojiManager} will be used.
-         *
-         * @since 0.5.0
-         */
-        @CheckResult public Builder setVariantEmoji(@NonNull final VariantEmoji variant) {
-            variantEmoji = checkNotNull(variant, "variant can't be null");
-            return this;
-        }
-
-        @CheckResult public Builder setBackgroundColor(@ColorInt final int color) {
-            backgroundColor = color;
-            return this;
-        }
-
-        @CheckResult public Builder setIconColor(@ColorInt final int color) {
-            iconColor = color;
-            return this;
-        }
-
-        @CheckResult public Builder setSelectedIconColor(@ColorInt final int color) {
-            selectedIconColor = color;
-            return this;
-        }
-
-        @CheckResult public Builder setDividerColor(@ColorInt final int color) {
-            dividerColor = color;
-            return this;
-        }
-
         @CheckResult public Builder setKeyboardAnimationStyle(@StyleRes final int animation) {
             keyboardAnimationStyle = animation;
             return this;
@@ -491,88 +357,7 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
             return this;
         }
 
-        /*
-        @CheckResult public EmojiPopup build(@NonNull final EditText editText) {
-            EmojiManager.getInstance().verifyInstalled();
-            checkNotNull(editText, "EditText can't be null");
-
-            final EmojiPopup emojiPopup = new EmojiPopup(this, editText);
-            emojiPopup.onSoftKeyboardCloseListener = onSoftKeyboardCloseListener;
-            emojiPopup.onEmojiClickListener = onEmojiClickListener;
-            emojiPopup.onSoftKeyboardOpenListener = onSoftKeyboardOpenListener;
-            emojiPopup.onEmojiPopupShownListener = onEmojiPopupShownListener;
-            emojiPopup.onEmojiPopupDismissListener = onEmojiPopupDismissListener;
-            emojiPopup.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
-            emojiPopup.popupWindowHeight = Math.max(popupWindowHeight, 0);
-            return emojiPopup;
-        }
-        */
     }
 
-    static final class EmojiPopUpOnAttachStateChangeListener implements OnAttachStateChangeListener {
-        private final WeakReference<EmojiPopup> emojiPopup;
-
-        EmojiPopUpOnAttachStateChangeListener(final EmojiPopup emojiPopup) {
-            this.emojiPopup = new WeakReference<>(emojiPopup);
-        }
-
-        @Override public void onViewAttachedToWindow(final View v) {
-            final EmojiPopup popup = emojiPopup.get();
-
-            if (popup != null) {
-                popup.start();
-            }
-        }
-
-        @Override public void onViewDetachedFromWindow(final View v) {
-            final EmojiPopup popup = emojiPopup.get();
-
-            if (popup != null) {
-                popup.stop();
-            }
-
-            emojiPopup.clear();
-            v.removeOnAttachStateChangeListener(this);
-        }
-    }
-
-
-    static final class EmojiPopUpOnApplyWindowInsetsListener implements androidx.core.view.OnApplyWindowInsetsListener {
-        private final WeakReference<EmojiPopup> emojiPopup;
-        int previousOffset;
-
-        EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopup emojiPopup) {
-            this.emojiPopup = new WeakReference<>(emojiPopup);
-        }
-
-        @Override
-        public WindowInsetsCompat onApplyWindowInsets(final View v, final WindowInsetsCompat insets) {
-            final EmojiPopup popup = emojiPopup.get();
-
-            if (popup != null) {
-                final int offset;
-
-                if (insets.getSystemWindowInsetBottom() < insets.getStableInsetBottom()) {
-                    offset = insets.getSystemWindowInsetBottom();
-                } else {
-                    offset = insets.getSystemWindowInsetBottom() - insets.getStableInsetBottom();
-                }
-
-                if (offset != previousOffset || offset == 0) {
-                    previousOffset = offset;
-
-                    if (offset > Utils.dpToPx(popup.context, MIN_KEYBOARD_HEIGHT)) {
-                        popup.updateKeyboardStateOpened(offset);
-                    } else {
-                        popup.updateKeyboardStateClosed();
-                    }
-                }
-
-                return ViewCompat.onApplyWindowInsets(popup.context.getWindow().getDecorView(), insets);
-            }
-
-            return insets;
-        }
-    }
 
 }

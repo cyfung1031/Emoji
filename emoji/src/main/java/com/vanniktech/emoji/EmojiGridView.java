@@ -19,40 +19,104 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Canvas;
+import android.util.Log;
+import android.widget.GridView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.widget.GridView;
+
+import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
 
+import java.util.Collection;
+
 class EmojiGridView extends GridView {
-  protected EmojiArrayAdapter emojiArrayAdapter;
+    protected EmojiArrayAdapter emojiArrayAdapter = null;
+    boolean isRecentEmojiGridView = false;
+    private RecentEmoji recentEmojis = null;
 
-  EmojiGridView(final Context context) {
-    super(context);
+    EmojiGridView(final Context context) {
+        super(context);
 
-    final Resources resources = getResources();
-    final int width = resources.getDimensionPixelSize(R.dimen.emoji_grid_view_column_width);
-    final int spacing = resources.getDimensionPixelSize(R.dimen.emoji_grid_view_spacing);
+        final Resources resources = getResources();
+        final int width = resources.getDimensionPixelSize(R.dimen.emoji_grid_view_column_width);
+        final int spacing = resources.getDimensionPixelSize(R.dimen.emoji_grid_view_spacing);
 
-    setColumnWidth(width);
-    setHorizontalSpacing(spacing);
-    setVerticalSpacing(spacing);
-    setPadding(spacing, spacing, spacing, spacing);
-    setNumColumns(AUTO_FIT);
-    setClipToPadding(false);
-    setVerticalScrollBarEnabled(false);
-  }
+        setColumnWidth(width);
+        setHorizontalSpacing(spacing);
+        setVerticalSpacing(spacing);
+        setPadding(spacing, spacing, spacing, spacing);
+        setNumColumns(AUTO_FIT);
+        setClipToPadding(false);
+        setVerticalScrollBarEnabled(false);
+    }
 
-  public EmojiGridView init(@Nullable final OnEmojiClickListener onEmojiClickListener,
-      @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
-      @NonNull final EmojiCategory category, @NonNull final VariantEmoji variantManager) {
-    emojiArrayAdapter = new EmojiArrayAdapter(getContext(), category.getEmojis(), variantManager,
-            onEmojiClickListener, onEmojiLongClickListener);
 
-    setAdapter(emojiArrayAdapter);
+    private void initInner(@Nullable final OnEmojiClickListener onEmojiClickListener,
+                           @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
+                           @NonNull Emoji[] emojis, @Nullable final VariantEmoji variantManager){
 
-    return this;
-  }
+        emojiArrayAdapter = new EmojiArrayAdapter(getContext(), emojis, variantManager,
+                onEmojiClickListener, onEmojiLongClickListener);
+
+        setAdapter(emojiArrayAdapter);
+    }
+    public EmojiGridView init(@Nullable final OnEmojiClickListener onEmojiClickListener,
+                              @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
+                              @NonNull final RecentEmoji recentEmoji) {
+        isRecentEmojiGridView = true;
+        recentEmojis = recentEmoji;
+
+        final Collection<Emoji> emojis = recentEmojis.getRecentEmojis();
+        initInner(onEmojiClickListener, onEmojiLongClickListener, emojis.toArray(new Emoji[0]), null);
+
+        return this;
+    }
+
+
+
+    public EmojiGridView init(@Nullable final OnEmojiClickListener onEmojiClickListener,
+                              @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
+                              @NonNull final EmojiCategory category, @NonNull final VariantEmoji variantManager) {
+        isRecentEmojiGridView = false;
+
+        initInner(onEmojiClickListener, onEmojiLongClickListener, category.getEmojis(), variantManager);
+
+        return this;
+    }
+
+    public void invalidateEmojis() {
+
+        if (isRecentEmojiGridView) {
+
+            emojiArrayAdapter.updateEmojis(recentEmojis.getRecentEmojis()
+
+            );
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        setAdapter(null);
+//        emojiArrayAdapter.clear();
+//        emojiArrayAdapter = null;
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if(emojiArrayAdapter!=null){
+            setAdapter(emojiArrayAdapter);
+        }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if(emojiArrayAdapter == null) return;
+        super.onDraw(canvas);
+    }
 }

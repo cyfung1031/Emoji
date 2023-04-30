@@ -50,8 +50,16 @@ public class FacebookEmoji extends Emoji {
     }
   }
 
+
+
   private final int x;
   private final int y;
+
+
+  public int getIconResIdX() {
+    return SHEET_RESOURCE_IDS[x];
+  }
+
 
   public FacebookEmoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes, final int x, final int y,
                      final boolean isDuplicate) {

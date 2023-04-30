@@ -26,8 +26,14 @@ import android.graphics.Point;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.ImageView;
+
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
@@ -48,24 +54,50 @@ public final class EmojiImageView extends AppCompatImageView {
   private final Point variantIndicatorBottomRight = new Point();
   private final Point variantIndicatorBottomLeft = new Point();
 
-  private ImageLoadingTask imageLoadingTask;
-
   private boolean hasVariants;
 
-  public EmojiImageView(final Context context, final AttributeSet attrs) {
-    super(context, attrs);
+  static private int mDesiredWidth = 0;
+  static private int mDesiredHeight = 0;
+
+
+  public void init(Context context){
+
+    if(mDesiredWidth == 0){
+      Resources resources = getResources();
+      mDesiredWidth = resources.getDimensionPixelSize(R.dimen.emoji_grid_view_column_width);
+      mDesiredHeight = mDesiredWidth;
+    }
+
+
+    setScaleType(ScaleType.FIT_CENTER);
+    setFrame(0,0,mDesiredWidth,mDesiredHeight);
 
     variantIndicatorPaint.setColor(Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
     variantIndicatorPaint.setStyle(Paint.Style.FILL);
     variantIndicatorPaint.setAntiAlias(true);
   }
+  public EmojiImageView(Context context) {
+    super(context);
+    init(context);
+  }
+
+  public EmojiImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    super(context, attrs, defStyleAttr);
+    init(context);
+  }
+
+  public EmojiImageView(final Context context, final AttributeSet attrs) {
+    super(context, attrs);
+    init(context);
+  }
 
   @Override public void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    setMeasuredDimension(mDesiredWidth, mDesiredHeight);
+//    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-    final int measuredWidth = getMeasuredWidth();
+//    final int measuredWidth = getMeasuredWidth();
     //noinspection SuspiciousNameCombination
-    setMeasuredDimension(measuredWidth, measuredWidth);
+//    setMeasuredDimension(measuredWidth, measuredWidth);
   }
 
   @Override protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
@@ -93,45 +125,60 @@ public final class EmojiImageView extends AppCompatImageView {
     }
   }
 
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+  }
+
   @Override protected void onDetachedFromWindow() {
     super.onDetachedFromWindow();
 
-    if (imageLoadingTask != null) {
-      imageLoadingTask.cancel();
-      imageLoadingTask = null;
-    }
   }
 
   void setEmoji(@NonNull final Emoji emoji) {
     if (!emoji.equals(currentEmoji)) {
-      setImageDrawable(null);
+
+//      if(getDrawable() != null) setImageDrawable(null);
 
       currentEmoji = emoji;
       hasVariants = emoji.getBase().hasVariants();
 
-      if (imageLoadingTask != null) {
-        imageLoadingTask.cancel();
-        imageLoadingTask = null;
-      }
 
-      setOnClickListener(new OnClickListener() {
-        @Override public void onClick(final View view) {
-          if (clickListener != null) {
-            clickListener.onEmojiClick(EmojiImageView.this, currentEmoji);
-          }
-        }
-      });
+      setOnClickListener(this::onEmojiClick);
 
-      setOnLongClickListener(hasVariants ? new OnLongClickListener() {
-        @Override public boolean onLongClick(final View view) {
-          longClickListener.onEmojiLongClick(EmojiImageView.this, currentEmoji);
+      setOnLongClickListener(hasVariants ? this::onEmojiLongPress : null);
 
-          return true;
-        }
-      } : null);
+//      ImageBackgroundLoader ibl =  ImageBackgroundLoader.build(mContext);
 
-      imageLoadingTask = new ImageLoadingTask(this, emoji);
+
+      loadDrawable(getContext(),EmojiImageView.this, currentEmoji);
+
+
+//      LoadDrawableTask.getInstance().loadDrawable(getContext(),EmojiImageView.this, currentEmoji);
+
     }
+  }
+
+  static void loadDrawable(Context context, ImageView imageView, Emoji currentEmoji){
+
+    final Drawable drawable = currentEmoji.getDrawable(context);
+
+        imageView.setImageDrawable(drawable);
+
+  }
+
+  void onEmojiClick(final View view){
+
+    if (clickListener != null) {
+      clickListener.onEmojiClick(EmojiImageView.this, currentEmoji);
+    }
+  }
+
+  boolean onEmojiLongPress(final View view){
+
+    longClickListener.onEmojiLongClick(EmojiImageView.this, currentEmoji);
+
+    return true;
   }
 
   /**
@@ -146,14 +193,6 @@ public final class EmojiImageView extends AppCompatImageView {
       currentEmoji = emoji;
 
       setImageDrawable(emoji.getDrawable(this.getContext()));
-    }
-  }
-
-  public void updateEmoji(@NonNull Resources resources, @NonNull final Emoji emoji) {
-    if (!emoji.equals(currentEmoji)) {
-      currentEmoji = emoji;
-
-      setImageDrawable(emoji.getDrawable(resources));
     }
   }
 

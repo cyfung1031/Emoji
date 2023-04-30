@@ -85,10 +85,11 @@ ext {
   supportAppCompat = "androidx.appcompat:appcompat:1.1.0"
   supportV4CoreUi = "androidx.legacy:legacy-support-core-ui:1.0.0"
   supportV4Compat = "androidx.core:core:1.7.0"
-  supportRecyclerView = "androidx.recyclerview:recyclerview:1.1.0"
+  supportRecyclerView = "androidx.recyclerview:recyclerview:1.2.1"
   supportCardView = "androidx.cardview:cardview:1.0.0"
   supportAnnotations = "androidx.annotation:annotation:1.0.0"
   supportEmoji = "androidx.emoji:emoji-appcompat:1.0.0"
+  supportViewPager2 = "androidx.viewpager2:viewpager2:1.0.0"
 
   leakCanaryDebug = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 

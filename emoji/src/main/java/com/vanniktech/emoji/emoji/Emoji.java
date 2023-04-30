@@ -26,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.Objects;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-@SuppressWarnings("PMD.ArrayIsStoredDirectly") public class Emoji implements Serializable {
+@SuppressWarnings("PMD.ArrayIsStoredDirectly") public abstract class Emoji implements Serializable {
   private static final long serialVersionUID = 3L;
   private static final List<Emoji> EMPTY_EMOJI_LIST = emptyList();
 
@@ -44,6 +45,13 @@ import static java.util.Collections.emptyList;
   private final boolean isDuplicate;
   @NonNull private final List<Emoji> variants;
   @Nullable private Emoji base;
+
+  public int getIconResId(){
+    return iconResId;
+  }
+
+
+  public abstract int getIconResIdX();
 
   public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
                @DrawableRes final int iconResId, final boolean isDuplicate) {
@@ -82,21 +90,22 @@ import static java.util.Collections.emptyList;
     return asList(shortcodes);
   }
 
-  /**
-   * @deprecated Please migrate to getDrawable(). May return -1 in the future for providers that don't use
-   * resources.
-   */
-  @Deprecated @DrawableRes public int getIconResId() {
-    return iconResId;
-  }
-
   @NonNull public Drawable getDrawable(final Context context) {
-    return getDrawable(context.getResources());
+    return Objects.requireNonNull(ResourcesCompat.getDrawable(context.getResources(), iconResId, null));
   }
 
   @NonNull public Drawable getDrawable(final Resources resources) {
     return Objects.requireNonNull(ResourcesCompat.getDrawable(resources, iconResId, null));
   }
+
+  WeakReference<Drawable> cacheDrawable = null;
+  public Drawable getCacheDrawable(){
+    return cacheDrawable != null ? cacheDrawable.get() : null;
+  }
+  public void setCacheDrawable(Drawable drawable){
+    if(drawable == null) cacheDrawable = null; else cacheDrawable = new WeakReference<>( drawable);
+  }
+
 
   public boolean isDuplicate() {
     return isDuplicate;
