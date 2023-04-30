@@ -4,5 +4,8 @@
     <item name="colorPrimary">@color/colorPrimary</item>
     <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
     <item name="colorSecondary">@color/colorSecondary</item>
+    <item name="emojiIconsToolNormal">@color/emoji_tool_color_normal</item>
+    <item name="emojiIconsToolSelected">@color/emoji_tool_color_selected</item>
+    colorAccent
   </style>
 </resources>

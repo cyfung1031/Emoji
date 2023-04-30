@@ -114,11 +114,11 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
   };
 
   final OnEmojiBackspaceClickListener internalOnEmojiBackspaceClickListener = new OnEmojiBackspaceClickListener() {
-    @Override public void onEmojiBackspaceClick(final View v) {
+    @Override public void onEmojiBackspaceClicked(final View v) {
       backspace(editText);
 
       if (onEmojiBackspaceClickListener != null) {
-        onEmojiBackspaceClickListener.onEmojiBackspaceClick(v);
+        onEmojiBackspaceClickListener.onEmojiBackspaceClicked(v);
       }
     }
   };

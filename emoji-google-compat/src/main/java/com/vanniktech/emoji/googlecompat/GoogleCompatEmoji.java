@@ -34,6 +34,12 @@ public final class GoogleCompatEmoji extends Emoji {
     super(codePoint, shortcodes, -1, isDuplicate, emojis);
   }
 
+
+  public int getIconResIdX() {
+    return -1;
+  }
+
+
   @Override @NonNull public Drawable getDrawable(@NonNull final Context context) {
     return new GoogleCompatEmojiDrawable(getUnicode());
   }
