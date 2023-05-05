@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -408,7 +409,17 @@ public class EmojiViewExtended extends EmojiViewInner{
             return recentEmojiGridViewWR != null ? recentEmojiGridViewWR.get(): null;
         }
 
+        PopupWindow popupWindow = null;
 
+        @Override
+        public void setPopupViewWindow(PopupWindow popupWindow) {
+            this.popupWindow =popupWindow;
+        }
+
+        @Override
+        public PopupWindow getPopupViewWindow() {
+            return popupWindow;
+        }
     }
 
 

@@ -19,6 +19,7 @@ package com.vanniktech.emoji.sample;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,11 +27,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.provider.FontRequest;
 import androidx.emoji.text.EmojiCompat;
 import androidx.emoji.text.FontRequestEmojiCompatConfig;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,6 +73,7 @@ public class MainActivityBase extends AppCompatActivity {
 
     @Override @SuppressLint("SetTextI18n") protected void onCreate(@Nullable final Bundle savedInstanceState) {
         getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
+
         super.onCreate(savedInstanceState);
 
         setupOnCreate();
@@ -77,6 +83,9 @@ public class MainActivityBase extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         setUpEmojiPopup();
+
+
+
     }
 
     @Override public boolean onCreateOptionsMenu(final Menu menu) {
@@ -130,7 +139,40 @@ public class MainActivityBase extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+
     }
+
+
+    @Override
+    protected void onDestroy() {
+        // dismiss the popup window when the activity is about to be destroyed
+        if (emojiPopup != null && emojiPopup.isShowing()) {
+            emojiPopup.dismiss();
+        }
+        super.onDestroy();
+    }
+
+
+
+    //    @Override
+//    public void recreate() {
+//        // Get a reference to the fragment manager
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//
+//        // Begin a new transaction to remove and add the fragments to the fragment manager
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//
+//        // Remove all fragments from the fragment manager
+//        for (Fragment fragment : fragmentManager.getFragments()) {
+//            transaction.remove(fragment);
+//        }
+//
+//        // Commit the transaction
+//        transaction.commit();
+//
+//        // Call the superclass method to finish recreating the activity
+//        super.recreate();
+//    }
 
 
     @Override public void onBackPressed() {

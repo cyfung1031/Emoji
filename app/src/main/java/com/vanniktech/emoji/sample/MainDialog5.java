@@ -18,6 +18,7 @@
 package com.vanniktech.emoji.sample;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class MainDialog5 extends DialogFragment {
   ImageView emojiButton;
 
   public static void show(@NonNull final AppCompatActivity activity) {
-    new MainDialog5().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG);
+    new MainDialog5().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG + System.currentTimeMillis());
   }
 
   @Override public void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -113,5 +114,15 @@ public class MainDialog5 extends DialogFragment {
 
             */     .setPageTransformer(new PageTransformer2())
         .build(editText);
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+  }
+
+  @Override
+  public void onDismiss(@NonNull DialogInterface dialog) {
+    super.onDismiss(dialog);
   }
 }

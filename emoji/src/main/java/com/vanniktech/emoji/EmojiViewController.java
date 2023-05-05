@@ -1,6 +1,7 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
+import android.widget.PopupWindow;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
@@ -23,4 +24,8 @@ public interface EmojiViewController {
 
     void setRecentEmojiGridView(EmojiGridInner newView);
     EmojiGridInner getRecentEmojiGridView();
+
+    void setPopupViewWindow(PopupWindow popupWindow);
+
+    PopupWindow getPopupViewWindow();
 }

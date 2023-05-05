@@ -14,7 +14,7 @@
         tools:ignore="GoogleAppIndexingWarning, UnusedAttribute"
         tools:targetApi="s">
         <activity
-            android:name=".MainActivityMultiAutoCompeteTextView"
+            android:name=".MainActivityEmojiEditText"
             android:exported="true"
             android:windowSoftInputMode="stateVisible|adjustResize">
             <intent-filter>

@@ -113,15 +113,6 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
   };
 
 
-  final OnEmojiBackspaceClickListener internalOnEmojiBackspaceClickListener = new OnEmojiBackspaceClickListener() {
-    @Override public void onEmojiBackspaceClicked(final View v) {
-      backspace(editText);
-
-      if (onEmojiBackspaceClickListener != null) {
-        onEmojiBackspaceClickListener.onEmojiBackspaceClicked(v);
-      }
-    }
-  };
 
   final PopupWindow.OnDismissListener onDismissListener = new PopupWindow.OnDismissListener() {
     @Override public void onDismiss() {
@@ -203,6 +194,9 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 
   }
 
+  public final EmojiViewInner mEmojiView;
+
+
   EmojiPopupGeneral(@NonNull final EmojiPopupGeneral.Builder builder, @NonNull final EditText editText) {
     this.context = Utils.asActivity(builder.rootView.getContext());
     this.rootView = builder.rootView.getRootView();
@@ -214,6 +208,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 //    variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
 
     final MyEmojiView myEmojiView = new MyEmojiView(context);
+    mEmojiView = myEmojiView;
     myEmojiView.popupBuilder = builder;
     /*
 
@@ -231,8 +226,10 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     variantPopup = myEmojiView.variantPopup;
 
 
+
     this.emojiViewController = myEmojiView.emojiViewController;
 
+    emojiViewController.setPopupViewWindow(popupWindow);
 
     popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
     popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // To avoid borders and overdraw.
@@ -699,5 +696,6 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
       return insets;
     }
   }
+
 
 }
