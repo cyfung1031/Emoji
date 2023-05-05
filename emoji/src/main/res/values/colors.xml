@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-  <color name="emoji_background" tools:ignore="UnusedResources">@color/emoji_white</color>
+  <color name="emoji_background" tools:ignore="UnusedResources">@color/emoji_white_background</color>
   <color name="emoji_icons" tools:ignore="UnusedResources">@color/emoji_black</color>
   <color name="emoji_divider" tools:ignore="UnusedResources">@color/emoji_gray20</color>
 
   <color name="emoji_white">#ffffffff</color>
+  <color name="emoji_white_background">#F8FDFF</color>
   <color name="emoji_black">#ff000000</color>
   <color name="emoji_gray20">#ffcccccc</color>
   <color name="emoji_gray70">#ff4d4d4d</color>
   <color name="emoji_grey_900">#212121</color>
+
+
+  <color name="emoji_variant_popup_bg1">#72FFFFFF</color>
+  <color name="emoji_variant_popup_bg2">#30000000</color>
+  <color name="emoji_variant_popup_bg3">#ffffff</color>
 </resources>

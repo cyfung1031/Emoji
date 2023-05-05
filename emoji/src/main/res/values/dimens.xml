@@ -4,4 +4,6 @@
     <dimen name="emoji_grid_view_spacing">6dp</dimen>
     <dimen name="emoji_grid_view_1dp">6dp</dimen>
 
+    <dimen name="emoji_popup_radius">4dp</dimen>
+
 </resources>
