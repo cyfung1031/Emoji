@@ -379,13 +379,13 @@ public class EmojiViewInner extends LinearLayout {
         //        private static final String ARG_EVC = "emoji_view_controller";
         @SuppressWarnings("unused")
         private int indexOfFragment;
-        protected EmojiGridPagerAdapter parentAdapter = null;
+        protected WeakReference<EmojiGridPagerAdapter> parentAdapterWR = null;
 
 
         public static EmojiGridFragment newInstance(int index, EmojiViewInner emojiViewInner, EmojiGridPagerAdapter emojiGridPagerAdapter) {
             EmojiGridFragment fragment = new EmojiGridFragment();
             fragment.emojiViewInnerWR = new WeakReference<>(emojiViewInner);
-            fragment.parentAdapter = emojiGridPagerAdapter;
+            fragment.parentAdapterWR = new WeakReference<>(emojiGridPagerAdapter);
             Bundle args = new Bundle();
             args.putInt(ARG_INDEX, index);
             fragment.setArguments(args);
@@ -574,8 +574,15 @@ public class EmojiViewInner extends LinearLayout {
                 }
             }else{
 
-                parentAdapter.toggleOFF();
-                parentAdapter.notifyAll();
+                EmojiGridPagerAdapter parentAdapter =  parentAdapterWR != null ? parentAdapterWR.get():null;
+                if(parentAdapter != null) {
+                    try {
+                        parentAdapter.toggleOFF();
+                        parentAdapter.notifyAll();
+                    }catch (Throwable ignored){
+                        //
+                    }
+                }
             }
 
             super.onAttach(context);
