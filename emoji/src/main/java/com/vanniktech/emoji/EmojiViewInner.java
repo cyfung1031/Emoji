@@ -68,7 +68,7 @@ public class EmojiViewInner extends LinearLayout {
     protected ViewPager2 emojisPager2;
 
     boolean isTabButtonSmoothTransitionEnabled = false;
-    private EmojiViewController emojiViewController = null;
+    protected EmojiViewController emojiViewController = null;
 
     public EmojiViewInner(final Context context) {
         super(context);
