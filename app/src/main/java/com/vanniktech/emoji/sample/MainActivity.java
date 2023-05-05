@@ -17,6 +17,9 @@
 
 package com.vanniktech.emoji.sample;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -39,9 +42,11 @@ import androidx.emoji.text.EmojiCompat;
 import androidx.emoji.text.FontRequestEmojiCompatConfig;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiPopupGeneral;
 import com.vanniktech.emoji.facebook.FacebookEmojiProvider;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
@@ -49,15 +54,12 @@ import com.vanniktech.emoji.ios.IosEmojiProvider;
 import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 // We don't care about duplicated code in the sample.
 public class MainActivity extends AppCompatActivity {
   static final String TAG = "MainActivity";
 
   ChatAdapter chatAdapter;
-  EmojiPopup emojiPopup;
+  EmojiPopupGeneral emojiPopup;
 
   EmojiEditText editText;
   ViewGroup rootView;
@@ -94,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
-    emojiButton.setOnClickListener(ignore -> emojiPopup.toggle());
+    emojiButton.setOnClickListener(ignore -> {
+      emojiPopup.toggle();
+    });
 
     sendButton.setOnClickListener(ignore -> {
       Editable editable = editText.getText();
@@ -124,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     if (itemId == R.id.menuMainShowDialog) {
       emojiPopup.dismiss();
-      MainDialog.show(this);
+      MainDialog5.show(this);
       return true;
     } else if (itemId == R.id.menuMainCustomView) {
       emojiPopup.dismiss();
@@ -166,7 +170,9 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void setUpEmojiPopup() {
-    emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
+
+    emojiPopup = EmojiPopupGeneral.Builder.fromRootView(rootView)
+            /*
         .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
         .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
         .setOnEmojiPopupShownListener(() -> emojiButton.setImageResource(R.drawable.ic_keyboard))
@@ -174,8 +180,9 @@ public class MainActivity extends AppCompatActivity {
         .setOnEmojiPopupDismissListener(() -> emojiButton.setImageResource(R.drawable.emoji_ios_category_smileysandpeople))
         .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
         .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-        .setPageTransformer(new PageTransformer())
-      //.setRecentEmoji(NoRecentEmoji.INSTANCE) // Uncomment this to hide recent emojis.
-        .build(editText);
+            */
+            .setPageTransformer(new PageTransformer2())
+            //.setRecentEmoji(NoRecentEmoji.INSTANCE) // Uncomment this to hide recent emojis.
+            .build(editText);
   }
 }

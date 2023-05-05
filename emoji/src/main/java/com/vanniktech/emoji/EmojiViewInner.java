@@ -32,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -354,6 +355,9 @@ boolean isTabButtonSmoothTransitionEnabled = false;
         @ColorInt
         public int getDividerColor(Context context);
 
+        @Nullable
+
+        public void setPageTransformer(@Nullable final ViewPager2.PageTransformer transformer);
         @Nullable
         public ViewPager2.PageTransformer getPageTransformer(Context context);
 

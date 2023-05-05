@@ -1,6 +1,6 @@
 package com.vanniktech.emoji;
 
-public interface PopupLike {
+public interface IPopup {
     void start();
     void show();
     void dismiss();

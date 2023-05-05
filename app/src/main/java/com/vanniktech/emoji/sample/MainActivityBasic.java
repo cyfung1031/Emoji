@@ -1,7 +1,6 @@
 package com.vanniktech.emoji.sample;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
@@ -23,7 +21,7 @@ import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiViewExtended;
 import com.vanniktech.emoji.emoji.Emoji;
 
-public class MainActivity4 extends AppCompatActivity {
+public class MainActivityBasic extends AppCompatActivity {
 
 
     private EmojiViewExtended emojiView;
@@ -57,7 +55,7 @@ public class MainActivity4 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                MainActivity4.this.showKeyboard();
+                MainActivityBasic.this.showKeyboard();
             }
         });
 

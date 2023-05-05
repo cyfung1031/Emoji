@@ -46,11 +46,10 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
@@ -63,7 +62,7 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import java.lang.ref.WeakReference;
 
-public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, PopupLike {
+public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IPopup {
   static final int MIN_KEYBOARD_HEIGHT = 50;
   static final int APPLY_WINDOW_INSETS_DURATION = 250;
 
@@ -72,10 +71,11 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
 
   @NonNull final RecentEmoji recentEmoji;
   @NonNull final VariantEmoji variantEmoji;
-  @NonNull final EmojiVariantPopup variantPopup;
+  @NonNull final EmojiVariantPopupGeneral variantPopup;
 
   final PopupWindow popupWindow;
-  final EditText editText;
+  public final EditText editText;
+  public final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
 
   boolean isPendingOpen;
   boolean isKeyboardOpen;
@@ -112,11 +112,6 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
     }
   };
 
-  final OnEmojiLongClickListener internalOnEmojiLongClickListener = new OnEmojiLongClickListener() {
-    @Override public void onEmojiLongClick(@NonNull final EmojiImageView view, @NonNull final Emoji emoji) {
-      variantPopup.show(view, emoji);
-    }
-  };
 
   final OnEmojiBackspaceClickListener internalOnEmojiBackspaceClickListener = new OnEmojiBackspaceClickListener() {
     @Override public void onEmojiBackspaceClicked(final View v) {
@@ -140,7 +135,18 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
   };
 
 
+
   class MyEmojiView extends EmojiViewExtended{
+
+    public EmojiPopupGeneral.Builder popupBuilder = null;
+
+    @Override
+    public void preSetup(EmojiViewBuildController<?> builder){
+      if(builder != null){
+        builder.setPageTransformer(popupBuilder.getPageTransformer());
+      }
+
+    }
 
     public MyEmojiView(Context context) {
       super(context);
@@ -166,9 +172,12 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
 
     }
 
+
+
     @Override
     public void onEmojiClick(@NonNull EmojiImageViewGeneral imageView, @NonNull Emoji emoji) {
 
+      Log.i("onEmojiClick", editText.getText()+"");
       Utils.input(editText, emoji);
 
       recentEmoji.addEmoji(emoji);
@@ -185,6 +194,8 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
 
     @Override
     public void onEmojiLongClick(@NonNull EmojiImageViewGeneral view, @NonNull Emoji emoji) {
+
+
       variantPopup.show(view, emoji);
     }
 
@@ -200,9 +211,10 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
     this.variantEmoji = builder.variantEmoji;
 
     popupWindow = new PopupWindow(context);
-    variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
+//    variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
 
     final MyEmojiView myEmojiView = new MyEmojiView(context);
+    myEmojiView.popupBuilder = builder;
     /*
 
     final EmojiView emojiView = new EmojiView(context,
@@ -216,6 +228,10 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
     popupWindow.setContentView(new FrameLayout(context));
     ((FrameLayout)popupWindow.getContentView()).addView(myEmojiView);
     myEmojiView.setup(this.rootView);
+    variantPopup = myEmojiView.variantPopup;
+
+
+    this.emojiViewController = myEmojiView.emojiViewController;
 
 
     popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
@@ -377,14 +393,16 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
     }
   }
 
-  public static final class Builder implements EmojiView.EmojiViewBuilder<Builder> {
+
+
+  public static final class Builder implements IEmojiViewBuilder<Builder> {
     @NonNull final View rootView;
     @StyleRes int keyboardAnimationStyle;
     @ColorInt int backgroundColor;
     @ColorInt int iconColor;
     @ColorInt int selectedIconColor;
     @ColorInt int dividerColor;
-    @Nullable ViewPager.PageTransformer pageTransformer;
+    @Nullable ViewPager2.PageTransformer pageTransformer;
     @Nullable OnEmojiPopupShownListener onEmojiPopupShownListener;
     @Nullable OnSoftKeyboardCloseListener onSoftKeyboardCloseListener;
     @Nullable OnSoftKeyboardOpenListener onSoftKeyboardOpenListener;
@@ -439,7 +457,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
     }
 
     @Nullable
-    public ViewPager.PageTransformer getPageTransformer() {
+    public ViewPager2.PageTransformer getPageTransformer() {
       return pageTransformer;
     }
 
@@ -583,7 +601,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, Po
       return this;
     }
 
-    @CheckResult public Builder setPageTransformer(@Nullable final ViewPager.PageTransformer transformer) {
+    @CheckResult public Builder setPageTransformer(@Nullable final ViewPager2.PageTransformer transformer) {
       pageTransformer = transformer;
       return this;
     }

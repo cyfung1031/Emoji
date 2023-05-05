@@ -135,10 +135,10 @@ public class EmojiEditText extends AppCompatEditText implements EmojiEditable {
 
 
   static class ForceEmojisOnlyFocusChangeListener implements OnFocusChangeListener {
-    final PopupLike emojiPopup;
+    final IPopup emojiPopup;
     @Nullable final OnFocusChangeListener onFocusChangeListener;
 
-    ForceEmojisOnlyFocusChangeListener(@Nullable final OnFocusChangeListener onFocusChangeListener, final PopupLike emojiPopup) {
+    ForceEmojisOnlyFocusChangeListener(@Nullable final OnFocusChangeListener onFocusChangeListener, final IPopup emojiPopup) {
       this.emojiPopup = emojiPopup;
       this.onFocusChangeListener = onFocusChangeListener;
     }

@@ -49,7 +49,7 @@ Version 0.6.0 *(2019-02-15)*
 
 - Add disclaimer about instantiating the EmojiPopup early to the README [\#337](https://github.com/vanniktech/Emoji/pull/337) ([rubengees](https://github.com/rubengees))
 - Show duplicate emojis in the input but not in the picker [\#336](https://github.com/vanniktech/Emoji/pull/336) ([rubengees](https://github.com/rubengees))
-- Add support for custom ViewPager.PageTransformer. [\#334](https://github.com/vanniktech/Emoji/pull/334) ([mario](https://github.com/mario))
+- Add support for custom ViewPager2.PageTransformer. [\#334](https://github.com/vanniktech/Emoji/pull/334) ([mario](https://github.com/mario))
 - Add keyboard animation [\#333](https://github.com/vanniktech/Emoji/pull/333) ([mario](https://github.com/mario))
 - Fix emoji visibility issue [\#330](https://github.com/vanniktech/Emoji/pull/330) ([mario](https://github.com/mario))
 - Fix Emoji keyboard in certain cases [\#329](https://github.com/vanniktech/Emoji/pull/329) ([mario](https://github.com/mario))

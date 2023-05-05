@@ -156,7 +156,7 @@ public class MainActivityMultiAutoCompeteTextView extends AppCompatActivity {
         .setOnEmojiPopupDismissListener(() -> emojiButton.setImageResource(R.drawable.emoji_ios_category_smileysandpeople))
         .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
         .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-        .setPageTransformer(new PageTransformer())
+        .setPageTransformer(new PageTransformer2())
         .build(editText);
   }
 }

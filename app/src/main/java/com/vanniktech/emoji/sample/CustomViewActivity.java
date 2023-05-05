@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiPopupGeneral;
 import com.vanniktech.emoji.SingleEmojiTrait;
 
 public class CustomViewActivity extends AppCompatActivity {
@@ -41,7 +42,7 @@ public class CustomViewActivity extends AppCompatActivity {
   static class CustomView extends LinearLayout {
     final Button emojiButton;
     final EmojiEditText editText;
-    EmojiPopup emojiPopup;
+    EmojiPopupGeneral emojiPopup;
 
     CustomView(final Context context, @Nullable final AttributeSet attrs) {
       super(context, attrs);
@@ -53,10 +54,12 @@ public class CustomViewActivity extends AppCompatActivity {
     }
 
     void setUpEmojiPopup() {
-      emojiPopup = EmojiPopup.Builder.fromRootView(this)
+      emojiPopup = EmojiPopupGeneral.Builder.fromRootView(this)
           .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-          .setPageTransformer(new PageTransformer())
+          .setPageTransformer(new PageTransformer2())
           .build(editText);
+
+      emojiPopup.emojiViewController.setPageTransformer(new PageTransformer2());
 
       emojiButton.setOnClickListener(ignore -> emojiPopup.toggle());
     }

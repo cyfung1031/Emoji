@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +84,7 @@ public class EmojiViewExtended extends EmojiViewInner{
     EmojiVariantPopupGeneral variantPopup;
 
 
-    EmojiViewController emojiViewController = null;
+    EmojiViewBuildController<?> emojiViewController = null;
 
 
     public int deleteOneUniChar(){
@@ -125,6 +126,10 @@ public class EmojiViewExtended extends EmojiViewInner{
     }
 
 
+    public void preSetup(EmojiViewBuildController<?> builder){
+        // TODO
+    }
+
 
     public void setup(@NonNull View container) {
 
@@ -134,6 +139,7 @@ public class EmojiViewExtended extends EmojiViewInner{
         this.variantEmoji = new VariantEmojiManager(context);
 
         EmojiViewExtended.EmojiViewControllerBase emojiViewController = new EmojiViewExtended.EmojiViewControllerBase(context);
+        preSetup(emojiViewController);
         emojiViewController.recentEmoji = this.recentEmoji;
         emojiViewController.variantEmoji = this.variantEmoji;
 
@@ -252,6 +258,11 @@ public class EmojiViewExtended extends EmojiViewInner{
             return pageTransformer2;
         }
 
+        @Nullable
+        @Override
+        public void setPageTransformer(@Nullable ViewPager2.PageTransformer transformer) {
+            pageTransformer2 = transformer;
+        }
 
         @NonNull
         public RecentEmoji getRecentEmoji() {

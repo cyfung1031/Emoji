@@ -31,6 +31,7 @@ import androidx.annotation.StyleRes;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -70,7 +71,7 @@ import com.vanniktech.emoji.listeners.RepeatListener;
 
   public EmojiView(final Context context,
                                                                                             final OnEmojiClickListener onEmojiClickListener,
-                                                                                            final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
+                                                                                            final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final IEmojiViewBuilder<?> builder) {
     super(context);
 
     View.inflate(context, R.layout.emoji_view, this);
@@ -88,7 +89,7 @@ import com.vanniktech.emoji.listeners.RepeatListener;
     emojiDivider.setBackgroundColor(builder.getDividerColor() != 0 ? builder.getDividerColor() : Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
 
     if (builder.getPageTransformer() != null) {
-      emojisPager.setPageTransformer(true, builder.getPageTransformer());
+//      emojisPager.setPageTransformer(true, builder.getPageTransformer());
     }
 
     final LinearLayout emojisTab = findViewById(R.id.emojiViewTab);
@@ -194,53 +195,6 @@ import com.vanniktech.emoji.listeners.RepeatListener;
       emojisPager.setCurrentItem(position);
     }
   }
-
-  public interface EmojiViewBuilder<TBuilder>{
-
-
-
-    // Getter methods
-    @NonNull
-    public View getRootView();
-
-    @ColorInt
-    public int getBackgroundColor();
-
-    @ColorInt
-    public int getIconColor();
-
-    @ColorInt
-    public int getSelectedIconColor();
-    @ColorInt
-    public int getDividerColor();
-
-    @Nullable
-    public ViewPager.PageTransformer getPageTransformer();
-
-    @NonNull
-    public RecentEmoji getRecentEmoji();
-
-    @NonNull
-    public VariantEmoji getVariantEmoji();
-
-    @CheckResult public TBuilder setOnSoftKeyboardCloseListener(@Nullable final OnSoftKeyboardCloseListener listener);
-
-    @CheckResult public TBuilder setOnEmojiClickListener(@Nullable final OnEmojiClickListener listener);
-    @CheckResult public TBuilder setOnSoftKeyboardOpenListener(@Nullable final OnSoftKeyboardOpenListener listener);
-
-    @CheckResult public TBuilder setOnEmojiPopupShownListener(@Nullable final OnEmojiPopupShownListener listener);
-
-    @CheckResult public TBuilder setOnEmojiPopupDismissListener(@Nullable final OnEmojiPopupDismissListener listener);
-    @CheckResult public TBuilder setOnEmojiBackspaceClickListener(@Nullable final OnEmojiBackspaceClickListener listener);
-
-    @CheckResult public TBuilder setKeyboardAnimationStyle(@StyleRes final int animation);
-
-    @CheckResult public TBuilder setPageTransformer(@Nullable final ViewPager.PageTransformer transformer);
-
-
-  }
-
-
 
 
   static public final class EmojiPagerAdapter extends PagerAdapter {

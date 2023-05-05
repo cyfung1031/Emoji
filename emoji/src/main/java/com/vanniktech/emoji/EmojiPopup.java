@@ -24,10 +24,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.autofill.AutofillManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -38,11 +36,10 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
@@ -59,7 +56,7 @@ import static androidx.core.view.ViewCompat.requestApplyInsets;
 import static com.vanniktech.emoji.Utils.backspace;
 import static com.vanniktech.emoji.Utils.checkNotNull;
 
-public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike {
+public final class EmojiPopup implements EmojiResultReceiver.Receiver, IPopup {
   static final int MIN_KEYBOARD_HEIGHT = 50;
   static final int APPLY_WINDOW_INSETS_DURATION = 250;
 
@@ -309,14 +306,14 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     }
   }
 
-  public static final class Builder implements EmojiView.EmojiViewBuilder<Builder> {
+  public static final class Builder implements IEmojiViewBuilder<Builder> {
     @NonNull final View rootView;
     @StyleRes int keyboardAnimationStyle;
     @ColorInt int backgroundColor;
     @ColorInt int iconColor;
     @ColorInt int selectedIconColor;
     @ColorInt int dividerColor;
-    @Nullable ViewPager.PageTransformer pageTransformer;
+    @Nullable ViewPager2.PageTransformer pageTransformer;
     @Nullable OnEmojiPopupShownListener onEmojiPopupShownListener;
     @Nullable OnSoftKeyboardCloseListener onSoftKeyboardCloseListener;
     @Nullable OnSoftKeyboardOpenListener onSoftKeyboardOpenListener;
@@ -371,7 +368,7 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     }
 
     @Nullable
-    public ViewPager.PageTransformer getPageTransformer() {
+    public ViewPager2.PageTransformer getPageTransformer() {
       return pageTransformer;
     }
 
@@ -515,7 +512,7 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
       return this;
     }
 
-    @CheckResult public Builder setPageTransformer(@Nullable final ViewPager.PageTransformer transformer) {
+    @CheckResult public Builder setPageTransformer(@Nullable final ViewPager2.PageTransformer transformer) {
       pageTransformer = transformer;
       return this;
     }
