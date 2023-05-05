@@ -4,7 +4,7 @@ plugins {
 
 android {
 
-  publishNonDefault true
+  // publishNonDefault true
 
   compileSdkVersion rootProject.ext.compileSdkVersion as int
 

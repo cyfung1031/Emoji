@@ -4,7 +4,7 @@ plugins {
 
 android {
 
-  publishNonDefault true
+  // publishNonDefault true
 
   compileSdkVersion rootProject.ext.compileSdkVersion as int
 
@@ -59,6 +59,7 @@ android {
     //If you want to continue even if errors found use following line
     abortOnError false
   }
+
 }
 
 dependencies {

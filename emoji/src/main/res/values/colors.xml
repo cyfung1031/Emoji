@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <color name="emoji_background">@color/emoji_white</color>
-  <color name="emoji_icons">@color/emoji_black</color>
-  <color name="emoji_divider">@color/emoji_gray20</color>
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <color name="emoji_background" tools:ignore="UnusedResources">@color/emoji_white</color>
+  <color name="emoji_icons" tools:ignore="UnusedResources">@color/emoji_black</color>
+  <color name="emoji_divider" tools:ignore="UnusedResources">@color/emoji_gray20</color>
 
   <color name="emoji_white">#ffffffff</color>
   <color name="emoji_black">#ff000000</color>

@@ -18,47 +18,17 @@
 package com.vanniktech.emoji.sample;
 
 import android.graphics.PorterDuff;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.provider.FontRequest;
-import androidx.emoji.text.EmojiCompat;
-import androidx.emoji.text.FontRequestEmojiCompatConfig;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiPopup;
-import com.vanniktech.emoji.facebook.FacebookEmojiProvider;
-import com.vanniktech.emoji.google.GoogleEmojiProvider;
-import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
-import com.vanniktech.emoji.ios.IosEmojiProvider;
-import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
-import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
 
 // We don't care about duplicated code in the sample.
-public class MainActivityMultiAutoCompeteTextView extends AppCompatActivity {
-  static final String TAG = "MainActivity";
-
-  ChatAdapter chatAdapter;
-  EmojiPopup emojiPopup;
+public class MainActivityMultiAutoCompeteTextView extends MainActivityBase {
 
   MultiAutoCompleteTextView editText;
-  ViewGroup rootView;
-  ImageView emojiButton;
-  EmojiCompat emojiCompat;
 
-  @Override protected void onCreate(@Nullable final Bundle savedInstanceState) {
-    getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
-    super.onCreate(savedInstanceState);
+  @Override
+  public void setupOnCreate() {
 
     setContentView(R.layout.activity_main_multiautocompletetextview);
 
@@ -83,80 +53,15 @@ public class MainActivityMultiAutoCompeteTextView extends AppCompatActivity {
         editText.setText("");
       }
     });
-
-    final RecyclerView recyclerView = findViewById(R.id.main_activity_recycler_view);
-    recyclerView.setAdapter(chatAdapter);
-    recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
-    setUpEmojiPopup();
-  }
-
-  @Override public boolean onCreateOptionsMenu(final Menu menu) {
-    getMenuInflater().inflate(R.menu.menu_main, menu);
-    return super.onCreateOptionsMenu(menu);
   }
 
   @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    int itemId = item.getItemId();
-
-    if (itemId == R.id.menuMainShowDialog) {
-      emojiPopup.dismiss();
-      MainDialog.show(this);
-      return true;
-    } else if (itemId == R.id.menuMainVariantIos) {
-      EmojiManager.destroy();
-      EmojiManager.install(new IosEmojiProvider());
-      recreate();
-      return true;
-    } else if (itemId == R.id.menuMainGoogle) {
-      EmojiManager.destroy();
-      EmojiManager.install(new GoogleEmojiProvider());
-      recreate();
-      return true;
-    } else if (itemId == R.id.menuMainTwitter) {
-      EmojiManager.destroy();
-      EmojiManager.install(new TwitterEmojiProvider());
-      recreate();
-      return true;
-    } else if (itemId == R.id.menuMainFacebook) {
-      EmojiManager.destroy();
-      EmojiManager.install(new FacebookEmojiProvider());
-      recreate();
-      return true;
-    } else if (itemId == R.id.menuMainGoogleCompat) {
-      if (emojiCompat == null) {
-        emojiCompat = EmojiCompat.init(new FontRequestEmojiCompatConfig(this,
-                new FontRequest("com.google.android.gms.fonts", "com.google.android.gms", "Noto Color Emoji Compat", R.array.com_google_android_gms_fonts_certs)
-        ).setReplaceAll(true));
-      }
-      EmojiManager.destroy();
-      EmojiManager.install(new GoogleCompatEmojiProvider(emojiCompat));
-      recreate();
-      return true;
-    } else {
-      return super.onOptionsItemSelected(item);
-    }
+  public MultiAutoCompleteTextView getEditText() {
+    return editText;
   }
 
-  @Override public void onBackPressed() {
-    if (emojiPopup != null && emojiPopup.isShowing()) {
-      emojiPopup.dismiss();
-    } else {
-      super.onBackPressed();
-    }
+  public void setEditText(MultiAutoCompleteTextView editText) {
+    this.editText = editText;
   }
 
-  private void setUpEmojiPopup() {
-    emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
-        .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
-        .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
-        .setOnEmojiPopupShownListener(() -> emojiButton.setImageResource(R.drawable.ic_keyboard))
-        .setOnSoftKeyboardOpenListener(ignore -> Log.d(TAG, "Opened soft keyboard"))
-        .setOnEmojiPopupDismissListener(() -> emojiButton.setImageResource(R.drawable.emoji_ios_category_smileysandpeople))
-        .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
-        .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-        .setPageTransformer(new PageTransformer2())
-        .build(editText);
-  }
 }

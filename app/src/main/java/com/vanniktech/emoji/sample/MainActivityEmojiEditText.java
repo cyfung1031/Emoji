@@ -17,23 +17,33 @@
 
 package com.vanniktech.emoji.sample;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.widget.AutoCompleteTextView;
+import android.text.Editable;
+import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+
 import androidx.core.content.ContextCompat;
 
-// We don't care about duplicated code in the sample.
-public class MainActivityAutoCompeteTextView extends MainActivityBase {
+import com.vanniktech.emoji.EmojiEditText;
 
-  AutoCompleteTextView editText;
+// We don't care about duplicated code in the sample.
+public class MainActivityEmojiEditText extends MainActivityBase {
 
   @Override
   public void setupOnCreate() {
 
-    setContentView(R.layout.activity_main_autocompletetextview);
+    setContentView(R.layout.activity_main);
 
     chatAdapter = new ChatAdapter();
 
+    final Button button = findViewById(R.id.main_activity_material_button);
+    button.setText("\uD83D\uDE18\uD83D\uDE02\uD83E\uDD8C");
     editText = findViewById(R.id.main_activity_chat_bottom_message_edittext);
     rootView = findViewById(R.id.main_activity_root_view);
     emojiButton = findViewById(R.id.main_activity_emoji);
@@ -42,9 +52,25 @@ public class MainActivityAutoCompeteTextView extends MainActivityBase {
     emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
     sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 
-    emojiButton.setOnClickListener(ignore -> emojiPopup.toggle());
+    final CheckBox forceEmojisOnly = findViewById(R.id.main_activity_force_emojis_only);
+    forceEmojisOnly.setOnCheckedChangeListener((ignore, isChecked) -> {
+      if (isChecked) {
+        editText.clearFocus();
+        emojiButton.setVisibility(GONE);
+        editText.disableKeyboardInput(emojiPopup);
+      } else {
+        emojiButton.setVisibility(VISIBLE);
+        editText.enableKeyboardInput();
+      }
+    });
+
+    emojiButton.setOnClickListener(ignore -> {
+      emojiPopup.toggle();
+    });
+
     sendButton.setOnClickListener(ignore -> {
-      final String text = editText.getText().toString().trim();
+      Editable editable = editText.getText();
+      final String text = editable != null ? editable.toString().trim() : "";
 
       if (text.length() > 0) {
         chatAdapter.add(text);
@@ -54,12 +80,24 @@ public class MainActivityAutoCompeteTextView extends MainActivityBase {
     });
   }
 
+  EmojiEditText editText;
+
   @Override
-  public AutoCompleteTextView getEditText() {
+  public EmojiEditText getEditText() {
     return editText;
   }
 
-  public void setEditText(AutoCompleteTextView editText) {
+  public void setEditText(EmojiEditText editText) {
     this.editText = editText;
+  }
+
+  @Override
+  public boolean customOptionsItemSelected(MenuItem item, int itemId) {
+    if (itemId == R.id.menuMainCustomView) {
+      emojiPopup.dismiss();
+      startActivity(new Intent(this, CustomViewActivity.class));
+      return true;
+    }
+    return false;
   }
 }

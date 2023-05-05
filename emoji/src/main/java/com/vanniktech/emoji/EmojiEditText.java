@@ -105,7 +105,7 @@ public class EmojiEditText extends AppCompatEditText implements EmojiEditable {
   }
 
   /** Disables the keyboard input using a focus change listener and delegating to the previous focus change listener. */
-  public void disableKeyboardInput(final EmojiPopup emojiPopup) {
+  public void disableKeyboardInput(final IPopup emojiPopup) {
     disableKeyboardInput = true;
     super.setOnFocusChangeListener(new ForceEmojisOnlyFocusChangeListener(getOnFocusChangeListener(), emojiPopup));
   }
@@ -116,7 +116,7 @@ public class EmojiEditText extends AppCompatEditText implements EmojiEditable {
 //    super.setOnFocusChangeListener(new ForceEmojisOnlyFocusChangeListener(getOnFocusChangeListener(), emojiPopup));
   }
 
-  /** Enables the keyboard input. If it has been disabled before using {@link #disableKeyboardInput(EmojiPopup)} the OnFocusChangeListener will be preserved. */
+  /** Enables the keyboard input. If it has been disabled before using {@link #disableKeyboardInput(IPopup)} the OnFocusChangeListener will be preserved. */
   public void enableKeyboardInput() {
     disableKeyboardInput = false;
     final OnFocusChangeListener onFocusChangeListener = getOnFocusChangeListener();

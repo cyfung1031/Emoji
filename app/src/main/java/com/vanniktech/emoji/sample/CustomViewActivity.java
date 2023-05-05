@@ -26,7 +26,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiPopupGeneral;
 import com.vanniktech.emoji.SingleEmojiTrait;
 

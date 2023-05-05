@@ -19,7 +19,6 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -31,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public final class RecentEmojiManager implements RecentEmoji {
+public final class RecentEmojiManagerOriginal implements RecentEmoji {
   private static final String PREFERENCE_NAME = "emoji-recent-manager";
   private static final String TIME_DELIMITER = ";";
   private static final String EMOJI_DELIMITER = "~";
@@ -42,7 +41,7 @@ public final class RecentEmojiManager implements RecentEmoji {
   @NonNull private EmojiList emojiList = new EmojiList(0);
   @NonNull private final SharedPreferences sharedPreferences;
 
-  public RecentEmojiManager(@NonNull final Context context) {
+  public RecentEmojiManagerOriginal(@NonNull final Context context) {
     sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
   }
 

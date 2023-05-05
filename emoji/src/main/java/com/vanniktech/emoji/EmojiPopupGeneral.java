@@ -420,7 +420,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 
 
     private void initByContext(final Context context) {
-      this.recentEmoji = new RecentEmojiManager(context);
+      this.recentEmoji = new RecentEmojiManager2(context);
       this.variantEmoji = new VariantEmojiManager(context);
     }
 
@@ -556,7 +556,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 
     /**
      * Allows you to pass your own implementation of recent emojis. If not provided the default one
-     * {@link RecentEmojiManager} will be used.
+     * {@link RecentEmojiManager2} will be used.
      *
      * @since 0.2.0
      */

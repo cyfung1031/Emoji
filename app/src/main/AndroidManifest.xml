@@ -14,7 +14,7 @@
         tools:ignore="GoogleAppIndexingWarning, UnusedAttribute"
         tools:targetApi="s">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivityMultiAutoCompeteTextView"
             android:exported="true"
             android:windowSoftInputMode="stateVisible|adjustResize">
             <intent-filter>
@@ -26,11 +26,16 @@
         <activity
             android:name=".CustomViewActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
+        <!--
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".MainActivityAutoCompeteTextView"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".MainActivityMultiAutoCompeteTextView"
             android:windowSoftInputMode="stateVisible|adjustResize" />
+        -->
     </application>
 </manifest>
