@@ -19,6 +19,7 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -41,9 +42,12 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.adapter.FragmentViewHolder;
@@ -62,7 +66,7 @@ public class EmojiViewInner extends LinearLayout {
     protected int themeAccentColor = 0;
     @ColorInt
     protected int themeIconColor = 0;
-    protected ImageButton[] emojiTabs = null;
+    protected AppCompatImageView[] emojiTabs = null;
     protected EmojiViewInner.EmojiGridPagerAdapter emojiPager2Adapter = null;
     protected int emojiTabLastSelectedIndex = -1;
     protected ViewPager2 emojisPager2;
@@ -100,7 +104,6 @@ public class EmojiViewInner extends LinearLayout {
 //        Log.i("EmojiViewInner", "onConfigurationChanged");
 //        super.onConfigurationChanged(newConfig);
 //    }
-
 
     public void init(@NonNull final EmojiViewBuildController<?> builder) {
 
@@ -145,7 +148,7 @@ public class EmojiViewInner extends LinearLayout {
         final EmojiCategory[] categories = EmojiManager.getInstance().getCategories();
 
         emojiPager2Adapter = new EmojiViewInner.EmojiGridPagerAdapter((FragmentActivity) this.getContext(), builder);
-        emojiTabs = new ImageButton[builder.recentAdapterItemCount() + categories.length + 1];
+        emojiTabs = new AppCompatImageView[builder.recentAdapterItemCount() + categories.length + 1];
 
         if (builder.hasRecentEmoji()) {
             emojiTabs[0] = inflateButton(context, R.drawable.emoji_recent, R.string.emoji_category_recent, emojisTab);
@@ -217,10 +220,10 @@ public class EmojiViewInner extends LinearLayout {
     }
 
 
-    private ImageButton inflateButtonInner(Context context) {
+    private AppCompatImageView inflateButtonInner(Context context) {
 
         // 1. Create a new ImageButton object
-        ImageButton imageButton = new ImageButton(context);
+        AppCompatImageView imageButton = new AppCompatImageView(context);
 
         // 2. Set the layout parameters, including width, height, and weight
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -235,12 +238,15 @@ public class EmojiViewInner extends LinearLayout {
         return imageButton;
     }
 
-    private ImageButton inflateButton(final Context context, @DrawableRes final int btnDrawableResId, @StringRes final int categoryName, final ViewGroup parent) {
+    private AppCompatImageView inflateButton(final Context context, @DrawableRes final int btnDrawableResId, @StringRes final int categoryName, final ViewGroup parent) {
 //        final ImageButton button = (ImageButton) LayoutInflater.from(context).inflate(R.layout.emoji_view_category, parent, false);
-        final ImageButton button = inflateButtonInner(context);
+        final AppCompatImageView button = inflateButtonInner(context);
 
-        button.setImageDrawable(ResourcesCompat.getDrawable(context.getResources(), btnDrawableResId, null));
-        button.setColorFilter(themeIconColor, PorterDuff.Mode.SRC_IN);
+        Drawable d = ResourcesCompat.getDrawable(context.getResources(), btnDrawableResId, null);
+        if(d!=null) {
+            DrawableCompat.setTint(d, themeIconColor);
+            button.setImageDrawable(d);
+        }
         button.setContentDescription(context.getString(categoryName));
 
         parent.addView(button);
@@ -326,7 +332,7 @@ public class EmojiViewInner extends LinearLayout {
                 final int lastSelectedIndex = v.emojiTabLastSelectedIndex;
                 v.emojiTabLastSelectedIndex = i;
 
-                final ImageButton[] emojiTabs = v.emojiTabs;
+                final AppCompatImageView[] emojiTabs = v.emojiTabs;
 
                 if (lastSelectedIndex >= 0 && lastSelectedIndex < v.emojiTabs.length) {
                     emojiTabs[lastSelectedIndex].setSelected(false);
@@ -630,8 +636,8 @@ public class EmojiViewInner extends LinearLayout {
 
 
 
-        public EmojiGridPagerAdapter(@NonNull FragmentActivity fragmentActivity, final EmojiViewBuildController<?> emojiViewController) {
-            super(fragmentActivity);
+        public EmojiGridPagerAdapter(@NonNull FragmentActivity fm, final EmojiViewBuildController<?> emojiViewController) {
+            super(fm.getSupportFragmentManager(), fm.getLifecycle());
 
             this.emojiViewController = emojiViewController;
             categoriesLen = EmojiManager.getInstance().getCategories().length;

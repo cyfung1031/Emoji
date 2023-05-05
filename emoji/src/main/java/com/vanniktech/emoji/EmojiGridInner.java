@@ -23,7 +23,9 @@ import static com.vanniktech.emoji.Utils.checkNotNull;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -32,6 +34,7 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -96,14 +99,18 @@ class EmojiGridInner extends GridView {
         setVerticalSpacing(spacing);
         setPadding(padding, padding, padding, padding);
         setNumColumns(AUTO_FIT);
+        setStretchMode(STRETCH_COLUMN_WIDTH);
         setClipToPadding(false);
         setVerticalScrollBarEnabled(false);
+
+        setDescendantFocusability(FOCUS_BLOCK_DESCENDANTS); // optional
+        ViewCompat.setNestedScrollingEnabled(this, true);
 
         // ------------------------------------
 
 
 
-        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiGridInner.EmojiArrayAdapterGeneral(getContext(), emojis,emojiViewController);
+        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiArrayAdapterGeneral(getContext(), emojis,emojiViewController);
 
 //        emojiArrayAdapterWR =new WeakReference<>(emojiArrayAdapter);
         emojiArrayAdapterG = emojiArrayAdapter;
@@ -293,5 +300,18 @@ class EmojiGridInner extends GridView {
 
     }
 
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // Intercept touch events to prevent the parent view from scrolling when
+        // the user is scrolling the GridView
+        boolean intercepted = super.onInterceptTouchEvent(ev);
+        Log.i("EmojiGridInner", intercepted +"|"+ canScrollVertically(-1) +" | "+ canScrollVertically(1));
+        if (intercepted && (canScrollVertically(-1) || canScrollVertically(1)) ) {
+            getParent().requestDisallowInterceptTouchEvent(true);
+            return true;
+        }
+        return intercepted;
+    }
 
 }

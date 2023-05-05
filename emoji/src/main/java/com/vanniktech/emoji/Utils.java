@@ -166,6 +166,10 @@ final class Utils {
 
   static int getProperHeight(final Activity activity) {
     return Utils.windowVisibleDisplayFrame(activity).bottom;
+
+//    View decorView = activity.getWindow().getDecorView();
+//    View contentView = decorView.findViewById(android.R.id.content);
+
   }
 
   static int getScreenWidth(@NonNull final Activity context) {
