@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class TravelAndPlacesCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(new int[] { 0x1F329, 0xFE0F }, new String[]{"lightning", "lightning_cloud"}, 5, 38, false),
       new TwitterEmoji(new int[] { 0x1F32A, 0xFE0F }, new String[]{"tornado", "tornado_cloud"}, 5, 39, false),

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class SymbolsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x2B1B, new String[]{"black_large_square"}, 59, 22, false),
       new IosEmoji(0x2B1C, new String[]{"white_large_square"}, 59, 23, false),

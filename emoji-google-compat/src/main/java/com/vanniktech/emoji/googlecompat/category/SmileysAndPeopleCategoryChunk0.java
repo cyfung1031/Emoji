@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class SmileysAndPeopleCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(0x1F600, new String[]{"grinning"}, false),
       new GoogleCompatEmoji(0x1F603, new String[]{"smiley"}, false),

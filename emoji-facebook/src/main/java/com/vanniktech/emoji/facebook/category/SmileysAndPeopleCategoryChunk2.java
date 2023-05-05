@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class SmileysAndPeopleCategoryChunk2 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(new int[] { 0x1F9D7, 0x200D, 0x2642, 0xFE0F }, new String[]{"man_climbing"}, 51, 10, false,
         new FacebookEmoji(new int[] { 0x1F9D7, 0x1F3FB, 0x200D, 0x2642, 0xFE0F }, new String[0], 51, 11, false),

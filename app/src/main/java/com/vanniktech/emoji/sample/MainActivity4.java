@@ -1,26 +1,37 @@
 package com.vanniktech.emoji.sample;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiViewOuter;
+import com.vanniktech.emoji.EmojiViewExtended;
 import com.vanniktech.emoji.emoji.Emoji;
 
 public class MainActivity4 extends AppCompatActivity {
 
 
-    private EmojiViewOuter emojiView;
-    private EmojiEditText emojiEditText;
+    private EmojiViewExtended emojiView;
+    protected EmojiEditText emojiEditText;
 
+    View mRootView = null;
+
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -28,17 +39,62 @@ public class MainActivity4 extends AppCompatActivity {
         setContentView(R.layout.activity_main2);
 
         emojiView = new MyEmojiView(this);
+        emojiView.fillUpVerticalLinearView();
 
         emojiEditText = findViewById(R.id.emojiEditText);
         FrameLayout emojiViewContainer = findViewById(R.id.emojiViewContainer);
 
+        mRootView = emojiViewContainer.getRootView();
 
-        emojiViewContainer.addView(emojiView);
+        emojiView.replaceView(emojiViewContainer);
 
-        emojiView.setup(emojiViewContainer);
+
+        emojiView.setup(mRootView);
+
+        ((Button)findViewById(R.id.clickBtn)).setText("Click");
+
+        findViewById(R.id.clickBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                MainActivity4.this.showKeyboard();
+            }
+        });
 
     }
-    public class MyEmojiView extends EmojiViewOuter{
+
+    public void showKeyboard(){
+
+        MyEmojiView customView = new MyEmojiView(this);
+//        View customView = new Button(this);
+        PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+// Set the PopupWindow's background to null to avoid any extra padding
+        popupWindow.setBackgroundDrawable(null);
+
+// Set the PopupWindow to be focusable so it can handle touch events
+        popupWindow.setFocusable(true);
+
+        popupWindow.setAnimationStyle(0);
+
+        ViewGroup rootView = findViewById(android.R.id.content);
+        popupWindow.showAtLocation(mRootView, Gravity.BOTTOM, 0, 0);
+        int originalHeight = rootView.getHeight();
+        popupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                rootView.getLayoutParams().height = originalHeight;
+                rootView.requestLayout();
+            }
+        });
+        rootView.getLayoutParams().height = originalHeight - popupWindow.getHeight();
+        rootView.requestLayout();
+
+        emojiView.setup(rootView);
+
+    }
+
+    public class MyEmojiView extends EmojiViewExtended {
 
 
         public MyEmojiView(@NonNull Context context) {

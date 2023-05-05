@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class FoodAndDrinkCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F347, new String[]{"grapes"}, 6, 7, false),
       new TwitterEmoji(0x1F348, new String[]{"melon"}, 6, 8, false),

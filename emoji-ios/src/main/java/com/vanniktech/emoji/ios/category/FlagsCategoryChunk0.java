@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class FlagsCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F3C1, new String[]{"checkered_flag"}, 8, 7, false),
       new IosEmoji(0x1F6A9, new String[]{"triangular_flag_on_post"}, 36, 29, false),

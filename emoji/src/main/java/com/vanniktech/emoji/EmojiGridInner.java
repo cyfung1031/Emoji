@@ -17,15 +17,21 @@
 
 package com.vanniktech.emoji;
 
+import static com.vanniktech.emoji.Utils.asListWithoutDuplicates;
+import static com.vanniktech.emoji.Utils.checkNotNull;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -38,7 +44,7 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 
 class EmojiGridInner extends GridView {
-    protected EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
+    protected EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
     boolean isRecentEmojiGridView = false;
     private WeakReference<RecentEmoji> recentEmojisWR = null;
 
@@ -47,6 +53,25 @@ class EmojiGridInner extends GridView {
     }
 
     private EmojiViewController emojiViewController = null;
+
+    boolean clearAdapter(){
+        EmojiArrayAdapterGeneral adapter = this.emojiArrayAdapterG;
+        if(adapter != null) {
+            adapter.clear();
+            return true;
+        }
+        return false;
+    }
+
+    public void destroyView(){
+
+        EmojiGridInner emojiGridInner = (EmojiGridInner) this;
+        boolean isAdapterValid =  emojiGridInner.clearAdapter();
+        if(isAdapterValid){
+            emojiGridInner.emojiArrayAdapterG = null;
+            emojiGridInner.isRecentEmojiGridView = false;
+        }
+    }
 
     private void initInner(@NonNull EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
                            @NonNull Emoji[] emojis) {
@@ -78,7 +103,7 @@ class EmojiGridInner extends GridView {
 
 
 
-        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiArrayAdapterGeneral(getContext(), emojis,emojiViewController);
+        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiGridInner.EmojiArrayAdapterGeneral(getContext(), emojis,emojiViewController);
 
 //        emojiArrayAdapterWR =new WeakReference<>(emojiArrayAdapter);
         emojiArrayAdapterG = emojiArrayAdapter;
@@ -114,8 +139,7 @@ class EmojiGridInner extends GridView {
         if (isRecentEmojiGridView) {
 
             if(recentEmojisWR == null) return;
-//            EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterWR.get();
-            EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
+            EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
             RecentEmoji recentEmojis = recentEmojisWR.get();
 
             if(emojiArrayAdapter == null || recentEmojis == null) return;
@@ -138,8 +162,7 @@ class EmojiGridInner extends GridView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
-//        EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterWR != null ? emojiArrayAdapterWR.get() : null;
+        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
         if (emojiArrayAdapter != null) {
             setAdapter(emojiArrayAdapter);
         }
@@ -150,8 +173,7 @@ class EmojiGridInner extends GridView {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
-//        EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterWR != null ? emojiArrayAdapterWR.get() : null;
+        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
         if (emojiArrayAdapter == null) return;
         super.onDraw(canvas);
     }
@@ -197,4 +219,79 @@ class EmojiGridInner extends GridView {
 //        view.postInvalidateDelayed(100);
 
     }
+
+
+    final static class EmojiArrayAdapterGeneral extends ArrayAdapter<Emoji> {
+        @Nullable private final VariantEmoji variantManager;
+
+        @NonNull private final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
+
+        EmojiArrayAdapterGeneral(@NonNull final Context context, @NonNull final Emoji[] emojis,
+                                 @NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController) {
+            super(context, 0, asListWithoutDuplicates(emojis));
+
+            this.variantManager = emojiViewController.getVariantEmoji();
+            this.emojiViewController = emojiViewController;
+        }
+
+        public static EmojiImageViewGeneral createEmojiImageView(Context context) {
+            EmojiImageViewGeneral emojiImageView = new EmojiImageViewGeneral(context);
+
+            // Set layout parameters
+            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            emojiImageView.setLayoutParams(layoutParams);
+
+            // Set background
+//    TypedValue typedValue = new TypedValue();
+//    context.getTheme().resolveAttribute( Utils.getSelectableBackgroundResId(), typedValue, true);
+//    emojiImageView.setBackgroundResource(typedValue.resourceId);
+
+            emojiImageView.setBackgroundResource(0);
+
+            emojiImageView.setBackground(ResourcesCompat.getDrawable( context.getResources(), R.drawable.emoji_normal, null));
+
+
+
+
+            // Set padding
+//    int paddingInPixels = (int) TypedValue.applyDimension(
+//            TypedValue.COMPLEX_UNIT_DIP,
+//            2,
+//            context.getResources().getDisplayMetrics());
+//    emojiImageView.setPadding(paddingInPixels, paddingInPixels, paddingInPixels, paddingInPixels);
+
+            return emojiImageView;
+        }
+
+        @Override @NonNull public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
+            EmojiImageViewGeneral image = (EmojiImageViewGeneral) convertView;
+
+            final Context context = getContext();
+
+            if (image == null) {
+                image = (EmojiImageViewGeneral) createEmojiImageView(context);
+                image.init(emojiViewController);
+            }
+
+            final Emoji emoji = checkNotNull(getItem(position), "emoji == null");
+            final Emoji variantToUse = variantManager == null ? emoji : variantManager.getVariant(emoji);
+            image.setContentDescription(emoji.getUnicode());
+            image.setEmoji(variantToUse);
+
+            return image;
+        }
+
+        void updateEmojis(final Collection<Emoji> emojis) {
+            clear();
+            addAll(emojis);
+            notifyDataSetChanged();
+        }
+
+
+
+    }
+
+
 }

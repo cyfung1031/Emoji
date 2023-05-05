@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class TravelAndPlacesCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(new int[] { 0x1F329, 0xFE0F }, new String[]{"lightning", "lightning_cloud"}, 5, 38, false),
       new IosEmoji(new int[] { 0x1F32A, 0xFE0F }, new String[]{"tornado", "tornado_cloud"}, 5, 39, false),

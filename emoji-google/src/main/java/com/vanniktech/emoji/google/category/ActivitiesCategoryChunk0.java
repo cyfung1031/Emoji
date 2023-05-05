@@ -20,7 +20,7 @@ package com.vanniktech.emoji.google.category;
 import com.vanniktech.emoji.google.GoogleEmoji;
 
 final class ActivitiesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleEmoji[] get() {
+  static GoogleEmoji[] get() {
     return new GoogleEmoji[] {
       new GoogleEmoji(0x1F383, new String[]{"jack_o_lantern"}, 7, 6, false),
       new GoogleEmoji(0x1F384, new String[]{"christmas_tree"}, 7, 7, false),

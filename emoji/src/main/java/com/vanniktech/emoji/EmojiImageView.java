@@ -38,7 +38,7 @@ import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
 
-public final class EmojiImageView extends AppCompatImageView {
+public final class EmojiImageView extends EmojiImageViewE {
   private static final int VARIANT_INDICATOR_PART_AMOUNT = 6;
   private static final int VARIANT_INDICATOR_PART = 5;
 
@@ -135,7 +135,7 @@ public final class EmojiImageView extends AppCompatImageView {
 
   }
 
-  void setEmoji(@NonNull final Emoji emoji) {
+  public void setEmoji(@NonNull final Emoji emoji) {
     if (!emoji.equals(currentEmoji)) {
 
 //      if(getDrawable() != null) setImageDrawable(null);
@@ -167,14 +167,14 @@ public final class EmojiImageView extends AppCompatImageView {
 
   }
 
-  void onEmojiClick(final View view){
+  public void onEmojiClick(final View view){
 
     if (clickListener != null) {
       clickListener.onEmojiClick(EmojiImageView.this, currentEmoji);
     }
   }
 
-  boolean onEmojiLongPress(final View view){
+  public boolean onEmojiLongPress(final View view){
 
     longClickListener.onEmojiLongClick(EmojiImageView.this, currentEmoji);
 

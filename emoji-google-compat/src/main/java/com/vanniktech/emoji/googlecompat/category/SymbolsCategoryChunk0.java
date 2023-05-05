@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class SymbolsCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(0x1F3E7, new String[]{"atm"}, false),
       new GoogleCompatEmoji(0x1F6AE, new String[]{"put_litter_in_its_place"}, false),

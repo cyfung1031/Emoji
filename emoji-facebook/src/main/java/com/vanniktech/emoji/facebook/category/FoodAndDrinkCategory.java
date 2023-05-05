@@ -24,7 +24,7 @@ import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.facebook.R;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
-@SuppressWarnings("PMD.MethodReturnsInternalArray") public final class FoodAndDrinkCategory implements EmojiCategory {
+public final class FoodAndDrinkCategory implements EmojiCategory {
   private static final FacebookEmoji[] EMOJIS = CategoryUtils.concatAll(FoodAndDrinkCategoryChunk0.get());
 
   @Override @NonNull public FacebookEmoji[] getEmojis() {

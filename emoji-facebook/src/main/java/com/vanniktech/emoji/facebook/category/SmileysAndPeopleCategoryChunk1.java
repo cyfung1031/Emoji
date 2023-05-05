@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class SmileysAndPeopleCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F444, new String[]{"lips"}, 12, 6, false),
       new FacebookEmoji(0x1F476, new String[]{"baby"}, 24, 28, false,

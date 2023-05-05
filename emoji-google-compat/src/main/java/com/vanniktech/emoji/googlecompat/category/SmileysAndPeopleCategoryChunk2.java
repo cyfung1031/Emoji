@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class SmileysAndPeopleCategoryChunk2 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(0x1F6B6, new String[]{"walking"}, true,
         new GoogleCompatEmoji(new int[] { 0x1F6B6, 0x1F3FB }, new String[0], false),

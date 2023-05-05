@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class AnimalsAndNatureCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F435, new String[]{"monkey_face"}, 11, 40, false),
       new IosEmoji(0x1F412, new String[]{"monkey"}, 11, 4, false),

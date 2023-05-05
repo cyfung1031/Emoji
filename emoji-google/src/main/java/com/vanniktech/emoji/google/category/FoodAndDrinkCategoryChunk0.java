@@ -20,7 +20,7 @@ package com.vanniktech.emoji.google.category;
 import com.vanniktech.emoji.google.GoogleEmoji;
 
 final class FoodAndDrinkCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleEmoji[] get() {
+  static GoogleEmoji[] get() {
     return new GoogleEmoji[] {
       new GoogleEmoji(0x1F347, new String[]{"grapes"}, 6, 7, false),
       new GoogleEmoji(0x1F348, new String[]{"melon"}, 6, 8, false),

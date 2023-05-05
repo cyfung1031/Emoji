@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class TravelAndPlacesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F30D, new String[]{"earth_africa"}, 5, 12, false),
       new FacebookEmoji(0x1F30E, new String[]{"earth_americas"}, 5, 13, false),

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class TravelAndPlacesCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(new int[] { 0x1F32C, 0xFE0F }, new String[]{"wind_blowing_face"}, 5, 41, false),
       new FacebookEmoji(0x1F300, new String[]{"cyclone"}, 4, 60, false),

@@ -2,4 +2,7 @@
 <lint>
     <issue id="IconMissingDensityFolder" severity="ignore" />
     <issue id="UnusedResources" severity="ignore" />
+    <issue id="ResourceName">
+        <ignore path="**/.DS_Store"/>
+    </issue>
 </lint>

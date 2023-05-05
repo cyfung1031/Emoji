@@ -50,21 +50,25 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 import com.vanniktech.emoji.listeners.RepeatListener;
 
 @SuppressLint("ViewConstructor") public final class EmojiView extends LinearLayout {
+
+
+
+
   private static final long INITIAL_INTERVAL = 500; //ms
   private static final int NORMAL_INTERVAL = 50; //ms
 
-  @ColorInt private final int themeAccentColor;
-  @ColorInt private final int themeIconColor;
+  @ColorInt protected final int themeAccentColor;
+  @ColorInt protected final int themeIconColor;
 
-  private final ImageButton[] emojiTabs;
-  private final EmojiView.EmojiPagerAdapter emojiPagerAdapter;
+  protected final ImageButton[] emojiTabs;
+  protected final EmojiView.EmojiPagerAdapter emojiPagerAdapter;
 
   @Nullable OnEmojiBackspaceClickListener onEmojiBackspaceClickListener;
 
-  private int emojiTabLastSelectedIndex = -1;
+  protected int emojiTabLastSelectedIndex = -1;
 
 
-  @SuppressWarnings({ "PMD.CyclomaticComplexity", "PMD.NPathComplexity" }) public EmojiView(final Context context,
+  public EmojiView(final Context context,
                                                                                             final OnEmojiClickListener onEmojiClickListener,
                                                                                             final OnEmojiLongClickListener onEmojiLongClickListener, @NonNull final EmojiViewBuilder<?> builder) {
     super(context);

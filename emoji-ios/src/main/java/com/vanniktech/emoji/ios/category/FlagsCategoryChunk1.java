@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class FlagsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(new int[] { 0x1F1F6, 0x1F1E6 }, new String[]{"flag-qa"}, 3, 40, false),
       new IosEmoji(new int[] { 0x1F1F7, 0x1F1EA }, new String[]{"flag-re"}, 3, 41, false),

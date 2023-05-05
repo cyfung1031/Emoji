@@ -37,7 +37,7 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
-public final class EmojiImageViewGeneral extends AppCompatImageView {
+public final class EmojiImageViewGeneral extends EmojiImageViewE {
   private static final int VARIANT_INDICATOR_PART_AMOUNT = 6;
   private static final int VARIANT_INDICATOR_PART = 5;
 
@@ -139,7 +139,7 @@ public final class EmojiImageViewGeneral extends AppCompatImageView {
 
 
 
-  void setEmoji(@NonNull final Emoji emoji) {
+  public void setEmoji(@NonNull final Emoji emoji) {
     if (!emoji.equals(currentEmoji)) {
 
 //      if(getDrawable() != null) setImageDrawable(null);
@@ -189,7 +189,7 @@ public final class EmojiImageViewGeneral extends AppCompatImageView {
 
   }
 
-  void onEmojiClick(final View view){
+  public void onEmojiClick(final View view){
 
       emojiViewController.setPopupRootImageView(EmojiImageViewGeneral.this);
       emojiViewController.setPopupVariant(currentEmoji);
@@ -198,7 +198,7 @@ public final class EmojiImageViewGeneral extends AppCompatImageView {
 
   }
 
-  boolean onEmojiLongPress(final View view){
+  public boolean onEmojiLongPress(final View view){
     emojiViewController.setPopupRootImageView(EmojiImageViewGeneral.this);
     emojiViewController.setPopupVariant(currentEmoji);
     emojiViewController.controller(0x6042);

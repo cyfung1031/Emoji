@@ -17,6 +17,12 @@
 
 package com.vanniktech.emoji;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.O;
+import static androidx.core.view.ViewCompat.requestApplyInsets;
+import static com.vanniktech.emoji.Utils.backspace;
+import static com.vanniktech.emoji.Utils.checkNotNull;
+
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,15 +30,17 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.WindowInsets;
 import android.view.autofill.AutofillManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
+
 import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -43,6 +51,7 @@ import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager.widget.ViewPager;
+
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
@@ -51,15 +60,10 @@ import com.vanniktech.emoji.listeners.OnEmojiPopupDismissListener;
 import com.vanniktech.emoji.listeners.OnEmojiPopupShownListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
+
 import java.lang.ref.WeakReference;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.O;
-import static androidx.core.view.ViewCompat.requestApplyInsets;
-import static com.vanniktech.emoji.Utils.backspace;
-import static com.vanniktech.emoji.Utils.checkNotNull;
-
-public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike {
+public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, PopupLike {
   static final int MIN_KEYBOARD_HEIGHT = 50;
   static final int APPLY_WINDOW_INSETS_DURATION = 250;
 
@@ -135,7 +139,60 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     }
   };
 
-  EmojiPopup(@NonNull final EmojiPopup.Builder builder, @NonNull final EditText editText) {
+
+  class MyEmojiView extends EmojiViewExtended{
+
+    public MyEmojiView(Context context) {
+      super(context);
+    }
+
+    public MyEmojiView(Context context, @Nullable AttributeSet attrs) {
+      super(context, attrs);
+    }
+
+    public MyEmojiView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+      super(context, attrs, defStyleAttr);
+    }
+
+    @Override
+    public void onEmojiBackspaceClicked(View v) {
+
+
+      backspace(editText);
+
+      if (onEmojiBackspaceClickListener != null) {
+        onEmojiBackspaceClickListener.onEmojiBackspaceClicked(v);
+      }
+
+    }
+
+    @Override
+    public void onEmojiClick(@NonNull EmojiImageViewGeneral imageView, @NonNull Emoji emoji) {
+
+      Utils.input(editText, emoji);
+
+      recentEmoji.addEmoji(emoji);
+      variantEmoji.addVariant(emoji);
+      imageView.updateEmoji(emoji);
+
+      if (onEmojiClickListener != null) {
+//        onEmojiClickListener.onEmojiClick(imageView, emoji);
+      }
+
+      variantPopup.dismiss();
+
+    }
+
+    @Override
+    public void onEmojiLongClick(@NonNull EmojiImageViewGeneral view, @NonNull Emoji emoji) {
+      variantPopup.show(view, emoji);
+    }
+
+
+
+  }
+
+  EmojiPopupGeneral(@NonNull final EmojiPopupGeneral.Builder builder, @NonNull final EditText editText) {
     this.context = Utils.asActivity(builder.rootView.getContext());
     this.rootView = builder.rootView.getRootView();
     this.editText = editText;
@@ -145,12 +202,22 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     popupWindow = new PopupWindow(context);
     variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
 
+    final MyEmojiView myEmojiView = new MyEmojiView(context);
+    /*
+
     final EmojiView emojiView = new EmojiView(context,
             internalOnEmojiClickListener, internalOnEmojiLongClickListener, builder);
 
-    emojiView.setOnEmojiBackspaceClickListener(internalOnEmojiBackspaceClickListener);
+     */
 
-    popupWindow.setContentView(emojiView);
+//    emojiView.setOnEmojiBackspaceClickListener(internalOnEmojiBackspaceClickListener);
+
+//    popupWindow.setContentView(emojiView);
+    popupWindow.setContentView(new FrameLayout(context));
+    ((FrameLayout)popupWindow.getContentView()).addView(myEmojiView);
+    myEmojiView.setup(this.rootView);
+
+
     popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
     popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null)); // To avoid borders and overdraw.
     popupWindow.setOnDismissListener(onDismissListener);
@@ -222,6 +289,7 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
   }
 
   public void toggle() {
+    Log.i("WSS","WW");
     if (!popupWindow.isShowing()) {
       // this is needed because something might have cleared the insets listener
       start();
@@ -419,7 +487,7 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     /**
      * @param rootView The root View of your layout.xml which will be used for calculating the height
      * of the keyboard.
-     * @return builder For building the {@link EmojiPopup}.
+     * @return builder For building the {@link EmojiPopupGeneral}.
      */
     @CheckResult public static Builder fromRootView(final View rootView) {
       return new Builder(rootView);
@@ -520,11 +588,12 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
       return this;
     }
 
-    @CheckResult public EmojiPopup build(@NonNull final EditText editText) {
+    @CheckResult public EmojiPopupGeneral build(@NonNull final EditText editText) {
       EmojiManager.getInstance().verifyInstalled();
       checkNotNull(editText, "EditText can't be null");
 
-      final EmojiPopup emojiPopup = new EmojiPopup(this, editText);
+      final EmojiPopupGeneral emojiPopup = new EmojiPopupGeneral(this, editText);
+      /*
       emojiPopup.onSoftKeyboardCloseListener = onSoftKeyboardCloseListener;
       emojiPopup.onEmojiClickListener = onEmojiClickListener;
       emojiPopup.onSoftKeyboardOpenListener = onSoftKeyboardOpenListener;
@@ -532,19 +601,21 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
       emojiPopup.onEmojiPopupDismissListener = onEmojiPopupDismissListener;
       emojiPopup.onEmojiBackspaceClickListener = onEmojiBackspaceClickListener;
       emojiPopup.popupWindowHeight = Math.max(popupWindowHeight, 0);
+
+       */
       return emojiPopup;
     }
   }
 
   static final class EmojiPopUpOnAttachStateChangeListener implements View.OnAttachStateChangeListener {
-    private final WeakReference<EmojiPopup> emojiPopup;
+    private final WeakReference<EmojiPopupGeneral> emojiPopup;
 
-    EmojiPopUpOnAttachStateChangeListener(final EmojiPopup emojiPopup) {
+    EmojiPopUpOnAttachStateChangeListener(final EmojiPopupGeneral emojiPopup) {
       this.emojiPopup = new WeakReference<>(emojiPopup);
     }
 
     @Override public void onViewAttachedToWindow(final View v) {
-      final EmojiPopup popup = emojiPopup.get();
+      final EmojiPopupGeneral popup = emojiPopup.get();
 
       if (popup != null) {
         popup.start();
@@ -552,7 +623,7 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     }
 
     @Override public void onViewDetachedFromWindow(final View v) {
-      final EmojiPopup popup = emojiPopup.get();
+      final EmojiPopupGeneral popup = emojiPopup.get();
 
       if (popup != null) {
         popup.stop();
@@ -573,17 +644,17 @@ public final class EmojiPopup implements EmojiResultReceiver.Receiver, PopupLike
     popupWindow.setOnDismissListener(null);
   }
 
-  static final class EmojiPopUpOnApplyWindowInsetsListener implements androidx.core.view.OnApplyWindowInsetsListener {
-    private final WeakReference<EmojiPopup> emojiPopup;
+  static final class EmojiPopUpOnApplyWindowInsetsListener implements OnApplyWindowInsetsListener {
+    private final WeakReference<EmojiPopupGeneral> emojiPopup;
     int previousOffset;
 
-    EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopup emojiPopup) {
+    EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopupGeneral emojiPopup) {
       this.emojiPopup = new WeakReference<>(emojiPopup);
     }
 
     @Override
     public WindowInsetsCompat onApplyWindowInsets(final View v, final WindowInsetsCompat insets) {
-      final EmojiPopup popup = emojiPopup.get();
+      final EmojiPopupGeneral popup = emojiPopup.get();
 
       if (popup != null) {
         final int offset;

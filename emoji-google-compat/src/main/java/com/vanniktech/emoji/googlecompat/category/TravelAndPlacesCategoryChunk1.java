@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class TravelAndPlacesCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(new int[] { 0x1F329, 0xFE0F }, new String[]{"lightning", "lightning_cloud"}, false),
       new GoogleCompatEmoji(new int[] { 0x1F32A, 0xFE0F }, new String[]{"tornado", "tornado_cloud"}, false),

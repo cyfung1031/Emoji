@@ -45,7 +45,7 @@ public final class RecentEmojiManager2 implements RecentEmoji {
         sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
     }
 
-    @Override @SuppressWarnings({ "PMD.AvoidDeeplyNestedIfStmts", "checkstyle:nestedifdepth" }) @NonNull public Collection<Emoji> getRecentEmojis() {
+    @NonNull public Collection<Emoji> getRecentEmojis() {
         if (emojiList.size() == 0) {
             final String savedRecentEmojis = sharedPreferences.getString(RECENT_EMOJIS, "");
 

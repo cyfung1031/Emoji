@@ -57,7 +57,7 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
 final class Utils {
   static final String TAG = "Utils";
 
-  static final int DONT_UPDATE_FLAG = -1;
+  static final int NO_UPDATE_FLAG = -1;
 
   @NonNull static <T> T checkNotNull(@Nullable final T reference, final String message) {
     if (reference == null) {
@@ -115,11 +115,11 @@ final class Utils {
     return false;
   }
 
-  @SuppressWarnings({"unchecked", "JavaReflectionMemberAccess"}) static int getInputMethodHeight(final Context context, final View rootView) {
+  static int getInputMethodHeight(final Context context, final View rootView) {
     try {
       final InputMethodManager imm = (InputMethodManager) context.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
       final Class inputMethodManagerClass = imm.getClass();
-      @SuppressLint("PrivateApi") final Method visibleHeightMethod = inputMethodManagerClass.getDeclaredMethod("getInputMethodWindowVisibleHeight");
+      @SuppressWarnings("unchecked") @SuppressLint("PrivateApi") final Method visibleHeightMethod = inputMethodManagerClass.getDeclaredMethod("getInputMethodWindowVisibleHeight");
       visibleHeightMethod.setAccessible(true);
       return (int) visibleHeightMethod.invoke(imm);
     } catch (NoSuchMethodException exception) {
@@ -133,7 +133,7 @@ final class Utils {
     return alternativeInputMethodHeight(rootView);
   }
 
-  @SuppressWarnings("JavaReflectionMemberAccess") @TargetApi(LOLLIPOP) private static int getViewBottomInset(final View rootView) {
+  private static int getViewBottomInset(final View rootView) {
     try {
       @SuppressLint("PrivateApi") final Field attachInfoField = View.class.getDeclaredField("mAttachInfo");
       attachInfoField.setAccessible(true);
@@ -252,7 +252,7 @@ final class Utils {
             fixedOffsetY = desiredLocation.y + differenceY;
           }
 
-          popupWindow.update(fixedOffsetX, fixedOffsetY, DONT_UPDATE_FLAG, DONT_UPDATE_FLAG);
+          popupWindow.update(fixedOffsetX, fixedOffsetY, NO_UPDATE_FLAG, NO_UPDATE_FLAG);
         }
       }
     });

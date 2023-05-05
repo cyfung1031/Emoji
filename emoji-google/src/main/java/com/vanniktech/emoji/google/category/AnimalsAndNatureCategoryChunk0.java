@@ -20,7 +20,7 @@ package com.vanniktech.emoji.google.category;
 import com.vanniktech.emoji.google.GoogleEmoji;
 
 final class AnimalsAndNatureCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleEmoji[] get() {
+  static GoogleEmoji[] get() {
     return new GoogleEmoji[] {
       new GoogleEmoji(0x1F435, new String[]{"monkey_face"}, 11, 40, false),
       new GoogleEmoji(0x1F412, new String[]{"monkey"}, 11, 4, false),

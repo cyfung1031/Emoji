@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class FlagsCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F3C1, new String[]{"checkered_flag"}, 8, 7, false),
       new FacebookEmoji(0x1F6A9, new String[]{"triangular_flag_on_post"}, 36, 29, false),

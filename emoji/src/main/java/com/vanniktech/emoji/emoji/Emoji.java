@@ -35,7 +35,7 @@ import java.util.Objects;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-@SuppressWarnings("PMD.ArrayIsStoredDirectly") public abstract class Emoji implements Serializable {
+public abstract class Emoji implements Serializable {
   private static final long serialVersionUID = 3L;
   private static final List<Emoji> EMPTY_EMOJI_LIST = emptyList();
 

@@ -17,14 +17,21 @@
 
 package com.vanniktech.emoji.sample;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
@@ -35,8 +42,11 @@ import androidx.emoji.text.EmojiCompat;
 import androidx.emoji.text.FontRequestEmojiCompatConfig;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiPopupGeneral;
 import com.vanniktech.emoji.facebook.FacebookEmojiProvider;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
@@ -45,25 +55,27 @@ import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
 
 // We don't care about duplicated code in the sample.
-public class MainActivityAutoCompeteTextView extends AppCompatActivity {
+public class MainActivity5 extends AppCompatActivity {
   static final String TAG = "MainActivity";
 
   ChatAdapter chatAdapter;
-  EmojiPopup emojiPopup;
+  EmojiPopupGeneral emojiPopup;
 
-  AutoCompleteTextView editText;
+  EmojiEditText editText;
   ViewGroup rootView;
   ImageView emojiButton;
   EmojiCompat emojiCompat;
 
-  @Override protected void onCreate(@Nullable final Bundle savedInstanceState) {
+  @Override @SuppressLint("SetTextI18n") protected void onCreate(@Nullable final Bundle savedInstanceState) {
     getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_main_autocompletetextview);
+    setContentView(R.layout.activity_main);
 
     chatAdapter = new ChatAdapter();
 
+    final Button button = findViewById(R.id.main_activity_material_button);
+    button.setText("\uD83D\uDE18\uD83D\uDE02\uD83E\uDD8C");
     editText = findViewById(R.id.main_activity_chat_bottom_message_edittext);
     rootView = findViewById(R.id.main_activity_root_view);
     emojiButton = findViewById(R.id.main_activity_emoji);
@@ -72,9 +84,23 @@ public class MainActivityAutoCompeteTextView extends AppCompatActivity {
     emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
     sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
 
+    final CheckBox forceEmojisOnly = findViewById(R.id.main_activity_force_emojis_only);
+    forceEmojisOnly.setOnCheckedChangeListener((ignore, isChecked) -> {
+      if (isChecked) {
+        editText.clearFocus();
+        emojiButton.setVisibility(GONE);
+        editText.disableKeyboardInput(emojiPopup);
+      } else {
+        emojiButton.setVisibility(VISIBLE);
+        editText.enableKeyboardInput();
+      }
+    });
+
     emojiButton.setOnClickListener(ignore -> emojiPopup.toggle());
+
     sendButton.setOnClickListener(ignore -> {
-      final String text = editText.getText().toString().trim();
+      Editable editable = editText.getText();
+      final String text = editable != null ? editable.toString().trim() : "";
 
       if (text.length() > 0) {
         chatAdapter.add(text);
@@ -94,7 +120,6 @@ public class MainActivityAutoCompeteTextView extends AppCompatActivity {
     getMenuInflater().inflate(R.menu.menu_main, menu);
     return super.onCreateOptionsMenu(menu);
   }
-
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     int itemId = item.getItemId();
@@ -102,6 +127,10 @@ public class MainActivityAutoCompeteTextView extends AppCompatActivity {
     if (itemId == R.id.menuMainShowDialog) {
       emojiPopup.dismiss();
       MainDialog.show(this);
+      return true;
+    } else if (itemId == R.id.menuMainCustomView) {
+      emojiPopup.dismiss();
+      startActivity(new Intent(this, CustomViewActivity.class));
       return true;
     } else if (itemId == R.id.menuMainVariantIos) {
       EmojiManager.destroy();
@@ -138,16 +167,10 @@ public class MainActivityAutoCompeteTextView extends AppCompatActivity {
     }
   }
 
-  @Override public void onBackPressed() {
-    if (emojiPopup != null && emojiPopup.isShowing()) {
-      emojiPopup.dismiss();
-    } else {
-      super.onBackPressed();
-    }
-  }
-
   private void setUpEmojiPopup() {
-    emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
+
+    emojiPopup = EmojiPopupGeneral.Builder.fromRootView(rootView)
+            /*
         .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
         .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
         .setOnEmojiPopupShownListener(() -> emojiButton.setImageResource(R.drawable.ic_keyboard))
@@ -156,6 +179,8 @@ public class MainActivityAutoCompeteTextView extends AppCompatActivity {
         .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
         .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
         .setPageTransformer(new PageTransformer())
+            */
+      //.setRecentEmoji(NoRecentEmoji.INSTANCE) // Uncomment this to hide recent emojis.
         .build(editText);
   }
 }

@@ -3,6 +3,7 @@ package com.vanniktech.emoji;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
@@ -18,7 +19,7 @@ public class EmojiViewConf implements OnEmojiClickListener, OnEmojiLongClickList
     }
 
     @Override
-    public void onEmojiClick(@NonNull EmojiImageView emoji, @NonNull Emoji imageView) {
+    public void onEmojiClick(@NonNull EmojiImageViewE emoji, @NonNull Emoji imageView) {
 
     }
 

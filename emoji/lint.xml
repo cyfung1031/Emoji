@@ -9,4 +9,8 @@
 
     <!-- You can't suppress it. -->
     <issue id="ClickableViewAccessibility" severity="ignore"/>
+
+    <issue id="ResourceName">
+        <ignore path="**/.DS_Store"/>
+    </issue>
 </lint>

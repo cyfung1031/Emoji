@@ -20,7 +20,7 @@ package com.vanniktech.emoji.google.category;
 import com.vanniktech.emoji.google.GoogleEmoji;
 
 final class TravelAndPlacesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleEmoji[] get() {
+  static GoogleEmoji[] get() {
     return new GoogleEmoji[] {
       new GoogleEmoji(0x1F30D, new String[]{"earth_africa"}, 5, 12, false),
       new GoogleEmoji(0x1F30E, new String[]{"earth_americas"}, 5, 13, false),

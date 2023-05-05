@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class SmileysAndPeopleCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F64F, new String[]{"pray"}, 35, 26, false,
         new IosEmoji(new int[] { 0x1F64F, 0x1F3FB }, new String[0], 35, 27, false),

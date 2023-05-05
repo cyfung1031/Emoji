@@ -1,47 +1,37 @@
-/*
- * Copyright (C) 2016 - Niklas Baudy, Ruben Gees, Mario Đanić and contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
-
 package com.vanniktech.emoji;
 
-import static com.vanniktech.emoji.Utils.backspace;
-
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.vanniktech.emoji.emoji.Emoji;
-import com.vanniktech.emoji.listeners.OnEmojiBackspaceClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 
 import java.lang.ref.WeakReference;
 
-public class EmojiViewOuter extends FrameLayout {
+public class EmojiViewExtended extends EmojiViewInner{
+    public EmojiViewExtended(Context context) {
+        super(context);
+    }
+
+    public EmojiViewExtended(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public EmojiViewExtended(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
 
 
     final HandlerThread bHt = createBackgroundThread();
@@ -49,15 +39,52 @@ public class EmojiViewOuter extends FrameLayout {
 
     final Handler bH = new Handler(bHt.getLooper());
 
+
+    private  HandlerThread createBackgroundThread(){
+        HandlerThread ht =  new HandlerThread("backgroundWorkOnEmojiView");
+        ht.start();
+        return ht;
+    }
+
+
+    public void addedInto(ViewGroup container){
+        container.addView(this);
+    }
+
+    public void fillUpVerticalLinearView(){
+
+        this.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                0,
+                1
+        ));
+    }
+
+    public void replaceView(View viewToReplace){
+        Activity activity = (Activity) viewToReplace.getContext();
+        if(activity == null) return;
+        View replacementView = this;
+
+        ViewGroup parentView = (ViewGroup) viewToReplace.getParent();
+        int index = parentView.indexOfChild(viewToReplace);
+        parentView.removeView(viewToReplace);
+        parentView.addView(replacementView, index);
+
+    }
+
+
     @NonNull
     RecentEmoji recentEmoji;
     @NonNull
     VariantEmoji variantEmoji;
+
+
     @NonNull
     EmojiVariantPopupGeneral variantPopup;
-//    EditText editText;
+
 
     EmojiViewController emojiViewController = null;
+
 
     public int deleteOneUniChar(){
         // TODO
@@ -70,33 +97,69 @@ public class EmojiViewOuter extends FrameLayout {
     }
 
 
-    private  HandlerThread createBackgroundThread(){
-        HandlerThread ht =  new HandlerThread("backgroundWorkOnEmojiView");
-        ht.start();
-        return ht;
-    }
-    public EmojiViewOuter(@NonNull Context context) {
-        super(context);
-        init(context);
+    public void setRecentEmoji(@NonNull RecentEmoji recentEmoji) {
+        this.recentEmoji = recentEmoji;
     }
 
-    public EmojiViewOuter(@NonNull Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+    public void setVariantEmoji(@NonNull VariantEmoji variantEmoji) {
+        this.variantEmoji = variantEmoji;
     }
 
-    public EmojiViewOuter(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
+    public void backgroundUpdateRecentEmoji(@NonNull final EmojiImageViewGeneral imageView, @NonNull final Emoji emoji){
+
+        bH.post(new Runnable() {
+            @Override
+            public void run() {
+
+
+                recentEmoji.addEmoji(emoji);
+                variantEmoji.addVariant(emoji);
+                imageView.updateEmoji(emoji);
+
+                recentEmoji.persist();
+                variantEmoji.persist();
+
+                emojiViewController.setRecentEmojiPageUpdateState(1);
+            }
+        });
     }
+
+
+
+    public void setup(@NonNull View container) {
+
+        final Context context = getContext();
+
+        this.recentEmoji = new RecentEmojiManager2(context);
+        this.variantEmoji = new VariantEmojiManager(context);
+
+        EmojiViewExtended.EmojiViewControllerBase emojiViewController = new EmojiViewExtended.EmojiViewControllerBase(context);
+        emojiViewController.recentEmoji = this.recentEmoji;
+        emojiViewController.variantEmoji = this.variantEmoji;
+
+
+        this.emojiViewController= emojiViewController;
+
+        variantPopup = new EmojiVariantPopupGeneral(container.getRootView(), emojiViewController);
+
+        this.init(emojiViewController);
+
+        this.setOnEmojiBackspaceClickListener(emojiViewController);
+
+
+
+
+    }
+
+
+    public void executeTask(int nextTaskNum){
+        // TODO
+    }
+
 
     public void onEmojiLongClick(@NonNull final EmojiImageViewGeneral view, @NonNull final Emoji emoji) {
 
         variantPopup.show(view, emoji);
-    }
-
-    public void executeTask(int nextTaskNum){
-        // TODO
     }
 
     public void onEmojiBackspaceClicked(final View v) {
@@ -119,53 +182,12 @@ public class EmojiViewOuter extends FrameLayout {
 //            onEmojiClickListener.onEmojiClick(imageView, emoji);
 //        }
         variantPopup.dismiss();
-        bH.post(new Runnable() {
-            @Override
-            public void run() {
-
-
-                recentEmoji.addEmoji(emoji);
-                variantEmoji.addVariant(emoji);
-                imageView.updateEmoji(emoji);
-
-                recentEmoji.persist();
-                variantEmoji.persist();
-
-                emojiViewController.setRecentEmojiPageUpdateState(1);
-            }
-        });
-    }
-
-    public void setup(@NonNull View container) {
-
-
-
-        EmojiViewControllerBase emojiViewController = new EmojiViewControllerBase(getContext());
-        this.emojiViewController= emojiViewController;
-        emojiViewController.setEmojiViewOuter(this);
-
-        this.recentEmoji = emojiViewController.getRecentEmoji();
-        this.variantEmoji = emojiViewController.getVariantEmoji();
-
-        variantPopup = new EmojiVariantPopupGeneral(container.getRootView(), emojiViewController);
-
-        final EmojiViewInner emojiView = new EmojiViewInner(getContext());
-        emojiView.init(emojiViewController);
-
-        emojiView.setOnEmojiBackspaceClickListener(emojiViewController);
-
-        EmojiViewOuter.this.addView(emojiView);
-
-
+        this.backgroundUpdateRecentEmoji(imageView, emoji);
     }
 
 
-    private void init(final Context context) {
-    }
+    public static final class EmojiViewControllerBase implements EmojiViewInner.EmojiViewBuildController<EmojiViewExtended.EmojiViewControllerBase> {
 
-
-    public static final class EmojiViewControllerBase implements EmojiViewInner.EmojiViewBuildController<EmojiViewControllerBase> {
-        
         EmojiViewControllerBase(){}
 
         @Nullable
@@ -175,22 +197,12 @@ public class EmojiViewOuter extends FrameLayout {
         @NonNull
         VariantEmoji variantEmoji;
 
-        private EmojiViewControllerBase(Context context) {
+        protected EmojiViewControllerBase(Context context) {
             initByContext(context);
         }
 
-        /**
-         * @param context The context of your view.
-         * @return builder For building the {@link EmojiPopup}.
-         */
-        @CheckResult
-        public static EmojiViewControllerBase fromRootView(Context context) {
-            return new EmojiViewControllerBase(context);
-        }
 
         private void initByContext(final Context context) {
-            this.recentEmoji = new RecentEmojiManager2(context);
-            this.variantEmoji = new VariantEmojiManager(context);
         }
 
         @ColorInt
@@ -298,30 +310,30 @@ public class EmojiViewOuter extends FrameLayout {
         public void controller(int msgId){
             EmojiImageViewGeneral popupRootImageView = this.popupRootImageView != null ?  this.popupRootImageView.get():null;
             Emoji popupVariant = this.popupVariant != null ?  this.popupVariant.get():null;
-            EmojiViewOuter emojiViewOuter = this.emojiViewOuter != null ?  this.emojiViewOuter.get():null;
+            EmojiViewInner emojiViewInner = this.emojiViewInner != null ?  this.emojiViewInner.get():null;
             switch (msgId){
                 case 0x3041:
                 case 0x3042:
 
-                    if(popupRootImageView!=null && popupVariant!=null && emojiViewOuter != null){
-                        emojiViewOuter.onEmojiClick(popupRootImageView, popupVariant);
+                    if(popupRootImageView!=null && popupVariant!=null && emojiViewInner instanceof EmojiViewExtended){
+                        ((EmojiViewExtended)emojiViewInner).onEmojiClick(popupRootImageView, popupVariant);
                     }
                     break;
 
                 case 0x6042:
 
-                    if(popupRootImageView!=null && popupVariant!=null && emojiViewOuter != null){
-                        emojiViewOuter.onEmojiLongClick(popupRootImageView, popupVariant);
+
+                    if(popupRootImageView!=null && popupVariant!=null && emojiViewInner instanceof EmojiViewExtended){
+                        ((EmojiViewExtended)emojiViewInner).onEmojiLongClick(popupRootImageView, popupVariant);
                     }
 
                     break;
 
                 case 0x3051:
 
-                    if( emojiViewOuter != null){
-                        emojiViewOuter.onEmojiBackspaceClicked(null);
+                    if( emojiViewInner instanceof EmojiViewExtended){
+                        ((EmojiViewExtended)emojiViewInner).onEmojiBackspaceClicked(null);
                     }
-
 
                     break;
 
@@ -344,12 +356,6 @@ public class EmojiViewOuter extends FrameLayout {
 
         }
 
-        WeakReference<EmojiViewOuter> emojiViewOuter = null;
-        @Override
-        public void setEmojiViewOuter(EmojiViewOuter v) {
-            emojiViewOuter = new WeakReference<>(v);
-
-        }
 
         WeakReference<EmojiViewInner> emojiViewInner = null;
         @Override
@@ -377,10 +383,6 @@ public class EmojiViewOuter extends FrameLayout {
             return recentEmojiPageUpdateState;
         }
 
-        @Override
-        public EmojiViewOuter getEmojiViewOuter() {
-            return emojiViewOuter != null ?  emojiViewOuter.get():null;
-        }
 
         @Override
         public EmojiViewInner getEmojiViewInner() {

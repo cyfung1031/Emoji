@@ -24,7 +24,7 @@ import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.<%= package %>.R;
 import com.vanniktech.emoji.<%= package %>.<%= name %>;
 
-@SuppressWarnings("PMD.MethodReturnsInternalArray") public final class <%= category %>Category implements EmojiCategory {
+public final class <%= category %>Category implements EmojiCategory {
   private static final <%= name %>[] EMOJIS = CategoryUtils.concatAll(<%= chunks %>);
 
   @Override @NonNull public <%= name %>[] getEmojis() {

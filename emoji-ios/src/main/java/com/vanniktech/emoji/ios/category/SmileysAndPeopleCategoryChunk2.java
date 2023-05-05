@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class SmileysAndPeopleCategoryChunk2 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F6B6, new String[]{"walking"}, 37, 27, true,
         new IosEmoji(new int[] { 0x1F6B6, 0x1F3FB }, new String[0], 37, 28, false),

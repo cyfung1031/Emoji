@@ -51,21 +51,21 @@ import com.vanniktech.emoji.listeners.RepeatListener;
 
 import java.lang.ref.WeakReference;
 
-public final class EmojiViewInner extends LinearLayout {
+public class EmojiViewInner extends LinearLayout {
     private static final long INITIAL_INTERVAL = 500; //ms
     private static final int NORMAL_INTERVAL = 50; //ms
     @ColorInt
-    private int themeAccentColor = 0;
+    protected int themeAccentColor = 0;
     @ColorInt
-    private int themeIconColor = 0;
-    private ImageButton[] emojiTabs = null;
+    protected int themeIconColor = 0;
+    protected ImageButton[] emojiTabs = null;
 //    private EmojiViewInner.EmojiPagerAdapter emojiPagerAdapter = null;
-    private EmojiViewInner.EmojiGridPagerAdapter emojiPager2Adapter = null;
-    private int emojiTabLastSelectedIndex = -1;
+    protected EmojiViewInner.EmojiGridPagerAdapter emojiPager2Adapter = null;
+    protected int emojiTabLastSelectedIndex = -1;
     private EmojiViewController emojiViewController = null;
 
 //    private ViewPager emojisPager;
-private ViewPager2 emojisPager2;
+protected ViewPager2 emojisPager2;
 
 boolean isTabButtonSmoothTransitionEnabled = false;
 
@@ -503,12 +503,7 @@ boolean isTabButtonSmoothTransitionEnabled = false;
             View v = getView();
             if(v instanceof EmojiGridInner){
                 EmojiGridInner emojiGridInner = (EmojiGridInner) v;
-                EmojiArrayAdapterGeneral adapter = emojiGridInner.emojiArrayAdapterG;
-                if(adapter != null){
-                    adapter.clear();
-                    emojiGridInner.emojiArrayAdapterG = null;
-                    emojiGridInner.isRecentEmojiGridView = false;
-                }
+                emojiGridInner.destroyView();
             }
 //            Log.i("WWS", "destory");
         }
@@ -568,7 +563,12 @@ boolean isTabButtonSmoothTransitionEnabled = false;
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
             if(emojiViewController != null) {
-                emojiViewController.getEmojiViewOuter().bH.post(this::updateRecentEmojiGridView);
+
+                EmojiViewInner emojiViewInner = emojiViewController.getEmojiViewInner();
+                if(emojiViewInner instanceof EmojiViewExtended){
+
+                    ((EmojiViewExtended)emojiViewInner).bH.post(this::updateRecentEmojiGridView);
+                }
             }
 
             super.onAttach(context);
@@ -586,7 +586,17 @@ boolean isTabButtonSmoothTransitionEnabled = false;
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
             if(emojiViewController != null) {
-                emojiViewController.getEmojiViewOuter().bH.post(this::detachRecentEmojiGrid);
+
+
+
+
+                EmojiViewInner emojiViewInner = emojiViewController.getEmojiViewInner();
+                if(emojiViewInner instanceof EmojiViewExtended){
+
+                    ((EmojiViewExtended)emojiViewInner).bH.post(this::detachRecentEmojiGrid);
+                }
+
+
             }
         }
 

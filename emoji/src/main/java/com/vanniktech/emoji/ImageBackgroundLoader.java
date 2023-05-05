@@ -13,6 +13,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 
 public class ImageBackgroundLoader {
@@ -22,16 +23,14 @@ public class ImageBackgroundLoader {
         globalImageBackgroundLoader = new ImageBackgroundLoader(context);
         return globalImageBackgroundLoader;
     }
-    final private Resources mResources;
-    final private Context mContext;
+    final protected WeakReference<Context> mContextWR;
     final private Handler myHandler;
     final private HandlerThread myHandlerThread;
 
-    final private HashMap<Emoji, Drawable> hMap;
+    final protected HashMap<Emoji, Drawable> hMap;
     private ImageBackgroundLoader(final Context context){
         hMap = new HashMap<>();
-        mContext = context;
-        mResources = context.getResources();
+        mContextWR = new WeakReference<>(context);
         myHandlerThread = new HandlerThread("backgroundImageLoader");
         if(!myHandlerThread.isAlive()) myHandlerThread.start();
         myHandler= new MyHandler(this, myHandlerThread.getLooper());
@@ -46,7 +45,9 @@ public class ImageBackgroundLoader {
     public Drawable loadImageSync(final Emoji emoji){
         Drawable drawable = hMap.get(emoji);
         if(drawable == null){
-            drawable = emoji.getDrawable(mContext);
+            final Context context = mContextWR.get();
+            if(context == null) return null;
+            drawable = emoji.getDrawable(context);
             hMap.put(emoji, drawable);
         }
         return drawable;
@@ -66,7 +67,9 @@ public class ImageBackgroundLoader {
             if(msg.what == 5){
                 Emoji emoji = (Emoji) msg.obj;
                 if(ibl.hMap.containsKey(emoji)) return;
-                Drawable drawable = emoji.getDrawable(ibl.mContext);
+                final Context context = ibl.mContextWR.get();
+                if(context == null) return;
+                Drawable drawable = emoji.getDrawable(context);
                 ibl.hMap.put(emoji, drawable);
             }else if (msg.what == 6){
                 Runnable emoji = (Runnable) msg.obj;

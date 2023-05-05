@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class SmileysAndPeopleCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(0x1F64F, new String[]{"pray"}, false,
         new GoogleCompatEmoji(new int[] { 0x1F64F, 0x1F3FB }, new String[0], false),

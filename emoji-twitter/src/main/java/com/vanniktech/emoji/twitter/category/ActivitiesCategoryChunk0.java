@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class ActivitiesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F383, new String[]{"jack_o_lantern"}, 7, 6, false),
       new TwitterEmoji(0x1F384, new String[]{"christmas_tree"}, 7, 7, false),

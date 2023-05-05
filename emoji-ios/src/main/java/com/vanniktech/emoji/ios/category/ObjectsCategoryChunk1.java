@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class ObjectsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(new int[] { 0x1F5DC, 0xFE0F }, new String[]{"compression"}, 32, 6, false),
       new IosEmoji(new int[] { 0x2696, 0xFE0F }, new String[]{"scales"}, 57, 32, false),

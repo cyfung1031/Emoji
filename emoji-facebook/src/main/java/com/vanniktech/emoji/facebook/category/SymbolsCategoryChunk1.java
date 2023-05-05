@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class SymbolsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F53A, new String[]{"small_red_triangle"}, 30, 22, false),
       new FacebookEmoji(0x1F53B, new String[]{"small_red_triangle_down"}, 30, 23, false),

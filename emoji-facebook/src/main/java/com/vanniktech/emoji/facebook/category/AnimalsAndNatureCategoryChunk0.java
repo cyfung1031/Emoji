@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class AnimalsAndNatureCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F435, new String[]{"monkey_face"}, 11, 40, false),
       new FacebookEmoji(0x1F412, new String[]{"monkey"}, 11, 4, false),

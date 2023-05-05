@@ -12,7 +12,6 @@ public interface EmojiViewController {
 
     void setPopupVariant(Emoji variant);
 
-    void setEmojiViewOuter(EmojiViewOuter v);
     void setEmojiViewInner(EmojiViewInner v);
     void setEmojiVariantPopupGeneral(EmojiVariantPopupGeneral v);
 
@@ -20,7 +19,6 @@ public interface EmojiViewController {
 
     int getRecentEmojiPageUpdateState();
 
-    EmojiViewOuter getEmojiViewOuter();
     EmojiViewInner getEmojiViewInner();
 
     void setRecentEmojiGridView(EmojiGridInner newView);

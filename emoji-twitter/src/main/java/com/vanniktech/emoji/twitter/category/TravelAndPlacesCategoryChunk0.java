@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class TravelAndPlacesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F30D, new String[]{"earth_africa"}, 5, 12, false),
       new TwitterEmoji(0x1F30E, new String[]{"earth_americas"}, 5, 13, false),

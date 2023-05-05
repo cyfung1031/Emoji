@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class SmileysAndPeopleCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F64F, new String[]{"pray"}, 35, 26, false,
         new TwitterEmoji(new int[] { 0x1F64F, 0x1F3FB }, new String[0], 35, 27, false),

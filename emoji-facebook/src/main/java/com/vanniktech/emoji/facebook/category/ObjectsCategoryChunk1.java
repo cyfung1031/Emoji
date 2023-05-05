@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class ObjectsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(new int[] { 0x2696, 0xFE0F }, new String[]{"scales"}, 57, 32, false),
       new FacebookEmoji(0x1F9AF, new String[]{"probing_cane"}, 45, 4, false),

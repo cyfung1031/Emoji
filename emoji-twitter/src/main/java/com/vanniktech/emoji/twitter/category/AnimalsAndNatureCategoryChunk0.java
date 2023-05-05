@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class AnimalsAndNatureCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F435, new String[]{"monkey_face"}, 11, 40, false),
       new TwitterEmoji(0x1F412, new String[]{"monkey"}, 11, 4, false),

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.googlecompat.category;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmoji;
 
 final class FlagsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static GoogleCompatEmoji[] get() {
+  static GoogleCompatEmoji[] get() {
     return new GoogleCompatEmoji[] {
       new GoogleCompatEmoji(new int[] { 0x1F1F6, 0x1F1E6 }, new String[]{"flag-qa"}, false),
       new GoogleCompatEmoji(new int[] { 0x1F1F7, 0x1F1EA }, new String[]{"flag-re"}, false),

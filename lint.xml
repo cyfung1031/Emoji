@@ -5,13 +5,15 @@
   <!-- False positive for the JVM module since we use the new tool mechanism. -->
   <issue id="JavaPluginLanguageLevel" severity="ignore"/>
   <issue id="ConvertToWebp">
-    <ignore regexp="_sheet_.*.png"/>
-    <ignore regexp="emoji_.*_category_.*.png"/>
-    <ignore regexp="ic_launcher.png"/>
+    <ignore path="**/*_sheet_*.png"/>
+    <ignore path="**/emoji_*_category_*.png"/>
+    <ignore path="**/ic_launcher.png"/>
   </issue>
-
   <!-- View Binding bugs. -->
   <issue id="UnusedIds">
     <ignore regexp=".*"/>
+  </issue>
+  <issue id="ResourceName">
+    <ignore path="**/.DS_Store"/>
   </issue>
 </lint>

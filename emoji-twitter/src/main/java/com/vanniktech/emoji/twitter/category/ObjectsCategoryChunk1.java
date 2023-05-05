@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class ObjectsCategoryChunk1 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(new int[] { 0x1F5DC, 0xFE0F }, new String[]{"compression"}, 32, 6, false),
       new TwitterEmoji(new int[] { 0x2696, 0xFE0F }, new String[]{"scales"}, 57, 32, false),

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class SymbolsCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F3E7, new String[]{"atm"}, 10, 18, false),
       new IosEmoji(0x1F6AE, new String[]{"put_litter_in_its_place"}, 36, 34, false),

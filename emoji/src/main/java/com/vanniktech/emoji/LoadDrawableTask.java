@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 public class LoadDrawableTask {
     private static final LoadDrawableTask INSTANCE = new LoadDrawableTask();
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    private final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
+    protected final Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     private LoadDrawableTask() {
     }

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class FoodAndDrinkCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F347, new String[]{"grapes"}, 6, 7, false),
       new IosEmoji(0x1F348, new String[]{"melon"}, 6, 8, false),

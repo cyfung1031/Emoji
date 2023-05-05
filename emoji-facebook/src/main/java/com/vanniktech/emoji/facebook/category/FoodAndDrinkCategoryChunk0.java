@@ -20,7 +20,7 @@ package com.vanniktech.emoji.facebook.category;
 import com.vanniktech.emoji.facebook.FacebookEmoji;
 
 final class FoodAndDrinkCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static FacebookEmoji[] get() {
+  static FacebookEmoji[] get() {
     return new FacebookEmoji[] {
       new FacebookEmoji(0x1F347, new String[]{"grapes"}, 6, 7, false),
       new FacebookEmoji(0x1F348, new String[]{"melon"}, 6, 8, false),

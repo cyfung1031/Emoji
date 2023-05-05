@@ -23,6 +23,8 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
+
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,14 +46,15 @@ public final class EmojiVariantPopup {
   @Nullable private PopupWindow popupWindow;
 
   @Nullable final OnEmojiClickListener listener;
-  @Nullable EmojiImageView rootImageView;
+  @Nullable
+  EmojiImageViewE rootImageView;
 
   public EmojiVariantPopup(@NonNull final View rootView, @Nullable final OnEmojiClickListener listener) {
     this.rootView = rootView;
     this.listener = listener;
   }
 
-  public void show(@NonNull final EmojiImageView clickedImage, @NonNull final Emoji emoji) {
+  public void show(@NonNull final EmojiImageViewE clickedImage, @NonNull final Emoji emoji) {
     dismiss();
 
     rootImageView = clickedImage;

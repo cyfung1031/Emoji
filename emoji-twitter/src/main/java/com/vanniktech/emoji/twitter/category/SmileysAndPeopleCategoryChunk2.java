@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class SmileysAndPeopleCategoryChunk2 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F6B6, new String[]{"walking"}, 37, 27, true,
         new TwitterEmoji(new int[] { 0x1F6B6, 0x1F3FB }, new String[0], 37, 28, false),

@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class SmileysAndPeopleCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F600, new String[]{"grinning"}, 32, 20, false),
       new IosEmoji(0x1F603, new String[]{"smiley"}, 32, 23, false),

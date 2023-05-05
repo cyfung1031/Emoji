@@ -11,7 +11,16 @@
     
     <Space
         android:layout_width="match_parent"
-        android:layout_height="320dp"
+        android:layout_height="100dp"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/clickBtn" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
         />
 
 

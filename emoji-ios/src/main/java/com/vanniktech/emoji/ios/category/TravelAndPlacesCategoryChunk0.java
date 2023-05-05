@@ -20,7 +20,7 @@ package com.vanniktech.emoji.ios.category;
 import com.vanniktech.emoji.ios.IosEmoji;
 
 final class TravelAndPlacesCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static IosEmoji[] get() {
+  static IosEmoji[] get() {
     return new IosEmoji[] {
       new IosEmoji(0x1F30D, new String[]{"earth_africa"}, 5, 12, false),
       new IosEmoji(0x1F30E, new String[]{"earth_americas"}, 5, 13, false),

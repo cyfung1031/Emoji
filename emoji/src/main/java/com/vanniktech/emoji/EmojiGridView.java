@@ -21,6 +21,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import androidx.annotation.NonNull;
@@ -34,7 +35,7 @@ import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
 import java.util.Collection;
 
 class EmojiGridView extends GridView {
-    protected EmojiArrayAdapter emojiArrayAdapter = null;
+    protected ArrayAdapter<Emoji> emojiArrayAdapter = null;
     boolean isRecentEmojiGridView = false;
     private RecentEmoji recentEmojis = null;
 
@@ -59,10 +60,13 @@ class EmojiGridView extends GridView {
                            @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
                            @NonNull Emoji[] emojis, @Nullable final VariantEmoji variantManager){
 
+        /*
         emojiArrayAdapter = new EmojiArrayAdapter(getContext(), emojis, variantManager,
                 onEmojiClickListener, onEmojiLongClickListener);
+*/
 
-        setAdapter(emojiArrayAdapter);
+
+        setAdapter(null);
     }
     public EmojiGridView init(@Nullable final OnEmojiClickListener onEmojiClickListener,
                               @Nullable final OnEmojiLongClickListener onEmojiLongClickListener,
@@ -92,9 +96,6 @@ class EmojiGridView extends GridView {
 
         if (isRecentEmojiGridView) {
 
-            emojiArrayAdapter.updateEmojis(recentEmojis.getRecentEmojis()
-
-            );
         }
     }
 

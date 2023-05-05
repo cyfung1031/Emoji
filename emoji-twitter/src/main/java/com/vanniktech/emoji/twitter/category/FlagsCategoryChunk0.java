@@ -20,7 +20,7 @@ package com.vanniktech.emoji.twitter.category;
 import com.vanniktech.emoji.twitter.TwitterEmoji;
 
 final class FlagsCategoryChunk0 {
-  @SuppressWarnings("PMD.ExcessiveMethodLength") static TwitterEmoji[] get() {
+  static TwitterEmoji[] get() {
     return new TwitterEmoji[] {
       new TwitterEmoji(0x1F3C1, new String[]{"checkered_flag"}, 8, 7, false),
       new TwitterEmoji(0x1F6A9, new String[]{"triangular_flag_on_post"}, 36, 29, false),
