@@ -724,7 +724,7 @@ public class EmojiViewInner extends LinearLayout {
         public void onBindViewHolder(@NonNull FragmentViewHolder holder, int position, @NonNull List<Object> payloads) {
 
             if (holder.itemView instanceof EmojiGrid) {
-                Log.i("2323", "455");
+//                Log.i("2323", "455");
             }
             super.onBindViewHolder(holder, position, payloads);
         }
@@ -732,7 +732,7 @@ public class EmojiViewInner extends LinearLayout {
         @Override
         public void onViewDetachedFromWindow(@NonNull FragmentViewHolder holder) {
             if (holder.itemView instanceof EmojiGrid) {
-                Log.i("2323", "234");
+//                Log.i("2323", "234");
             }
             super.onViewDetachedFromWindow(holder);
         }
