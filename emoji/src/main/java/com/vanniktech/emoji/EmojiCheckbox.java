@@ -27,7 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Px;
 import androidx.appcompat.widget.AppCompatCheckBox;
 
-public class EmojiCheckbox extends AppCompatCheckBox implements EmojiDisplayable {
+public class EmojiCheckbox extends AppCompatCheckBox implements IEmojiDisplayable {
   private float emojiSize;
 
   public EmojiCheckbox(@NonNull final Context context) {

@@ -25,7 +25,7 @@ import com.vanniktech.emoji.emoji.EmojiCategory;
  *
  * @since 0.4.0
  */
-public interface EmojiProvider {
+public interface IEmojiProvider {
   /**
    * @return The Array of categories.
    * @since 0.4.0

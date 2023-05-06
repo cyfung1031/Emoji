@@ -19,7 +19,9 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
+
 import com.vanniktech.emoji.emoji.Emoji;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public final class RecentEmojiManager2 implements RecentEmoji {
+public final class RecentEmojiManager2 implements IRecentEmoji {
     private static final String PREFERENCE_NAME = "emoji-recent-manager";
     private static final String TIME_DELIMITER = ";";
     private static final String EMOJI_DELIMITER = "~";
@@ -77,8 +79,12 @@ public final class RecentEmojiManager2 implements RecentEmoji {
         return emojiList.getEmojis();
     }
 
+    public void clear() {
+        if(emojiList != null) emojiList.clear();
+    }
+
     @Override public void addEmoji(@NonNull final Emoji emoji) {
-        emojiList.add(emoji, System.currentTimeMillis());
+        emojiList.add(emoji);
     }
 
     @Override public void persist() {
@@ -118,6 +124,8 @@ public final class RecentEmojiManager2 implements RecentEmoji {
             emojis = new ArrayList<>(size);
         }
 
+        private static long lastAddTimeStamp = 0L;
+
         void add(final Emoji emoji) {
             add(emoji, System.currentTimeMillis());
         }
@@ -126,7 +134,11 @@ public final class RecentEmojiManager2 implements RecentEmoji {
             add(emoji, timestamp, 1);
         }
 
-        void add(final Emoji emoji, final long timestamp, final int clickCount) {
+        void add(final Emoji emoji, long timestamp, final int clickCount) {
+            if (timestamp <= lastAddTimeStamp) {
+                timestamp = ++lastAddTimeStamp;
+            }
+            lastAddTimeStamp = timestamp;
             final Iterator<Data> iterator = emojis.iterator();
 
             final Emoji emojiBase = emoji.getBase();
@@ -170,6 +182,7 @@ public final class RecentEmojiManager2 implements RecentEmoji {
         Data get(final int index) {
             return emojis.get(index);
         }
+        void clear(){emojis.clear();}
     }
 
     static class Data {

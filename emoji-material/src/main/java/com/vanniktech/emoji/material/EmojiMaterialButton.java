@@ -25,10 +25,10 @@ import androidx.annotation.CallSuper;
 import androidx.annotation.DimenRes;
 import androidx.annotation.Px;
 import com.google.android.material.button.MaterialButton;
-import com.vanniktech.emoji.EmojiDisplayable;
+import com.vanniktech.emoji.IEmojiDisplayable;
 import com.vanniktech.emoji.EmojiManager;
 
-public class EmojiMaterialButton extends MaterialButton implements EmojiDisplayable {
+public class EmojiMaterialButton extends MaterialButton implements IEmojiDisplayable {
   private float emojiSize;
 
   public EmojiMaterialButton(final Context context) {

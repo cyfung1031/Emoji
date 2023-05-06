@@ -25,11 +25,7 @@ import java.util.Collections;
 /**
  * Use this class to hide recent Emoji.
  */
-public final class NoRecentEmoji implements RecentEmoji {
-    public static final RecentEmoji INSTANCE = new NoRecentEmoji();
-
-    private NoRecentEmoji() {
-    }
+public final class NoRecentEmoji implements IRecentEmoji {
 
     @NonNull @Override public Collection<Emoji> getRecentEmojis() {
         return Collections.emptyList();
@@ -40,6 +36,9 @@ public final class NoRecentEmoji implements RecentEmoji {
     }
 
     @Override public void persist() {
+        // Do nothing.
+    }
+    @Override public void clear() {
         // Do nothing.
     }
 }

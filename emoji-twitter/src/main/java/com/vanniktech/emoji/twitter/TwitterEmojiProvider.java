@@ -18,7 +18,7 @@
 package com.vanniktech.emoji.twitter;
 
 import androidx.annotation.NonNull;
-import com.vanniktech.emoji.EmojiProvider;
+import com.vanniktech.emoji.IEmojiProvider;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.twitter.category.ActivitiesCategory;
 import com.vanniktech.emoji.twitter.category.AnimalsAndNatureCategory;
@@ -29,7 +29,7 @@ import com.vanniktech.emoji.twitter.category.SmileysAndPeopleCategory;
 import com.vanniktech.emoji.twitter.category.SymbolsCategory;
 import com.vanniktech.emoji.twitter.category.TravelAndPlacesCategory;
 
-public final class TwitterEmojiProvider implements EmojiProvider {
+public final class TwitterEmojiProvider implements IEmojiProvider {
   @Override @NonNull public EmojiCategory[] getCategories() {
     return new EmojiCategory[] {
       new SmileysAndPeopleCategory(),

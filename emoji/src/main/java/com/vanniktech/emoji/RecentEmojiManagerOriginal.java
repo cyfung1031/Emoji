@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public final class RecentEmojiManagerOriginal implements RecentEmoji {
+public final class RecentEmojiManagerOriginal implements IRecentEmoji {
   private static final String PREFERENCE_NAME = "emoji-recent-manager";
   private static final String TIME_DELIMITER = ";";
   private static final String EMOJI_DELIMITER = "~";
@@ -98,6 +98,10 @@ public final class RecentEmojiManagerOriginal implements RecentEmoji {
     }
   }
 
+  public void clear(){
+    emojiList.clear();
+  }
+
   static class EmojiList {
     static final Comparator<Data> COMPARATOR = new Comparator<Data>() {
       @Override public int compare(final Data lhs, final Data rhs) {
@@ -152,6 +156,9 @@ public final class RecentEmojiManagerOriginal implements RecentEmoji {
 
     Data get(final int index) {
       return emojis.get(index);
+    }
+    void clear(){
+      emojis.clear();
     }
   }
 

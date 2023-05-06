@@ -21,8 +21,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.emoji.text.EmojiCompat;
 import android.text.Spannable;
-import com.vanniktech.emoji.EmojiProvider;
-import com.vanniktech.emoji.EmojiReplacer;
+import com.vanniktech.emoji.IEmojiProvider;
+import com.vanniktech.emoji.IEmojiReplacer;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.googlecompat.category.ActivitiesCategory;
 import com.vanniktech.emoji.googlecompat.category.AnimalsAndNatureCategory;
@@ -33,7 +33,7 @@ import com.vanniktech.emoji.googlecompat.category.SmileysAndPeopleCategory;
 import com.vanniktech.emoji.googlecompat.category.SymbolsCategory;
 import com.vanniktech.emoji.googlecompat.category.TravelAndPlacesCategory;
 
-public final class GoogleCompatEmojiProvider implements EmojiProvider, EmojiReplacer {
+public final class GoogleCompatEmojiProvider implements IEmojiProvider, IEmojiReplacer {
   public GoogleCompatEmojiProvider(@NonNull final EmojiCompat emojiCompat) {
     if (emojiCompat == null) {
       throw new NullPointerException();
@@ -53,7 +53,7 @@ public final class GoogleCompatEmojiProvider implements EmojiProvider, EmojiRepl
     };
   }
 
-  @Override public void replaceWithImages(final Context context, final Spannable text, final float emojiSize, final EmojiReplacer fallback) {
+  @Override public void replaceWithImages(final Context context, final Spannable text, final float emojiSize, final IEmojiReplacer fallback) {
     if (EmojiCompat.get().getLoadState() != EmojiCompat.LOAD_STATE_SUCCEEDED
             || EmojiCompat.get().process(text, 0, text.length()) != text) {
       fallback.replaceWithImages(context, text, emojiSize, null);

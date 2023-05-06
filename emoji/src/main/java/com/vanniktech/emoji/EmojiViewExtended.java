@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -75,9 +74,9 @@ public class EmojiViewExtended extends EmojiViewInner{
 
 
     @NonNull
-    RecentEmoji recentEmoji;
+    IRecentEmoji recentEmoji;
     @NonNull
-    VariantEmoji variantEmoji;
+    IVariantEmoji variantEmoji;
 
 
     @NonNull
@@ -98,15 +97,15 @@ public class EmojiViewExtended extends EmojiViewInner{
     }
 
 
-    public void setRecentEmoji(@NonNull RecentEmoji recentEmoji) {
+    public void setRecentEmoji(@NonNull IRecentEmoji recentEmoji) {
         this.recentEmoji = recentEmoji;
     }
 
-    public void setVariantEmoji(@NonNull VariantEmoji variantEmoji) {
+    public void setVariantEmoji(@NonNull IVariantEmoji variantEmoji) {
         this.variantEmoji = variantEmoji;
     }
 
-    public void backgroundUpdateRecentEmoji(@NonNull final EmojiImageViewGeneral imageView, @NonNull final Emoji emoji){
+    public void backgroundUpdateRecentEmoji(@NonNull final EmojiImageViewG imageView, @NonNull final Emoji emoji){
 
         bH.post(new Runnable() {
             @Override
@@ -163,7 +162,7 @@ public class EmojiViewExtended extends EmojiViewInner{
     }
 
 
-    public void onEmojiLongClick(@NonNull final EmojiImageViewGeneral view, @NonNull final Emoji emoji) {
+    public void onEmojiLongClick(@NonNull final EmojiImageViewG view, @NonNull final Emoji emoji) {
 
         variantPopup.show(view, emoji);
     }
@@ -177,7 +176,7 @@ public class EmojiViewExtended extends EmojiViewInner{
 //        backspace(editText);
     }
 
-    public void onEmojiClick(@NonNull final EmojiImageViewGeneral imageView, @NonNull final Emoji emoji) {
+    public void onEmojiClick(@NonNull final EmojiImageViewG imageView, @NonNull final Emoji emoji) {
 
         int nextTaskNum = commitOneEmoji(emoji);
 
@@ -199,9 +198,9 @@ public class EmojiViewExtended extends EmojiViewInner{
         @Nullable
         ViewPager2.PageTransformer pageTransformer2;
         @NonNull
-        RecentEmoji recentEmoji;
+        IRecentEmoji recentEmoji;
         @NonNull
-        VariantEmoji variantEmoji;
+        IVariantEmoji variantEmoji;
 
         protected EmojiViewControllerBase(Context context) {
             initByContext(context);
@@ -270,12 +269,12 @@ public class EmojiViewExtended extends EmojiViewInner{
         }
 
         @NonNull
-        public RecentEmoji getRecentEmoji() {
+        public IRecentEmoji getRecentEmoji() {
             return recentEmoji;
         }
 
         @NonNull
-        public VariantEmoji getVariantEmoji() {
+        public IVariantEmoji getVariantEmoji() {
             return variantEmoji;
         }
 
@@ -324,7 +323,7 @@ public class EmojiViewExtended extends EmojiViewInner{
 
 
         public void controller(int msgId){
-            EmojiImageViewGeneral popupRootImageView = this.popupRootImageView != null ?  this.popupRootImageView.get():null;
+            EmojiImageViewG popupRootImageView = this.popupRootImageView != null ?  this.popupRootImageView.get():null;
             Emoji popupVariant = this.popupVariant != null ?  this.popupVariant.get():null;
             EmojiViewInner emojiViewInner = this.emojiViewInner != null ?  this.emojiViewInner.get():null;
             switch (msgId){
@@ -357,11 +356,11 @@ public class EmojiViewExtended extends EmojiViewInner{
 
         }
 
-        public WeakReference<EmojiImageViewGeneral> popupRootImageView = null;
+        public WeakReference<EmojiImageViewG> popupRootImageView = null;
         public WeakReference<Emoji> popupVariant = null;
 
         @Override
-        public void setPopupRootImageView(EmojiImageViewGeneral rootImageView) {
+        public void setPopupRootImageView(EmojiImageViewG rootImageView) {
             popupRootImageView = new WeakReference<>(rootImageView);
 
         }
@@ -406,12 +405,12 @@ public class EmojiViewExtended extends EmojiViewInner{
         }
 
 
-        WeakReference<EmojiGridInner> recentEmojiGridViewWR = null;
-        public void setRecentEmojiGridView(EmojiGridInner newView){
+        WeakReference<EmojiGrid> recentEmojiGridViewWR = null;
+        public void setRecentEmojiGridView(EmojiGrid newView){
             recentEmojiGridViewWR = new WeakReference<>(newView);
 
         }
-        public EmojiGridInner getRecentEmojiGridView(){
+        public EmojiGrid getRecentEmojiGridView(){
             return recentEmojiGridViewWR != null ? recentEmojiGridViewWR.get(): null;
         }
 

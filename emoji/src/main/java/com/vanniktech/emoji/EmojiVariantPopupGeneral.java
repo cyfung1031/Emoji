@@ -36,26 +36,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.vanniktech.emoji.emoji.Emoji;
-import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 
 public final class EmojiVariantPopupGeneral {
   private static final int MARGIN = 2;
 
-  @NonNull private final View rootView;
+  @Nullable private WeakReference<View>  rootViewWR = null;
   @Nullable private PopupWindow popupWindow;
 
   @NonNull final EmojiViewController controller;
-  @Nullable EmojiImageViewGeneral rootImageView;
+  @Nullable
+  EmojiImageViewG rootImageView;
 
   public EmojiVariantPopupGeneral(@NonNull final View rootView, @NonNull final EmojiViewController controller) {
-    this.rootView = rootView;
+    this.rootViewWR = new WeakReference<>(rootView);
     this.controller = controller;
   }
 
-  public void show(@NonNull final EmojiImageViewGeneral clickedImage, @NonNull final Emoji emoji) {
+  public void show(@NonNull final EmojiImageViewG clickedImage, @NonNull final Emoji emoji) {
     dismiss();
+
+    View rootView =  rootViewWR != null ? rootViewWR.get():null;
+    if(rootView==null) return;
 
     rootImageView = clickedImage;
 
@@ -74,7 +78,6 @@ public final class EmojiVariantPopupGeneral {
             location.x - content.getMeasuredWidth() / 2 + clickedImage.getWidth() / 2,
             location.y - content.getMeasuredHeight()
     );
-
     popupWindow.showAtLocation(rootView, Gravity.NO_GRAVITY, desiredLocation.x, desiredLocation.y);
     rootImageView.getParent().requestDisallowInterceptTouchEvent(true);
     Utils.fixPopupLocation(popupWindow, desiredLocation);

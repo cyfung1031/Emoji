@@ -19,7 +19,7 @@ package com.vanniktech.emoji;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
-public interface EmojiEditable extends EmojiDisplayable {
+public interface IEmojiEditable extends IEmojiDisplayable {
   /** Issues a backspace. */
   void backspace();
 

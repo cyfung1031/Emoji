@@ -5,7 +5,7 @@ import com.vanniktech.emoji.EmojiUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class EmojiEdgeCaseTest {
   @Before public void setUp() {

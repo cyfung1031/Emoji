@@ -53,12 +53,6 @@ public class TwitterEmoji extends Emoji {
   private final int y;
 
 
-
-  public int getIconResIdX() {
-    return SHEET_RESOURCE_IDS[x];
-  }
-
-
   public TwitterEmoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes, final int x, final int y,
                      final boolean isDuplicate) {
     super(codePoints, shortcodes, -1, isDuplicate);

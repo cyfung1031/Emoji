@@ -20,7 +20,7 @@ package com.vanniktech.emoji;
 import androidx.annotation.DimenRes;
 import androidx.annotation.Px;
 
-public interface EmojiDisplayable {
+public interface IEmojiDisplayable {
   /** Returns the emoji size */
   float getEmojiSize();
 

@@ -91,7 +91,7 @@ EmojiManager.install(new TwitterEmojiProvider());
 
 ## Custom Emojis
 
-If you want to display your own Emojis you can create your own implementation of [`EmojiProvider`](emoji/src/main/java/com/vanniktech/emoji/EmojiProvider.java) and pass it to `EmojiManager.install`.
+If you want to display your own Emojis you can create your own implementation of [`IEmojiProvider`](emoji/src/main/java/com/vanniktech/emoji/IEmojiProvider.java) and pass it to `EmojiManager.install`.
 
 All of the core API lays in `emoji`, which is being pulled in automatically by the provided implementations:
 
@@ -155,7 +155,7 @@ setOnEmojiBackspaceClickListener(OnEmojiBackspaceClickListener listener);
 
 #### Custom Recent Emoji implementation
 
-You can pass your own implementation of the recent Emojis. Implement the [`RecentEmoji`](emoji/src/main/java/com/vanniktech/emoji/RecentEmoji.java) interface and pass it when you're building the [`EmojiPopup`](emoji/src/main/java/com/vanniktech/emoji/EmojiPopup.java):
+You can pass your own implementation of the recent Emojis. Implement the [`IRecentEmoji`](emoji/src/main/java/com/vanniktech/emoji/IRecentEmoji.java) interface and pass it when you're building the [`EmojiPopup`](emoji/src/main/java/com/vanniktech/emoji/EmojiPopup.java):
 
 ```java
 setRecentEmoji(yourClassThatImplementsRecentEmoji)
@@ -165,7 +165,7 @@ If no instance or a null instance is set the [default implementation](./emoji/sr
 
 #### Custom Variant Emoji implementation
 
-You can pass your own implementation of the variant Emojis. Implement the [`VariantEmoji`](emoji/src/main/java/com/vanniktech/emoji/VariantEmoji.java) interface and pass it when you're building the [`EmojiPopup`](emoji/src/main/java/com/vanniktech/emoji/EmojiPopup.java):
+You can pass your own implementation of the variant Emojis. Implement the [`IVariantEmoji`](emoji/src/main/java/com/vanniktech/emoji/IVariantEmoji.java) interface and pass it when you're building the [`EmojiPopup`](emoji/src/main/java/com/vanniktech/emoji/EmojiPopup.java):
 
 ```java
 setVariantEmoji(yourClassThatImplementsVariantEmoji)

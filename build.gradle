@@ -89,15 +89,15 @@ ext {
   supportCardView = "androidx.cardview:cardview:1.0.0"
   supportAnnotations = "androidx.annotation:annotation:1.6.0"
   supportEmoji = "androidx.emoji:emoji-appcompat:1.0.0"
-  supportViewPager2 = "androidx.viewpager2:viewpager2:1.0.0"
+  supportViewPager2 = "androidx.viewpager2:viewpager2:1.1.0-beta01"
 
   leakCanaryDebug = "com.squareup.leakcanary:leakcanary-android:$leakCanaryVersion"
 
   testing = [
           junit             : 'junit:junit:4.13.2',
-          robolectric       : 'org.robolectric:robolectric:4.10',
+          robolectric       : 'org.robolectric:robolectric:4.10.2',
           privateConstructor: 'com.pushtorefresh.java-private-constructor-checker:checker:1.2.0',
-          assertJ           : 'org.assertj:assertj-core:2.9.1'
+          assertJ           : 'org.assertj:assertj-core:3.21.0'
   ]
 
   javaVersion = JavaVersion.VERSION_1_8

@@ -1,6 +1,5 @@
 package com.vanniktech.emoji;
 
-import android.content.Context;
 import android.widget.PopupWindow;
 
 import com.vanniktech.emoji.emoji.Emoji;
@@ -9,7 +8,7 @@ public interface EmojiViewController {
 
     public void controller(int msgId);
 
-    void setPopupRootImageView(EmojiImageViewGeneral rootImageView);
+    void setPopupRootImageView(EmojiImageViewG rootImageView);
 
     void setPopupVariant(Emoji variant);
 
@@ -22,8 +21,8 @@ public interface EmojiViewController {
 
     EmojiViewInner getEmojiViewInner();
 
-    void setRecentEmojiGridView(EmojiGridInner newView);
-    EmojiGridInner getRecentEmojiGridView();
+    void setRecentEmojiGridView(EmojiGrid newView);
+    EmojiGrid getRecentEmojiGridView();
 
     void setPopupViewWindow(PopupWindow popupWindow);
 

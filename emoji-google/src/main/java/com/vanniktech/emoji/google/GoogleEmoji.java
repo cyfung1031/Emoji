@@ -51,11 +51,6 @@ public class GoogleEmoji extends Emoji {
   }
 
 
-  public int getIconResIdX() {
-    return SHEET_RESOURCE_IDS[x];
-  }
-
-
   private final int x;
   private final int y;
 

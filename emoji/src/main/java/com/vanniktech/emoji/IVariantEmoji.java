@@ -19,37 +19,39 @@ package com.vanniktech.emoji;
 
 import androidx.annotation.NonNull;
 import com.vanniktech.emoji.emoji.Emoji;
-import java.util.Collection;
 
 /**
- * Interface for providing some custom implementation for recent emojis.
+ * Interface for providing some custom implementation for variant emojis.
  *
- * @since 0.2.0
+ * @since 0.5.0
  */
-public interface RecentEmoji {
+public interface IVariantEmoji {
   /**
-   * Returns the recent emojis. Could be loaded from a database, shared preferences or just hard
+   * Returns the variant for the passed emoji. Could be loaded from a database, shared preferences or just hard
    * coded.<br>
    *
    * This method will be called more than one time hence it is recommended to hold a collection of
-   * recent emojis.
+   * desired emojis.
    *
-   * @since 0.2.0
+   * @param desiredEmoji The emoji to retrieve the variant for. If none is found,
+   *                     the passed emoji should be returned.
+   * @since 0.5.0
    */
-  @NonNull Collection<Emoji> getRecentEmojis();
+  @NonNull Emoji getVariant(Emoji desiredEmoji);
 
   /**
-   * Should add the emoji to the recent ones. After calling this method, {@link #getRecentEmojis()}
+   * Should add the emoji to the variants. After calling this method, {@link #getVariant(Emoji)}
    * should return the emoji that was just added.
    *
-   * @since 0.2.0
+   * @param newVariant The new variant to save.
+   * @since 0.5.0
    */
-  void addEmoji(@NonNull Emoji emoji);
+  void addVariant(@NonNull Emoji newVariant);
 
   /**
    * Should persist all emojis.
    *
-   * @since 0.2.0
+   * @since 0.5.0
    */
   void persist();
 }

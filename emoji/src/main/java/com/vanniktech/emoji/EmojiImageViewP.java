@@ -22,14 +22,12 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
 
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,7 +36,7 @@ import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.listeners.OnEmojiClickListener;
 import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
 
-public final class EmojiImageView extends EmojiImageViewE {
+public final class EmojiImageViewP extends EmojiImageViewE {
   private static final int VARIANT_INDICATOR_PART_AMOUNT = 6;
   private static final int VARIANT_INDICATOR_PART = 5;
 
@@ -50,9 +48,9 @@ public final class EmojiImageView extends EmojiImageViewE {
   private final Paint variantIndicatorPaint = new Paint();
   private final Path variantIndicatorPath = new Path();
 
-  private final Point variantIndicatorTop = new Point();
-  private final Point variantIndicatorBottomRight = new Point();
-  private final Point variantIndicatorBottomLeft = new Point();
+  private final PointF variantIndicatorTop = new PointF();
+  private final PointF variantIndicatorBottomRight = new PointF();
+  private final PointF variantIndicatorBottomLeft = new PointF();
 
   private boolean hasVariants;
 
@@ -76,17 +74,17 @@ public final class EmojiImageView extends EmojiImageViewE {
     variantIndicatorPaint.setStyle(Paint.Style.FILL);
     variantIndicatorPaint.setAntiAlias(true);
   }
-  public EmojiImageView(Context context) {
+  public EmojiImageViewP(Context context) {
     super(context);
     init(context);
   }
 
-  public EmojiImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+  public EmojiImageViewP(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
     init(context);
   }
 
-  public EmojiImageView(final Context context, final AttributeSet attrs) {
+  public EmojiImageViewP(final Context context, final AttributeSet attrs) {
     super(context, attrs);
     init(context);
   }
@@ -103,12 +101,18 @@ public final class EmojiImageView extends EmojiImageViewE {
   @Override protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
     super.onSizeChanged(w, h, oldw, oldh);
 
-    variantIndicatorTop.x = w;
-    variantIndicatorTop.y = h / VARIANT_INDICATOR_PART_AMOUNT * VARIANT_INDICATOR_PART;
-    variantIndicatorBottomRight.x = w;
-    variantIndicatorBottomRight.y = h;
-    variantIndicatorBottomLeft.x = w / VARIANT_INDICATOR_PART_AMOUNT * VARIANT_INDICATOR_PART;
-    variantIndicatorBottomLeft.y = h;
+    float w2 = w-0;
+    float h2 = h-0;
+
+    float h2k = ((float)(h2 * VARIANT_INDICATOR_PART)) / ((float)VARIANT_INDICATOR_PART_AMOUNT);
+    float w2k = ((float)(w2 * VARIANT_INDICATOR_PART)) / ((float)VARIANT_INDICATOR_PART_AMOUNT);
+
+    variantIndicatorTop.x = w2;
+    variantIndicatorTop.y = h2k;
+    variantIndicatorBottomRight.x = w2;
+    variantIndicatorBottomRight.y = h2;
+    variantIndicatorBottomLeft.x = w2k;
+    variantIndicatorBottomLeft.y = h2;
 
     variantIndicatorPath.rewind();
     variantIndicatorPath.moveTo(variantIndicatorTop.x, variantIndicatorTop.y);
@@ -151,7 +155,7 @@ public final class EmojiImageView extends EmojiImageViewE {
 //      ImageBackgroundLoader ibl =  ImageBackgroundLoader.build(mContext);
 
 
-      loadDrawable(getContext(),EmojiImageView.this, currentEmoji);
+      loadDrawable(getContext(), EmojiImageViewP.this, currentEmoji);
 
 
 //      LoadDrawableTask.getInstance().loadDrawable(getContext(),EmojiImageView.this, currentEmoji);
@@ -170,13 +174,13 @@ public final class EmojiImageView extends EmojiImageViewE {
   public void onEmojiClick(final View view){
 
     if (clickListener != null) {
-      clickListener.onEmojiClick(EmojiImageView.this, currentEmoji);
+      clickListener.onEmojiClick(EmojiImageViewP.this, currentEmoji);
     }
   }
 
   public boolean onEmojiLongPress(final View view){
 
-    longClickListener.onEmojiLongClick(EmojiImageView.this, currentEmoji);
+    longClickListener.onEmojiLongClick(EmojiImageViewP.this, currentEmoji);
 
     return true;
   }

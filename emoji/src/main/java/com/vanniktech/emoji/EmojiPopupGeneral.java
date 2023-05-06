@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.ResultReceiver;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
@@ -60,22 +61,33 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IPopup {
+public final class EmojiPopupGeneral implements IPopup {
     static final int MIN_KEYBOARD_HEIGHT = 50;
     static final int APPLY_WINDOW_INSETS_DURATION = 250;
-    public final EditText editText;
+    public WeakReference<EditText> editTextWR = null;
     public final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
-    public final EmojiViewInner mEmojiView;
-    final View rootView;
-    final Activity context;
+//    public WeakReference<EmojiViewInner> mEmojiViewWR = null;
+     WeakReference<View> rootViewWR = null;
+     WeakReference<Activity>  contextWR = null;
     @NonNull
-    final RecentEmoji recentEmoji;
+    final IRecentEmoji recentEmoji;
     @NonNull
-    final VariantEmoji variantEmoji;
+    final IVariantEmoji variantEmoji;
     @NonNull
     final EmojiVariantPopupGeneral variantPopup;
     final PopupWindow popupWindow;
-    final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper()));
+    final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper())) {
+        @Override
+        public void onReceiveResult(int resultCode, Bundle data) {
+            if(!this.enabled) return;
+
+            if (resultCode == 0 || resultCode == 1) {
+
+                this.enabled = false;
+                EmojiPopupGeneral.this.showAtBottom();
+            }
+        }
+    };
     boolean isPendingOpen;
     boolean isKeyboardOpen;
     @Nullable
@@ -114,9 +126,11 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     private int delay;
 
     EmojiPopupGeneral(@NonNull final EmojiPopupGeneral.Builder builder, @NonNull final EditText editText) {
-        this.context = Utils.asActivity(builder.rootView.getContext());
-        this.rootView = builder.rootView.getRootView();
-        this.editText = editText;
+        Activity context = Utils.asActivity(builder.rootView.getContext());
+        View rootView = builder.rootView.getRootView();
+        this.contextWR = new WeakReference<>(context);
+        this.rootViewWR = new WeakReference<>(rootView);
+        this.editTextWR = new WeakReference<>(editText);
         this.recentEmoji = builder.recentEmoji;
         this.variantEmoji = builder.variantEmoji;
 
@@ -124,7 +138,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 //    variantPopup = new EmojiVariantPopup(rootView, internalOnEmojiClickListener);
 
         final MyEmojiView myEmojiView = new MyEmojiView(context);
-        mEmojiView = myEmojiView;
+//        mEmojiView = myEmojiView;
         myEmojiView.popupBuilder = builder;
     /*
 
@@ -138,7 +152,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 //    popupWindow.setContentView(emojiView);
         popupWindow.setContentView(new FrameLayout(context));
         ((FrameLayout) popupWindow.getContentView()).addView(myEmojiView);
-        myEmojiView.setup(this.rootView);
+        myEmojiView.setup(rootView);
         variantPopup = myEmojiView.variantPopup;
 
 
@@ -163,6 +177,8 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     public void onPopupDismiss() {
+        EditText editText = editTextWR != null ? editTextWR.get() : null;
+
         if (editText instanceof EmojiEditText && ((EmojiEditText) editText).isKeyboardInputDisabled()) {
             editText.clearFocus();
         }
@@ -172,6 +188,10 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     void updateKeyboardStateOpened(final int keyboardHeight) {
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
+
         if (popupWindowHeight > 0 && popupWindow.getHeight() != popupWindowHeight) {
             popupWindow.setHeight(popupWindowHeight);
         } else if (popupWindowHeight == 0 && popupWindow.getHeight() != keyboardHeight) {
@@ -227,6 +247,9 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 //    }
 
     public void toggle() {
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
 //        Log.i("WSS", "WW");
         if (!popupWindow.isShowing()) {
             // this is needed because something might have cleared the insets listener
@@ -239,6 +262,13 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     public void show() {
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
+
+        EditText editText = editTextWR != null ? editTextWR.get() : null;
+        if(editText == null) return;
+
         if (Utils.shouldOverrideRegularCondition(context, editText) && originalImeOptions == -1) {
             originalImeOptions = editText.getImeOptions();
         }
@@ -250,10 +280,15 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     private void showAtBottomPending() {
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
+
+        EditText editText = editTextWR != null ? editTextWR.get() : null;
         isPendingOpen = true;
         final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        if (Utils.shouldOverrideRegularCondition(context, editText)) {
+        if (editText != null &&  Utils.shouldOverrideRegularCondition(context, editText)) {
             editText.setImeOptions(editText.getImeOptions() | EditorInfo.IME_FLAG_NO_EXTRACT_UI);
             if (inputMethodManager != null) {
                 inputMethodManager.restartInput(editText);
@@ -261,7 +296,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         }
 
         if (inputMethodManager != null) {
-            emojiResultReceiver.setReceiver(this);
+            emojiResultReceiver.enabled = true;
             inputMethodManager.showSoftInput(editText, InputMethodManager.RESULT_UNCHANGED_SHOWN, emojiResultReceiver);
         }
     }
@@ -271,19 +306,28 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     public void dismiss() {
+        EditText editText = editTextWR != null ? editTextWR.get() : null;
+
         popupWindow.dismiss();
         variantPopup.dismiss();
         recentEmoji.persist();
         variantEmoji.persist();
 
-        emojiResultReceiver.setReceiver(null);
+        emojiResultReceiver.enabled = false;
+
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
 
         if (originalImeOptions != -1) {
-            editText.setImeOptions(originalImeOptions);
-            final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (editText != null) {
+                editText.setImeOptions(originalImeOptions);
 
-            if (inputMethodManager != null) {
-                inputMethodManager.restartInput(editText);
+                final InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+                if (inputMethodManager != null) {
+                    inputMethodManager.restartInput(editText);
+                }
             }
 
             if (SDK_INT >= O) {
@@ -298,6 +342,16 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     void showAtBottom() {
         if (isPendingOpen) {
             isPendingOpen = false;
+
+
+            Activity context = contextWR != null ? contextWR.get() : null;
+            if(context == null) return;
+
+            View rootView = rootViewWR != null ? rootViewWR.get() : null;
+            if(rootView == null) return;
+
+            EditText editText = editTextWR != null ? editTextWR.get() : null;
+            if(editText == null) return;
             editText.post(new Runnable() {
                 @Override
                 public void run() {
@@ -312,19 +366,18 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         }
     }
 
-    @Override
-    public void onReceiveResult(final int resultCode, final Bundle data) {
-        if (resultCode == 0 || resultCode == 1) {
-            showAtBottom();
-        }
-    }
-
     public void start() {
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
         ViewCompat.setOnApplyWindowInsetsListener(context.getWindow().getDecorView(), new EmojiPopUpOnApplyWindowInsetsListener(this));
     }
 
     void stop() {
         dismiss();
+
+        Activity context = contextWR != null ? contextWR.get() : null;
+        if(context == null) return;
         ViewCompat.setOnApplyWindowInsetsListener(context.getWindow().getDecorView(), null);
         popupWindow.setOnDismissListener(null);
     }
@@ -357,9 +410,9 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         @Nullable
         OnEmojiPopupDismissListener onEmojiPopupDismissListener;
         @NonNull
-        RecentEmoji recentEmoji;
+        IRecentEmoji recentEmoji;
         @NonNull
-        VariantEmoji variantEmoji;
+        IVariantEmoji variantEmoji;
         int popupWindowHeight;
 
         private Builder(final View rootView) {
@@ -521,7 +574,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         }
 
         @NonNull
-        public RecentEmoji getRecentEmoji() {
+        public IRecentEmoji getRecentEmoji() {
             return recentEmoji;
         }
 
@@ -532,13 +585,13 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
          * @since 0.2.0
          */
         @CheckResult
-        public Builder setRecentEmoji(@NonNull final RecentEmoji recent) {
+        public Builder setRecentEmoji(@NonNull final IRecentEmoji recent) {
             recentEmoji = Objects.requireNonNull(recent, "recent can't be null");
             return this;
         }
 
         @NonNull
-        public VariantEmoji getVariantEmoji() {
+        public IVariantEmoji getVariantEmoji() {
             return variantEmoji;
         }
 
@@ -549,7 +602,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
          * @since 0.5.0
          */
         @CheckResult
-        public Builder setVariantEmoji(@NonNull final VariantEmoji variant) {
+        public Builder setVariantEmoji(@NonNull final IVariantEmoji variant) {
             variantEmoji = Objects.requireNonNull(variant, "variant can't be null");
             return this;
         }
@@ -638,17 +691,19 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
                     offset = insets.getSystemWindowInsetBottom() - insets.getStableInsetBottom();
                 }
 
+                Activity context = popup.contextWR != null ? popup.contextWR.get() : null;
+
                 if (offset != previousOffset || offset == 0) {
                     previousOffset = offset;
 
-                    if (offset > Utils.dpToPx(popup.context, MIN_KEYBOARD_HEIGHT)) {
+                    if (offset > Utils.dpToPx(context, MIN_KEYBOARD_HEIGHT)) {
                         popup.updateKeyboardStateOpened(offset);
                     } else {
                         popup.updateKeyboardStateClosed();
                     }
                 }
 
-                return ViewCompat.onApplyWindowInsets(popup.context.getWindow().getDecorView(), insets);
+                return ViewCompat.onApplyWindowInsets(context.getWindow().getDecorView(), insets);
             }
 
             return insets;
@@ -683,7 +738,10 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         public void onEmojiBackspaceClicked(View v) {
 
 
-            backspace(editText);
+            EditText editText = editTextWR != null ? editTextWR.get() : null;
+            if(editText != null) {
+                backspace(editText);
+            }
 
             if (onEmojiBackspaceClickListener != null) {
                 onEmojiBackspaceClickListener.onEmojiBackspaceClicked(v);
@@ -693,10 +751,14 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 
 
         @Override
-        public void onEmojiClick(@NonNull EmojiImageViewGeneral imageView, @NonNull Emoji emoji) {
+        public void onEmojiClick(@NonNull EmojiImageViewG imageView, @NonNull Emoji emoji) {
 
 //      Log.i("onEmojiClick", editText.getText()+"");
-            Utils.input(editText, emoji);
+
+            EditText editText = editTextWR != null ? editTextWR.get() : null;
+            if(editText != null) {
+                Utils.input(editText, emoji);
+            }
 
             recentEmoji.addEmoji(emoji);
             variantEmoji.addVariant(emoji);
@@ -711,7 +773,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         }
 
         @Override
-        public void onEmojiLongClick(@NonNull EmojiImageViewGeneral view, @NonNull Emoji emoji) {
+        public void onEmojiLongClick(@NonNull EmojiImageViewG view, @NonNull Emoji emoji) {
 
 
             variantPopup.show(view, emoji);
@@ -719,6 +781,24 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
 
 
     }
+
+
+    public static class EmojiResultReceiver extends ResultReceiver {
+
+        public boolean enabled = false;
+
+        /**
+         * Create a new EmojiResultReceiver to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         */
+        EmojiResultReceiver(final Handler handler) {
+            super(handler);
+            enabled = false;
+        }
+
+    }
+
 
 
 }

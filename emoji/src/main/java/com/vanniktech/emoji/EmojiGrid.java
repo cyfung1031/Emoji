@@ -40,13 +40,13 @@ import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Objects;
 
-class EmojiGridInner extends GridView {
-    protected EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
+class EmojiGrid extends GridView {
+    protected EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
     boolean isRecentEmojiGridView = false;
-    private WeakReference<RecentEmoji> recentEmojisWR = null;
+    private WeakReference<IRecentEmoji> recentEmojisWR = null;
     private EmojiViewController emojiViewController = null;
 
-    EmojiGridInner(final Context context) {
+    EmojiGrid(final Context context) {
         super(context);
     }
 
@@ -61,11 +61,11 @@ class EmojiGridInner extends GridView {
 
     public void destroyView() {
 
-        EmojiGridInner emojiGridInner = (EmojiGridInner) this;
-        boolean isAdapterValid = emojiGridInner.clearAdapter();
+        EmojiGrid emojiGrid = (EmojiGrid) this;
+        boolean isAdapterValid = emojiGrid.clearAdapter();
         if (isAdapterValid) {
-            emojiGridInner.emojiArrayAdapterG = null;
-            emojiGridInner.isRecentEmojiGridView = false;
+            emojiGrid.emojiArrayAdapterG = null;
+            emojiGrid.isRecentEmojiGridView = false;
         }
     }
 
@@ -111,8 +111,8 @@ class EmojiGridInner extends GridView {
         setAdapter(emojiArrayAdapter);
     }
 
-    public EmojiGridInner init(@NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
-                               @NonNull final RecentEmoji recentEmoji) {
+    public EmojiGrid init(@NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
+                          @NonNull final IRecentEmoji recentEmoji) {
         isRecentEmojiGridView = true;
 
         recentEmojisWR = new WeakReference<>(recentEmoji);
@@ -124,8 +124,8 @@ class EmojiGridInner extends GridView {
     }
 
 
-    public EmojiGridInner init(@NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
-                               @NonNull final EmojiCategory category) {
+    public EmojiGrid init(@NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
+                          @NonNull final EmojiCategory category) {
         isRecentEmojiGridView = false;
         recentEmojisWR = null;
 
@@ -139,8 +139,8 @@ class EmojiGridInner extends GridView {
         if (isRecentEmojiGridView) {
 
             if (recentEmojisWR == null) return;
-            EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
-            RecentEmoji recentEmojis = recentEmojisWR.get();
+            EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
+            IRecentEmoji recentEmojis = recentEmojisWR.get();
 
             if (emojiArrayAdapter == null || recentEmojis == null) return;
 
@@ -161,7 +161,7 @@ class EmojiGridInner extends GridView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
+        EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
         if (emojiArrayAdapter != null) {
             setAdapter(emojiArrayAdapter);
         }
@@ -171,7 +171,7 @@ class EmojiGridInner extends GridView {
     @Override
     protected void onDraw(Canvas canvas) {
 
-        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
+        EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
         if (emojiArrayAdapter == null) return;
         super.onDraw(canvas);
     }
@@ -254,7 +254,7 @@ class EmojiGridInner extends GridView {
 
     final static class EmojiArrayAdapterGeneral extends ArrayAdapter<Emoji> {
         @Nullable
-        private final VariantEmoji variantManager;
+        private final IVariantEmoji variantManager;
 
         @NonNull
         private final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
@@ -267,8 +267,8 @@ class EmojiGridInner extends GridView {
             this.emojiViewController = emojiViewController;
         }
 
-        public static EmojiImageViewGeneral createEmojiImageView(Context context) {
-            EmojiImageViewGeneral emojiImageView = new EmojiImageViewGeneral(context);
+        public static EmojiImageViewG createEmojiImageView(Context context) {
+            EmojiImageViewG emojiImageView = new EmojiImageViewG(context);
 
             // Set layout parameters
             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
@@ -299,12 +299,12 @@ class EmojiGridInner extends GridView {
         @Override
         @NonNull
         public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
-            EmojiImageViewGeneral image = (EmojiImageViewGeneral) convertView;
+            EmojiImageViewG image = (EmojiImageViewG) convertView;
 
             final Context context = getContext();
 
             if (image == null) {
-                image = (EmojiImageViewGeneral) createEmojiImageView(context);
+                image = (EmojiImageViewG) createEmojiImageView(context);
                 image.init(emojiViewController);
             }
 

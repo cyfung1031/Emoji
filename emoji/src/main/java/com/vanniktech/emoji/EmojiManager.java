@@ -37,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * EmojiManager where an EmojiProvider can be installed for further usage.
+ * EmojiManager where an IEmojiProvider can be installed for further usage.
  */
 public final class EmojiManager {
     private static final EmojiManager INSTANCE = new EmojiManager();
@@ -54,9 +54,9 @@ public final class EmojiManager {
         }
     };
 
-    private static final EmojiReplacer DEFAULT_EMOJI_REPLACER = new EmojiReplacer() {
+    private static final IEmojiReplacer DEFAULT_EMOJI_REPLACER = new IEmojiReplacer() {
         @Override
-        public void replaceWithImages(final Context context, final Spannable text, final float emojiSize, final EmojiReplacer fallback) {
+        public void replaceWithImages(final Context context, final Spannable text, final float emojiSize, final IEmojiReplacer fallback) {
             final EmojiManager emojiManager = EmojiManager.getInstance();
             final EmojiSpan[] existingSpans = text.getSpans(0, text.length(), EmojiSpan.class);
             final List<Integer> existingSpanPositions = new ArrayList<>(existingSpans.length);
@@ -85,7 +85,7 @@ public final class EmojiManager {
     private EmojiCategory[] categories;
     private Pattern emojiPattern;
     private Pattern emojiRepetitivePattern;
-    private EmojiReplacer emojiReplacer;
+    private IEmojiReplacer emojiReplacer;
 
     private EmojiManager() {
         // No instances apart from singleton.
@@ -98,17 +98,17 @@ public final class EmojiManager {
     }
 
     /**
-     * Installs the given EmojiProvider.
+     * Installs the given IEmojiProvider.
      * <p>
      * NOTE: That only one can be present at any time.
      *
      * @param provider the provider that should be installed.
      */
-    public static void install(@NonNull final EmojiProvider provider) {
+    public static void install(@NonNull final IEmojiProvider provider) {
         synchronized (EmojiManager.class) {
             INSTANCE.categories = Objects.requireNonNull(provider.getCategories(), "categories == null");
             INSTANCE.emojiMap.clear();
-            INSTANCE.emojiReplacer = provider instanceof EmojiReplacer ? (EmojiReplacer) provider : DEFAULT_EMOJI_REPLACER;
+            INSTANCE.emojiReplacer = provider instanceof IEmojiReplacer ? (IEmojiReplacer) provider : DEFAULT_EMOJI_REPLACER;
 
             final List<String> unicodesForPattern = new ArrayList<>(GUESSED_UNICODE_AMOUNT);
 
@@ -139,7 +139,7 @@ public final class EmojiManager {
             }
 
             if (unicodesForPattern.isEmpty()) {
-                throw new IllegalArgumentException("Your EmojiProvider must at least have one category with at least one emoji.");
+                throw new IllegalArgumentException("Your IEmojiProvider must at least have one category with at least one emoji.");
             }
 
             // We need to sort the unicodes by length so the longest one gets matched first.
@@ -160,7 +160,7 @@ public final class EmojiManager {
 
     /**
      * Destroys the EmojiManager. This means that all internal data structures are released as well as
-     * all data associated with installed {@link Emoji}s. For the existing {@link EmojiProvider}s this
+     * all data associated with installed {@link Emoji}s. For the existing {@link IEmojiProvider}s this
      * means the memory-heavy emoji sheet.
      *
      * @see #destroy()
@@ -178,11 +178,11 @@ public final class EmojiManager {
     }
 
     /**
-     * Releases all data associated with installed {@link Emoji}s. For the existing {@link EmojiProvider}s this
+     * Releases all data associated with installed {@link Emoji}s. For the existing {@link IEmojiProvider}s this
      * means the memory-heavy emoji sheet.
      * <p>
      * In contrast to {@link #destroy()}, this does <b>not</b> destroy the internal
-     * data structures and thus, you do not need to {@link #install(EmojiProvider)} again before using the EmojiManager.
+     * data structures and thus, you do not need to {@link #install(IEmojiProvider)} again before using the EmojiManager.
      *
      * @see #destroy()
      */
@@ -240,7 +240,7 @@ public final class EmojiManager {
 
     public void verifyInstalled() {
         if (categories == null) {
-            throw new IllegalStateException("Please install an EmojiProvider through the EmojiManager.install() method first.");
+            throw new IllegalStateException("Please install an IEmojiProvider through the EmojiManager.install() method first.");
         }
     }
 }

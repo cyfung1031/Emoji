@@ -25,9 +25,9 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.Px;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiDisplayable;
+import com.vanniktech.emoji.IEmojiDisplayable;
 
-public class EmojiAppCompatCheckBox extends AppCompatCheckBox implements EmojiDisplayable {
+public class EmojiAppCompatCheckBox extends AppCompatCheckBox implements IEmojiDisplayable {
   private float emojiSize;
 
   public EmojiAppCompatCheckBox(final Context context) {

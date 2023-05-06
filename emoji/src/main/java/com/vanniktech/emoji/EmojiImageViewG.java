@@ -21,23 +21,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatImageView;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
-public final class EmojiImageViewGeneral extends EmojiImageViewE {
+public final class EmojiImageViewG extends EmojiImageViewE {
   private static final int VARIANT_INDICATOR_PART_AMOUNT = 6;
   private static final int VARIANT_INDICATOR_PART = 5;
 
@@ -57,15 +53,15 @@ public final class EmojiImageViewGeneral extends EmojiImageViewE {
 
 
 
-  public EmojiImageViewGeneral(Context context) {
+  public EmojiImageViewG(Context context) {
     super(context);
   }
 
-  public EmojiImageViewGeneral(Context context, AttributeSet attrs, int defStyleAttr) {
+  public EmojiImageViewG(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 
-  public EmojiImageViewGeneral(final Context context, final AttributeSet attrs) {
+  public EmojiImageViewG(final Context context, final AttributeSet attrs) {
     super(context, attrs);
   }
 
@@ -152,7 +148,7 @@ public final class EmojiImageViewGeneral extends EmojiImageViewE {
 //      ImageBackgroundLoader ibl =  ImageBackgroundLoader.build(mContext);
 
 
-      loadDrawable(getContext(), EmojiImageViewGeneral.this, currentEmoji);
+      loadDrawable(getContext(), EmojiImageViewG.this, currentEmoji);
 
 
 //      LoadDrawableTask.getInstance().loadDrawable(getContext(),EmojiImageView.this, currentEmoji);
@@ -191,7 +187,7 @@ public final class EmojiImageViewGeneral extends EmojiImageViewE {
 
   public void onEmojiClick(final View view){
 
-      emojiViewController.setPopupRootImageView(EmojiImageViewGeneral.this);
+      emojiViewController.setPopupRootImageView(EmojiImageViewG.this);
       emojiViewController.setPopupVariant(currentEmoji);
       emojiViewController.controller(0x3042);
 //      clickListener.onEmojiClick(EmojiImageViewGeneral.this, currentEmoji);
@@ -199,7 +195,7 @@ public final class EmojiImageViewGeneral extends EmojiImageViewE {
   }
 
   public boolean onEmojiLongPress(final View view){
-    emojiViewController.setPopupRootImageView(EmojiImageViewGeneral.this);
+    emojiViewController.setPopupRootImageView(EmojiImageViewG.this);
     emojiViewController.setPopupVariant(currentEmoji);
     emojiViewController.controller(0x6042);
 

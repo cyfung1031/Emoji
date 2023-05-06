@@ -299,10 +299,10 @@ public class EmojiViewInner extends LinearLayout {
         public ViewPager2.PageTransformer getPageTransformer(Context context);
 
         @NonNull
-        public RecentEmoji getRecentEmoji();
+        public IRecentEmoji getRecentEmoji();
 
         @NonNull
-        public VariantEmoji getVariantEmoji();
+        public IVariantEmoji getVariantEmoji();
 
 
         public int recentAdapterItemCount();
@@ -407,7 +407,7 @@ public class EmojiViewInner extends LinearLayout {
         private static final int RECENT_POSITION = 0;
         private static final String ARG_INDEX = "index_of_fragment";
         protected WeakReference<EmojiGridPagerAdapter> parentAdapterWR = null;
-        PopupWindow relatedWindow = null;
+        private WeakReference<PopupWindow> relatedWindowWR = null;
         private WeakReference<EmojiViewInner> emojiViewInnerWR;
         //        private static final String ARG_EVC = "emoji_view_controller";
         @SuppressWarnings("unused")
@@ -462,7 +462,7 @@ public class EmojiViewInner extends LinearLayout {
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            EmojiGridInner v = new EmojiGridInner(this.getContext());
+            EmojiGrid v = new EmojiGrid(this.getContext());
 
 
             v.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -471,7 +471,7 @@ public class EmojiViewInner extends LinearLayout {
 
         }
 
-        public void prepareView(@NonNull EmojiGridInner newView) {
+        public void prepareView(@NonNull EmojiGrid newView) {
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
 
@@ -485,7 +485,7 @@ public class EmojiViewInner extends LinearLayout {
                 emojiViewController.setRecentEmojiGridView(newView);
             }
 
-            RecentEmoji recentEmoji = emojiViewController.getRecentEmoji();
+            IRecentEmoji recentEmoji = emojiViewController.getRecentEmoji();
 
             if (emojiViewController.hasRecentEmoji() && position == RECENT_POSITION) {
                 newView.init(emojiViewController, recentEmoji);
@@ -504,7 +504,7 @@ public class EmojiViewInner extends LinearLayout {
 
             view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-            final EmojiGridInner newView = (EmojiGridInner) view;
+            final EmojiGrid newView = (EmojiGrid) view;
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
 
@@ -525,13 +525,13 @@ public class EmojiViewInner extends LinearLayout {
         public void onDestroyView() {
             super.onDestroyView();
             View v = getView();
-            if (v instanceof EmojiGridInner) {
-                EmojiGridInner emojiGridInner = (EmojiGridInner) v;
-                emojiGridInner.destroyView();
+            if (v instanceof EmojiGrid) {
+                EmojiGrid emojiGrid = (EmojiGrid) v;
+                emojiGrid.destroyView();
             }
         }
 
-        public EmojiGridInner getGridViewIfFragmentIsRecentEmoji() {
+        public EmojiGrid getGridViewIfFragmentIsRecentEmoji() {
 
             Bundle args = getArguments();
             if (args != null) {
@@ -540,12 +540,12 @@ public class EmojiViewInner extends LinearLayout {
 
                 if (position == RECENT_POSITION) {
                     View v = getView();
-                    if (v instanceof EmojiGridInner) {
+                    if (v instanceof EmojiGrid) {
                         EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
 
                         if (emojiViewController != null) {
 
-                            return (EmojiGridInner) v;
+                            return (EmojiGrid) v;
                         }
                     }
                 }
@@ -558,7 +558,7 @@ public class EmojiViewInner extends LinearLayout {
         public void updateRecentEmojiGridView() {
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
-            EmojiGridInner recentEmojiGrid = getGridViewIfFragmentIsRecentEmoji();
+            EmojiGrid recentEmojiGrid = getGridViewIfFragmentIsRecentEmoji();
             if (recentEmojiGrid != null && emojiViewController != null) {
                 emojiViewController.setRecentEmojiGridView(recentEmojiGrid);
             }
@@ -586,7 +586,7 @@ public class EmojiViewInner extends LinearLayout {
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
             if (emojiViewController != null) {
-                relatedWindow = emojiViewController.getPopupViewWindow();
+                relatedWindowWR = new WeakReference<>(emojiViewController.getPopupViewWindow());
 
                 EmojiViewInner emojiViewInner = emojiViewController.getEmojiViewInner();
                 if (emojiViewInner instanceof EmojiViewExtended) {
@@ -597,12 +597,8 @@ public class EmojiViewInner extends LinearLayout {
 
                 EmojiGridPagerAdapter parentAdapter = parentAdapterWR != null ? parentAdapterWR.get() : null;
                 if (parentAdapter != null) {
-                    try {
-                        parentAdapter.toggleOFF();
-                        parentAdapter.notifyAll();
-                    } catch (Throwable ignored) {
-                        //
-                    }
+                    parentAdapter.toggleOFF();
+                    parentAdapter.notifyAll();
                 }
             }
 
@@ -633,7 +629,7 @@ public class EmojiViewInner extends LinearLayout {
         public void detachRecentEmojiGrid() {
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
-            EmojiGridInner recentEmojiGrid = getGridViewIfFragmentIsRecentEmoji();
+            EmojiGrid recentEmojiGrid = getGridViewIfFragmentIsRecentEmoji();
             if (recentEmojiGrid != null && emojiViewController != null) {
                 emojiViewController.setRecentEmojiGridView(null);
             }
@@ -700,8 +696,8 @@ public class EmojiViewInner extends LinearLayout {
 
         int numberOfRecentEmojis() {
 
-            RecentEmoji recentEmoji = emojiViewController.getRecentEmoji();
-            VariantEmoji variantManager = emojiViewController.getVariantEmoji();
+            IRecentEmoji recentEmoji = emojiViewController.getRecentEmoji();
+            IVariantEmoji variantManager = emojiViewController.getVariantEmoji();
 
             if (recentEmoji == null) return 0;
             if (!emojiViewController.hasRecentEmoji()) return 0;
@@ -710,7 +706,7 @@ public class EmojiViewInner extends LinearLayout {
 
         void invalidateRecentEmojis() {
 
-            EmojiGridInner recentEmojiGridView = emojiViewController.getRecentEmojiGridView();
+            EmojiGrid recentEmojiGridView = emojiViewController.getRecentEmojiGridView();
 //            EmojiGridInner recentEmojiGridView = recentEmojiGridViewWR != null ? recentEmojiGridViewWR.get() : null;
             if (recentEmojiGridView != null) {
                 recentEmojiGridView.invalidateEmojis();
@@ -727,7 +723,7 @@ public class EmojiViewInner extends LinearLayout {
         @Override
         public void onBindViewHolder(@NonNull FragmentViewHolder holder, int position, @NonNull List<Object> payloads) {
 
-            if (holder.itemView instanceof EmojiGridInner) {
+            if (holder.itemView instanceof EmojiGrid) {
                 Log.i("2323", "455");
             }
             super.onBindViewHolder(holder, position, payloads);
@@ -735,7 +731,7 @@ public class EmojiViewInner extends LinearLayout {
 
         @Override
         public void onViewDetachedFromWindow(@NonNull FragmentViewHolder holder) {
-            if (holder.itemView instanceof EmojiGridInner) {
+            if (holder.itemView instanceof EmojiGrid) {
                 Log.i("2323", "234");
             }
             super.onViewDetachedFromWindow(holder);

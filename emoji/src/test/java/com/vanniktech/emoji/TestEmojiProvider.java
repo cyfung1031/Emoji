@@ -21,21 +21,21 @@ import androidx.annotation.NonNull;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 
-final class TestEmojiProvider implements EmojiProvider {
-  static EmojiProvider from(final Emoji... emojis) {
+final class TestEmojiProvider implements IEmojiProvider {
+  static IEmojiProvider from(final Emoji... emojis) {
     return new TestEmojiProvider(emojis);
   }
 
-  static EmojiProvider emptyCategories() {
-    return new EmojiProvider() {
+  static IEmojiProvider emptyCategories() {
+    return new IEmojiProvider() {
       @Override @NonNull public EmojiCategory[] getCategories() {
         return new EmojiCategory[0];
       }
     };
   }
 
-  static EmojiProvider emptyEmojis() {
-    return new EmojiProvider() {
+  static IEmojiProvider emptyEmojis() {
+    return new IEmojiProvider() {
       @Override @NonNull public EmojiCategory[] getCategories() {
         return new EmojiCategory[] {
           new EmojiCategory() {

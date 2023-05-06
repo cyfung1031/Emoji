@@ -18,7 +18,7 @@
 package com.vanniktech.emoji.google;
 
 import androidx.annotation.NonNull;
-import com.vanniktech.emoji.EmojiProvider;
+import com.vanniktech.emoji.IEmojiProvider;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.google.category.ActivitiesCategory;
 import com.vanniktech.emoji.google.category.AnimalsAndNatureCategory;
@@ -29,7 +29,7 @@ import com.vanniktech.emoji.google.category.SmileysAndPeopleCategory;
 import com.vanniktech.emoji.google.category.SymbolsCategory;
 import com.vanniktech.emoji.google.category.TravelAndPlacesCategory;
 
-public final class GoogleEmojiProvider implements EmojiProvider {
+public final class GoogleEmojiProvider implements IEmojiProvider {
   @Override @NonNull public EmojiCategory[] getCategories() {
     return new EmojiCategory[] {
       new SmileysAndPeopleCategory(),

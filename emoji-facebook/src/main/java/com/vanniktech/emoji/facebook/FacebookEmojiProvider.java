@@ -18,7 +18,7 @@
 package com.vanniktech.emoji.facebook;
 
 import androidx.annotation.NonNull;
-import com.vanniktech.emoji.EmojiProvider;
+import com.vanniktech.emoji.IEmojiProvider;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 import com.vanniktech.emoji.facebook.category.ActivitiesCategory;
 import com.vanniktech.emoji.facebook.category.AnimalsAndNatureCategory;
@@ -29,7 +29,7 @@ import com.vanniktech.emoji.facebook.category.SmileysAndPeopleCategory;
 import com.vanniktech.emoji.facebook.category.SymbolsCategory;
 import com.vanniktech.emoji.facebook.category.TravelAndPlacesCategory;
 
-public final class FacebookEmojiProvider implements EmojiProvider {
+public final class FacebookEmojiProvider implements IEmojiProvider {
   @Override @NonNull public EmojiCategory[] getCategories() {
     return new EmojiCategory[] {
       new SmileysAndPeopleCategory(),

@@ -163,11 +163,6 @@ public class IosEmoji extends Emoji {
     };
   }
 
-  @Override
-  public int getIconResIdX() {
-    return SHEET_RESOURCE_IDS[x];
-  }
-
   private Bitmap loadStrip(final Context context) {
     Bitmap strip = (Bitmap) STRIP_REFS[x].get();
     if (strip == null) {

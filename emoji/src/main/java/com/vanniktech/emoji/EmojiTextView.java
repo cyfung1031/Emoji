@@ -26,7 +26,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.Px;
 import androidx.appcompat.widget.AppCompatTextView;
 
-public class EmojiTextView extends AppCompatTextView implements EmojiDisplayable {
+public class EmojiTextView extends AppCompatTextView implements IEmojiDisplayable {
   private float emojiSize;
 
   public EmojiTextView(final Context context) {

@@ -40,10 +40,10 @@ public interface IEmojiViewBuilder<TBuilder>{
     public ViewPager2.PageTransformer getPageTransformer();
 
     @NonNull
-    public RecentEmoji getRecentEmoji();
+    public IRecentEmoji getRecentEmoji();
 
     @NonNull
-    public VariantEmoji getVariantEmoji();
+    public IVariantEmoji getVariantEmoji();
 
     @CheckResult
     public TBuilder setOnSoftKeyboardCloseListener(@Nullable final OnSoftKeyboardCloseListener listener);

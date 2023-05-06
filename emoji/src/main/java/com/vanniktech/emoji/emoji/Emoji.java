@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class Emoji implements Serializable {
+public class Emoji implements Serializable {
     private static final long serialVersionUID = 3L;
     private static final List<Emoji> EMPTY_EMOJI_LIST = emptyList();
 
@@ -49,7 +49,6 @@ public abstract class Emoji implements Serializable {
     private final boolean isDuplicate;
     @NonNull
     private final List<Emoji> variants;
-    WeakReference<Drawable> cacheDrawable = null;
     @Nullable
     private Emoji base;
 
@@ -84,12 +83,6 @@ public abstract class Emoji implements Serializable {
         }
     }
 
-    public int getIconResId() {
-        return iconResId;
-    }
-
-    public abstract int getIconResIdX();
-
     @NonNull
     public String getUnicode() {
         return unicode;
@@ -109,16 +102,6 @@ public abstract class Emoji implements Serializable {
     public Drawable getDrawable(final Resources resources) {
         return Objects.requireNonNull(ResourcesCompat.getDrawable(resources, iconResId, null));
     }
-
-    public Drawable getCacheDrawable() {
-        return cacheDrawable != null ? cacheDrawable.get() : null;
-    }
-
-    public void setCacheDrawable(Drawable drawable) {
-        if (drawable == null) cacheDrawable = null;
-        else cacheDrawable = new WeakReference<>(drawable);
-    }
-
 
     public boolean isDuplicate() {
         return isDuplicate;

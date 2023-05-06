@@ -339,7 +339,7 @@ async function generateCode(map, targets) {
     const categoryTemplate = await fs.readFile("template/Category.java", "utf-8");
     const categoryChunkTemplate = await fs.readFile("template/CategoryChunk.java", "utf-8");
     const categoryUtilsTemplate = await fs.readFile("template/CategoryUtils.java", "utf-8");
-    const emojiProviderTemplate = await fs.readFile("template/EmojiProvider.java", "utf-8");
+    const emojiProviderTemplate = await fs.readFile("template/IEmojiProvider.java", "utf-8");
     const emojiProviderCompatTemplate = await fs.readFile("template/EmojiProviderCompat.java", "utf-8");
 
     const entries = stable([...map.entries()], (first, second) => {
