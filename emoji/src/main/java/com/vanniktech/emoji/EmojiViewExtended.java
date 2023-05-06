@@ -40,13 +40,14 @@ public class EmojiViewExtended extends EmojiViewInner{
     final Handler bH = new Handler(bHt.getLooper());
 
 
-    private  HandlerThread createBackgroundThread(){
+    private static HandlerThread createBackgroundThread(){
         HandlerThread ht =  new HandlerThread("backgroundWorkOnEmojiView");
         ht.start();
         return ht;
     }
 
 
+    @SuppressWarnings("unused")
     public void addedInto(ViewGroup container){
         container.addView(this);
     }
@@ -224,9 +225,11 @@ public class EmojiViewExtended extends EmojiViewInner{
 
 
 
-            final TypedValue value = new TypedValue();
-            context.getTheme().resolveAttribute(R.attr.emojiIconsToolNormal , value, true);
-            return value.data;
+//            final TypedValue value = new TypedValue();
+//            context.getTheme().resolveAttribute(R.attr.emojiIconsToolNormal , value, true);
+//            return value.data;
+
+            return Utils.resolveColor(context, R.attr.emojiIconsToolNormal, R.color.emoji_tool_color_normal);
 
         }
 
@@ -240,9 +243,12 @@ public class EmojiViewExtended extends EmojiViewInner{
 
 
 
-            final TypedValue value = new TypedValue();
-            context.getTheme().resolveAttribute(R.attr.emojiIconsToolSelected , value, true);
-            return value.data;
+//            final TypedValue value = new TypedValue();
+//            context.getTheme().resolveAttribute(R.attr.emojiIconsToolSelected , value, true);
+//            return value.data;
+
+
+            return Utils.resolveColor(context, R.attr.emojiIconsToolSelected, R.color.emoji_tool_color_selected);
 
         }
 

@@ -21,7 +21,6 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.O;
 import static androidx.core.view.ViewCompat.requestApplyInsets;
 import static com.vanniktech.emoji.Utils.backspace;
-import static com.vanniktech.emoji.Utils.checkNotNull;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,7 +30,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.autofill.AutofillManager;
@@ -60,6 +58,7 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 
 import java.lang.ref.WeakReference;
+import java.util.Objects;
 
 public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IPopup {
     static final int MIN_KEYBOARD_HEIGHT = 50;
@@ -96,7 +95,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     int popupWindowHeight;
     int originalImeOptions = -1;
     private int globalKeyboardHeight;
-//
+    //
 //  final OnEmojiClickListener internalOnEmojiClickListener = new OnEmojiClickListener() {
 //    @Override public void onEmojiClick(@NonNull final EmojiImageViewE imageView, @NonNull final Emoji emoji) {
 //      Utils.input(editText, emoji);
@@ -297,20 +296,20 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
     }
 
     void showAtBottom() {
-      if(isPendingOpen) {
-        isPendingOpen = false;
-        editText.post(new Runnable() {
-          @Override
-          public void run() {
-            popupWindow.showAtLocation(rootView, Gravity.NO_GRAVITY, 0,
-                    Utils.getProperHeight(context) + popupWindowHeight);
-          }
-        });
+        if (isPendingOpen) {
+            isPendingOpen = false;
+            editText.post(new Runnable() {
+                @Override
+                public void run() {
+                    popupWindow.showAtLocation(rootView, Gravity.NO_GRAVITY, 0,
+                            Utils.getProperHeight(context) + popupWindowHeight);
+                }
+            });
 
-        if (onEmojiPopupShownListener != null) {
-          onEmojiPopupShownListener.onEmojiPopupShown();
+            if (onEmojiPopupShownListener != null) {
+                onEmojiPopupShownListener.onEmojiPopupShown();
+            }
         }
-      }
     }
 
     @Override
@@ -364,7 +363,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         int popupWindowHeight;
 
         private Builder(final View rootView) {
-            this.rootView = checkNotNull(rootView, "The root View can't be null");
+            this.rootView = Objects.requireNonNull(rootView, "The root View can't be null");
             initByContext(rootView.getContext());
         }
 
@@ -534,7 +533,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
          */
         @CheckResult
         public Builder setRecentEmoji(@NonNull final RecentEmoji recent) {
-            recentEmoji = checkNotNull(recent, "recent can't be null");
+            recentEmoji = Objects.requireNonNull(recent, "recent can't be null");
             return this;
         }
 
@@ -551,7 +550,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
          */
         @CheckResult
         public Builder setVariantEmoji(@NonNull final VariantEmoji variant) {
-            variantEmoji = checkNotNull(variant, "variant can't be null");
+            variantEmoji = Objects.requireNonNull(variant, "variant can't be null");
             return this;
         }
 
@@ -572,7 +571,7 @@ public final class EmojiPopupGeneral implements EmojiResultReceiver.Receiver, IP
         @CheckResult
         public EmojiPopupGeneral build(@NonNull final EditText editText) {
             EmojiManager.getInstance().verifyInstalled();
-            checkNotNull(editText, "EditText can't be null");
+            Objects.requireNonNull(editText, "EditText can't be null");
 
             final EmojiPopupGeneral emojiPopup = new EmojiPopupGeneral(this, editText);
       /*

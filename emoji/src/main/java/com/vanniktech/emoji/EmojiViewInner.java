@@ -18,12 +18,8 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -32,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -47,7 +42,6 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.adapter.FragmentViewHolder;
@@ -70,9 +64,9 @@ public class EmojiViewInner extends LinearLayout {
     protected EmojiViewInner.EmojiGridPagerAdapter emojiPager2Adapter = null;
     protected int emojiTabLastSelectedIndex = -1;
     protected ViewPager2 emojisPager2;
-
-    boolean isTabButtonSmoothTransitionEnabled = false;
     protected EmojiViewController emojiViewController = null;
+    boolean isTabButtonSmoothTransitionEnabled = false;
+    boolean disAllowParentVerticalScroll = false;
 
     public EmojiViewInner(final Context context) {
         super(context);
@@ -80,10 +74,6 @@ public class EmojiViewInner extends LinearLayout {
 
     public EmojiViewInner(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    public EmojiViewInner(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
     }
 
 //    @Nullable
@@ -104,6 +94,18 @@ public class EmojiViewInner extends LinearLayout {
 //        Log.i("EmojiViewInner", "onConfigurationChanged");
 //        super.onConfigurationChanged(newConfig);
 //    }
+
+
+    public EmojiViewInner(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    static public void tintImageView(AppCompatImageView v, int color) {
+        Drawable d = v.getDrawable();
+        if (d != null) {
+            DrawableCompat.setTint(d, color);
+        }
+    }
 
     public void init(@NonNull final EmojiViewBuildController<?> builder) {
 
@@ -172,7 +174,6 @@ public class EmojiViewInner extends LinearLayout {
 
     }
 
-
     @Override
     protected void onDetachedFromWindow() {
 //        Log.i("12312","123123");
@@ -202,7 +203,6 @@ public class EmojiViewInner extends LinearLayout {
         }
     }
 
-
     private void handleOnClicks() {
         for (int i = 0; i < emojiTabs.length - 1; i++) {
             emojiTabs[i].setOnClickListener(this::onEmojiTabButtonClicked);
@@ -218,7 +218,6 @@ public class EmojiViewInner extends LinearLayout {
     public void setOnEmojiBackspaceClickListener(@Nullable final EmojiViewController emojiViewController) {
         this.emojiViewController = emojiViewController;
     }
-
 
     private AppCompatImageView inflateButtonInner(Context context) {
 
@@ -242,16 +241,39 @@ public class EmojiViewInner extends LinearLayout {
 //        final ImageButton button = (ImageButton) LayoutInflater.from(context).inflate(R.layout.emoji_view_category, parent, false);
         final AppCompatImageView button = inflateButtonInner(context);
 
+
         Drawable d = ResourcesCompat.getDrawable(context.getResources(), btnDrawableResId, null);
-        if(d!=null) {
-            DrawableCompat.setTint(d, themeIconColor);
-            button.setImageDrawable(d);
+        if (d != null) {
+            if (themeIconColor != 0) {
+                DrawableCompat.setTint(d, themeIconColor);
+            }
+
+
+//            d
+//            res = new BitmapDrawable(context.getResources(), resBitmap);
+//            res.setTint(textColor);
+
+//            int myColor = Color.argb(255, 255, 0, 0);
+//            d=d.mutate();
+//            DrawableCompat.setTintMode(d, PorterDuff.Mode.SRC_IN);
+//            DrawableCompat.setTint(d, themeIconColor);
+
         }
+        button.setImageDrawable(d);
+
         button.setContentDescription(context.getString(categoryName));
 
         parent.addView(button);
 
         return button;
+    }
+
+    public boolean isDisAllowParentVerticalScroll() {
+        return disAllowParentVerticalScroll;
+    }
+
+    public void setDisAllowParentVerticalScroll(boolean disAllowParentVerticalScroll) {
+        this.disAllowParentVerticalScroll = disAllowParentVerticalScroll;
     }
 
     public interface EmojiViewBuilder<TBuilder> {
@@ -336,11 +358,14 @@ public class EmojiViewInner extends LinearLayout {
 
                 if (lastSelectedIndex >= 0 && lastSelectedIndex < v.emojiTabs.length) {
                     emojiTabs[lastSelectedIndex].setSelected(false);
-                    emojiTabs[lastSelectedIndex].setColorFilter(v.themeIconColor, PorterDuff.Mode.SRC_IN);
+                    tintImageView(emojiTabs[lastSelectedIndex], v.themeIconColor);
+
+//                    emojiTabs[lastSelectedIndex].setColorFilter(v.themeIconColor, PorterDuff.Mode.SRC_IN);
                 }
 
                 emojiTabs[i].setSelected(true);
-                emojiTabs[i].setColorFilter(v.themeAccentColor, PorterDuff.Mode.SRC_IN);
+                tintImageView(emojiTabs[i], v.themeAccentColor);
+//                emojiTabs[i].setColorFilter(v.themeAccentColor, PorterDuff.Mode.SRC_IN);
 
             }
         }
@@ -381,12 +406,12 @@ public class EmojiViewInner extends LinearLayout {
 
         private static final int RECENT_POSITION = 0;
         private static final String ARG_INDEX = "index_of_fragment";
+        protected WeakReference<EmojiGridPagerAdapter> parentAdapterWR = null;
+        PopupWindow relatedWindow = null;
         private WeakReference<EmojiViewInner> emojiViewInnerWR;
         //        private static final String ARG_EVC = "emoji_view_controller";
         @SuppressWarnings("unused")
         private int indexOfFragment;
-        protected WeakReference<EmojiGridPagerAdapter> parentAdapterWR = null;
-
 
         public static EmojiGridFragment newInstance(int index, EmojiViewInner emojiViewInner, EmojiGridPagerAdapter emojiGridPagerAdapter) {
             EmojiGridFragment fragment = new EmojiGridFragment();
@@ -420,6 +445,7 @@ public class EmojiViewInner extends LinearLayout {
                         .commit();
             }
         }
+
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -432,7 +458,6 @@ public class EmojiViewInner extends LinearLayout {
 //                destroySelf();
 //            }
         }
-
 
         @Nullable
         @Override
@@ -474,9 +499,6 @@ public class EmojiViewInner extends LinearLayout {
 
         }
 
-
-
-
         @Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
@@ -486,13 +508,13 @@ public class EmojiViewInner extends LinearLayout {
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
 
-            if(emojiViewController == null){
-                ViewParent parentView= view.getParent();
-                if(parentView instanceof ViewGroup) {
+            if (emojiViewController == null) {
+                ViewParent parentView = view.getParent();
+                if (parentView instanceof ViewGroup) {
 
                     ((ViewGroup) parentView).removeView(view);
                 }
-            }else{
+            } else {
                 prepareView(newView);
             }
 
@@ -555,18 +577,11 @@ public class EmojiViewInner extends LinearLayout {
             return -1;
         }
 
-
-
-
-
-        PopupWindow relatedWindow = null;
         @Override
         public void onAttach(@NonNull Context context) {
 
 
-
 //            Log.i("Fragment", "onAttach " +getIndex());
-
 
 
             EmojiViewBuildController<?> emojiViewController = getEmojiViewBuildController();
@@ -578,14 +593,14 @@ public class EmojiViewInner extends LinearLayout {
 
                     ((EmojiViewExtended) emojiViewInner).bH.post(this::updateRecentEmojiGridView);
                 }
-            }else{
+            } else {
 
-                EmojiGridPagerAdapter parentAdapter =  parentAdapterWR != null ? parentAdapterWR.get():null;
-                if(parentAdapter != null) {
+                EmojiGridPagerAdapter parentAdapter = parentAdapterWR != null ? parentAdapterWR.get() : null;
+                if (parentAdapter != null) {
                     try {
                         parentAdapter.toggleOFF();
                         parentAdapter.notifyAll();
-                    }catch (Throwable ignored){
+                    } catch (Throwable ignored) {
                         //
                     }
                 }
@@ -625,7 +640,6 @@ public class EmojiViewInner extends LinearLayout {
         }
     }
 
-
     public class EmojiGridPagerAdapter extends FragmentStateAdapter {
 
         private final EmojiViewBuildController<?> emojiViewController;
@@ -633,7 +647,6 @@ public class EmojiViewInner extends LinearLayout {
         private final int categoriesLen;
         private final int numOfFragments;
         private int numOfFragmentsCurrent;
-
 
 
         public EmojiGridPagerAdapter(@NonNull FragmentActivity fm, final EmojiViewBuildController<?> emojiViewController) {
@@ -714,7 +727,7 @@ public class EmojiViewInner extends LinearLayout {
         @Override
         public void onBindViewHolder(@NonNull FragmentViewHolder holder, int position, @NonNull List<Object> payloads) {
 
-            if(  holder.itemView instanceof  EmojiGridInner){
+            if (holder.itemView instanceof EmojiGridInner) {
                 Log.i("2323", "455");
             }
             super.onBindViewHolder(holder, position, payloads);
@@ -722,15 +735,12 @@ public class EmojiViewInner extends LinearLayout {
 
         @Override
         public void onViewDetachedFromWindow(@NonNull FragmentViewHolder holder) {
-            if(  holder.itemView instanceof  EmojiGridInner){
+            if (holder.itemView instanceof EmojiGridInner) {
                 Log.i("2323", "234");
             }
             super.onViewDetachedFromWindow(holder);
         }
     }
-
-
-
 
 
 }

@@ -17,8 +17,6 @@
 
 package com.vanniktech.emoji;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -27,274 +25,190 @@ import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
+import android.text.Editable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+
 import com.vanniktech.emoji.emoji.Emoji;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.LOLLIPOP;
-
 final class Utils {
-  static final String TAG = "Utils";
+    static final String TAG = "Utils";
 
-  static final int NO_UPDATE_FLAG = -1;
+    static final int NO_UPDATE_FLAG = -1;
 
-  @NonNull static <T> T checkNotNull(@Nullable final T reference, final String message) {
-    if (reference == null) {
-      throw new IllegalArgumentException(message);
+    private Utils() {
+        throw new AssertionError("No instances.");
     }
 
-    return reference;
-  }
-
-  static float initTextView(final TextView textView, final AttributeSet attrs) {
-    if (!textView.isInEditMode()) {
-      EmojiManager.getInstance().verifyInstalled();
-    }
-
-    final Paint.FontMetrics fontMetrics = textView.getPaint().getFontMetrics();
-    final float defaultEmojiSize = fontMetrics.descent - fontMetrics.ascent;
-
-    final float emojiSize;
-
-    if (attrs == null) {
-      emojiSize = defaultEmojiSize;
-    } else {
-      final TypedArray a = textView.getContext().obtainStyledAttributes(attrs, R.styleable.EmojiTextView);
-
-      try {
-        emojiSize = a.getDimension(R.styleable.EmojiTextView_emojiSize, defaultEmojiSize);
-      } finally {
-        a.recycle();
-      }
-    }
-
-    textView.setText(textView.getText());
-    return emojiSize;
-  }
-
-  static int dpToPx(@NonNull final Context context, final float dp) {
-    return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
-        context.getResources().getDisplayMetrics()) + 0.5f);
-  }
-
-  static int getOrientation(final Context context) {
-    return context.getResources().getConfiguration().orientation;
-  }
-
-  static int getProperWidth(final Activity activity) {
-    final Rect rect = Utils.windowVisibleDisplayFrame(activity);
-    return Utils.getOrientation(activity) == Configuration.ORIENTATION_PORTRAIT ? rect.right : getScreenWidth(activity);
-  }
-
-  static boolean shouldOverrideRegularCondition(@NonNull final Context context, final EditText editText) {
-    if ((editText.getImeOptions() & EditorInfo.IME_FLAG_NO_EXTRACT_UI) == 0) {
-      return getOrientation(context) == Configuration.ORIENTATION_LANDSCAPE;
-    }
-
-    return false;
-  }
-
-  static int getInputMethodHeight(final Context context, final View rootView) {
-    try {
-      final InputMethodManager imm = (InputMethodManager) context.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-      final Class inputMethodManagerClass = imm.getClass();
-      @SuppressWarnings("unchecked") @SuppressLint("PrivateApi") final Method visibleHeightMethod = inputMethodManagerClass.getDeclaredMethod("getInputMethodWindowVisibleHeight");
-      visibleHeightMethod.setAccessible(true);
-      return (int) visibleHeightMethod.invoke(imm);
-    } catch (NoSuchMethodException exception) {
-      Log.w(TAG, exception.getLocalizedMessage());
-    } catch (IllegalAccessException exception) {
-      Log.w(TAG, exception.getLocalizedMessage());
-    } catch (InvocationTargetException exception) {
-      Log.w(TAG, exception.getLocalizedMessage());
-    }
-
-    return alternativeInputMethodHeight(rootView);
-  }
-
-  private static int getViewBottomInset(final View rootView) {
-    try {
-      @SuppressLint("PrivateApi") final Field attachInfoField = View.class.getDeclaredField("mAttachInfo");
-      attachInfoField.setAccessible(true);
-      final Object attachInfo = attachInfoField.get(rootView);
-      if (attachInfo != null) {
-        final Field stableInsetsField = attachInfo.getClass().getDeclaredField("mStableInsets");
-        stableInsetsField.setAccessible(true);
-        return ((Rect) stableInsetsField.get(attachInfo)).bottom;
-      }
-    } catch (NoSuchFieldException noSuchFieldException) {
-      Log.w(TAG, noSuchFieldException.getLocalizedMessage());
-    } catch (IllegalAccessException illegalAccessException) {
-      Log.w(TAG, illegalAccessException.getLocalizedMessage());
-    }
-    return 0;
-  }
-
-  private static int alternativeInputMethodHeight(final View rootView) {
-    int viewInset = 0;
-    if (SDK_INT >= LOLLIPOP) {
-      viewInset = getViewBottomInset(rootView);
-    }
-
-    final Rect rect = new Rect();
-    rootView.getWindowVisibleDisplayFrame(rect);
-
-    final int availableHeight = rootView.getHeight() - viewInset - rect.top;
-    return availableHeight - (rect.bottom - rect.top);
-  }
-
-  static int getProperHeight(final Activity activity) {
-    return Utils.windowVisibleDisplayFrame(activity).bottom;
-
-//    View decorView = activity.getWindow().getDecorView();
-//    View contentView = decorView.findViewById(android.R.id.content);
-
-  }
-
-  static int getScreenWidth(@NonNull final Activity context) {
-    return dpToPx(context, context.getResources().getConfiguration().screenWidthDp);
-  }
-
-  @NonNull static Point locationOnScreen(@NonNull final View view) {
-    final int[] location = new int[2];
-    view.getLocationOnScreen(location);
-    return new Point(location[0], location[1]);
-  }
-
-  @NonNull static Rect windowVisibleDisplayFrame(@NonNull final Activity context) {
-    final Rect result = new Rect();
-    context.getWindow().getDecorView().getWindowVisibleDisplayFrame(result);
-    return result;
-  }
-
-  static void backspace(@NonNull final EditText editText) {
-    final KeyEvent event = new KeyEvent(0, 0, 0, KeyEvent.KEYCODE_DEL, 0, 0, 0, 0, KeyEvent.KEYCODE_ENDCALL);
-    editText.dispatchKeyEvent(event);
-  }
-
-  static List<Emoji> asListWithoutDuplicates(final Emoji[] emojis) {
-    final List<Emoji> result = new ArrayList<>(emojis.length);
-
-    for (final Emoji emoji : emojis) {
-      if (!emoji.isDuplicate()) {
-        result.add(emoji);
-      }
-    }
-
-    return result;
-  }
-
-  static void input(@NonNull final EditText editText, @Nullable final Emoji emoji) {
-    if (emoji != null) {
-      final int start = editText.getSelectionStart();
-      final int end = editText.getSelectionEnd();
-
-      if (start < 0) {
-        editText.append(emoji.getUnicode());
-      } else {
-        editText.getText().replace(Math.min(start, end), Math.max(start, end), emoji.getUnicode(), 0, emoji.getUnicode().length());
-      }
-    }
-  }
-
-  static Activity asActivity(@NonNull final Context context) {
-    Context result = context;
-
-    while (result instanceof ContextWrapper) {
-      if (result instanceof Activity) {
-        return (Activity) result;
-      }
-
-      result = ((ContextWrapper) result).getBaseContext();
-    }
-
-    throw new IllegalArgumentException("The passed Context is not an Activity.");
-  }
-
-  static void fixPopupLocation(@NonNull final PopupWindow popupWindow, @NonNull final Point desiredLocation) {
-    popupWindow.getContentView().post(new Runnable() {
-      @Override public void run() {
-        final Point actualLocation = locationOnScreen(popupWindow.getContentView());
-
-        if (!(actualLocation.x == desiredLocation.x && actualLocation.y == desiredLocation.y)) {
-          final int differenceX = actualLocation.x - desiredLocation.x;
-          final int differenceY = actualLocation.y - desiredLocation.y;
-
-          final int fixedOffsetX;
-          final int fixedOffsetY;
-
-          if (actualLocation.x > desiredLocation.x) {
-            fixedOffsetX = desiredLocation.x - differenceX;
-          } else {
-            fixedOffsetX = desiredLocation.x + differenceX;
-          }
-
-          if (actualLocation.y > desiredLocation.y) {
-            fixedOffsetY = desiredLocation.y - differenceY;
-          } else {
-            fixedOffsetY = desiredLocation.y + differenceY;
-          }
-
-          popupWindow.update(fixedOffsetX, fixedOffsetY, NO_UPDATE_FLAG, NO_UPDATE_FLAG);
+    static float initTextView(final TextView textView, final AttributeSet attrs) {
+        if (!textView.isInEditMode()) {
+            EmojiManager.getInstance().verifyInstalled();
         }
-      }
-    });
-  }
 
-  @ColorInt static int resolveColor(final Context context, @AttrRes final int resource, @ColorRes final int fallback) {
-    final TypedValue value = new TypedValue();
-    context.getTheme().resolveAttribute(resource, value, true);
-    final int resolvedColor;
+        final Paint.FontMetrics fontMetrics = textView.getPaint().getFontMetrics();
+        final float defaultEmojiSize = fontMetrics.descent - fontMetrics.ascent;
 
-    if (value.resourceId != 0) {
-      resolvedColor = ContextCompat.getColor(context, value.resourceId);
-    } else {
-      resolvedColor = value.data;
+        final float emojiSize;
+
+        if (attrs == null) {
+            emojiSize = defaultEmojiSize;
+        } else {
+            try (TypedArray a = textView.getContext().obtainStyledAttributes(attrs, R.styleable.EmojiTextView)) {
+                emojiSize = a.getDimension(R.styleable.EmojiTextView_emojiSize, defaultEmojiSize);
+            }
+        }
+
+        textView.setText(textView.getText());
+        return emojiSize;
     }
 
-    if (resolvedColor != 0) {
-      return resolvedColor;
-    } else {
-      return ContextCompat.getColor(context, fallback);
+    static int dpToPx(@NonNull final Context context, final float dp) {
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.getResources().getDisplayMetrics()) + 0.5f);
     }
-  }
 
-  private Utils() {
-    throw new AssertionError("No instances.");
-  }
-
-  static public int getSelectableBackgroundResId(){
-
-    // Set background
-    int selectableItemBackgroundBorderlessResourceId;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      selectableItemBackgroundBorderlessResourceId = android.R.attr.selectableItemBackgroundBorderless;
-    } else {
-      // For Android SDK API 16, use the default selectable item background
-      selectableItemBackgroundBorderlessResourceId = android.R.attr.selectableItemBackground;
+    static int getOrientation(final Context context) {
+        return context.getResources().getConfiguration().orientation;
     }
-    return selectableItemBackgroundBorderlessResourceId;
-  }
+
+    static int getProperWidth(final Activity activity) {
+        final Rect rect = Utils.windowVisibleDisplayFrame(activity);
+        return Utils.getOrientation(activity) == Configuration.ORIENTATION_PORTRAIT ? rect.right : getScreenWidth(activity);
+    }
+
+    static boolean shouldOverrideRegularCondition(@NonNull final Context context, final EditText editText) {
+        if ((editText.getImeOptions() & EditorInfo.IME_FLAG_NO_EXTRACT_UI) == 0) {
+            return getOrientation(context) == Configuration.ORIENTATION_LANDSCAPE;
+        }
+
+        return false;
+    }
+
+    static int getProperHeight(final Activity activity) {
+        return Utils.windowVisibleDisplayFrame(activity).bottom;
+    }
+
+    static int getScreenWidth(@NonNull final Activity context) {
+        return dpToPx(context, context.getResources().getConfiguration().screenWidthDp);
+    }
+
+    @NonNull
+    static Point locationOnScreen(@NonNull final View view) {
+        final int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        return new Point(location[0], location[1]);
+    }
+
+    @NonNull
+    static Rect windowVisibleDisplayFrame(@NonNull final Activity context) {
+        final Rect result = new Rect();
+        context.getWindow().getDecorView().getWindowVisibleDisplayFrame(result);
+        return result;
+    }
+
+    static void backspace(@NonNull final EditText editText) {
+        final KeyEvent event = new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL);
+        editText.dispatchKeyEvent(event);
+    }
+
+    static List<Emoji> asListWithoutDuplicates(final Emoji[] emojis) {
+        final List<Emoji> result = new ArrayList<>(emojis.length);
+
+        for (final Emoji emoji : emojis) {
+            if (!emoji.isDuplicate()) {
+                result.add(emoji);
+            }
+        }
+
+        return result;
+    }
+
+    static void input(@NonNull final EditText editText, @Nullable final Emoji emoji) {
+        if (emoji != null) {
+            final int start = editText.getSelectionStart();
+            final int end = editText.getSelectionEnd();
+            final String unicode = emoji.getUnicode();
+            final Editable text = editText.getText();
+            if (start >= 0) {
+                final int min = Math.min(start, end);
+                final int max = Math.max(start, end);
+                text.replace(min, max, unicode, 0, unicode.length());
+            } else {
+                text.append(unicode);
+            }
+        }
+    }
+
+    static Activity asActivity(@NonNull final Context context) {
+        for (Context result = context; result instanceof ContextWrapper; result = ((ContextWrapper) result).getBaseContext()) {
+            if (result instanceof Activity) {
+                return (Activity) result;
+            }
+        }
+
+        throw new IllegalArgumentException("The passed Context is not an Activity.");
+    }
+
+    static void fixPopupLocation(@NonNull final PopupWindow popupWindow, @NonNull final Point desiredLocation) {
+        View contentView = popupWindow.getContentView();
+        if (contentView == null) return;
+        contentView.post(new Runnable() {
+            @Override
+            public void run() {
+                final Point actualLocation = locationOnScreen(popupWindow.getContentView());
+
+                if (!(actualLocation.x == desiredLocation.x && actualLocation.y == desiredLocation.y)) {
+                    final int differenceX = actualLocation.x - desiredLocation.x;
+                    final int differenceY = actualLocation.y - desiredLocation.y;
+
+                    final int fixedOffsetX;
+                    final int fixedOffsetY;
+
+                    if (actualLocation.x > desiredLocation.x) {
+                        fixedOffsetX = desiredLocation.x - differenceX;
+                    } else {
+                        fixedOffsetX = desiredLocation.x + differenceX;
+                    }
+
+                    if (actualLocation.y > desiredLocation.y) {
+                        fixedOffsetY = desiredLocation.y - differenceY;
+                    } else {
+                        fixedOffsetY = desiredLocation.y + differenceY;
+                    }
+
+                    popupWindow.update(fixedOffsetX, fixedOffsetY, NO_UPDATE_FLAG, NO_UPDATE_FLAG);
+                }
+            }
+        });
+    }
+
+    @ColorInt
+    static int resolveColor(@NonNull final Context context, @AttrRes final int resource, @ColorRes final int fallback) {
+        final TypedValue value = new TypedValue();
+        context.getTheme().resolveAttribute(resource, value, true);
+
+        final int resolvedColor = value.resourceId != 0 ?
+                ContextCompat.getColor(context, value.resourceId) :
+                value.data;
+
+        return resolvedColor != 0 ? resolvedColor :
+                ContextCompat.getColor(context, fallback);
+    }
 
 }

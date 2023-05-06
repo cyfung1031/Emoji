@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,11 +45,11 @@ public class UtilsTest {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage("param is null");
 
-    Utils.checkNotNull(null, "param is null");
+    Objects.requireNonNull(null, "param is null");
   }
 
   @Test public void checkNotNull() {
-    Utils.checkNotNull("valid", "null is null");
+    Objects.requireNonNull("valid", "null is null");
   }
 
   /* 

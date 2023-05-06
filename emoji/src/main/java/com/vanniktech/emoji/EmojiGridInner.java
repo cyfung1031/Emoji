@@ -18,13 +18,10 @@
 package com.vanniktech.emoji;
 
 import static com.vanniktech.emoji.Utils.asListWithoutDuplicates;
-import static com.vanniktech.emoji.Utils.checkNotNull;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
-import android.os.Build;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,46 +32,43 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.view.ViewCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.emoji.EmojiCategory;
-import com.vanniktech.emoji.listeners.OnEmojiClickListener;
-import com.vanniktech.emoji.listeners.OnEmojiLongClickListener;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
+import java.util.Objects;
 
 class EmojiGridInner extends GridView {
     protected EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
     boolean isRecentEmojiGridView = false;
     private WeakReference<RecentEmoji> recentEmojisWR = null;
+    private EmojiViewController emojiViewController = null;
 
     EmojiGridInner(final Context context) {
         super(context);
     }
 
-    private EmojiViewController emojiViewController = null;
-
-    boolean clearAdapter(){
+    boolean clearAdapter() {
         EmojiArrayAdapterGeneral adapter = this.emojiArrayAdapterG;
-        if(adapter != null) {
+        if (adapter != null) {
             adapter.clear();
             return true;
         }
         return false;
     }
 
-    public void destroyView(){
+    public void destroyView() {
 
         EmojiGridInner emojiGridInner = (EmojiGridInner) this;
-        boolean isAdapterValid =  emojiGridInner.clearAdapter();
-        if(isAdapterValid){
+        boolean isAdapterValid = emojiGridInner.clearAdapter();
+        if (isAdapterValid) {
             emojiGridInner.emojiArrayAdapterG = null;
             emojiGridInner.isRecentEmojiGridView = false;
         }
     }
+
 
     private void initInner(@NonNull EmojiViewInner.EmojiViewBuildController<?> emojiViewController,
                            @NonNull Emoji[] emojis) {
@@ -90,8 +84,8 @@ class EmojiGridInner extends GridView {
 
         int gridWidth = emojiViewController.getGridWidth(getContext());
         int gridPadding = emojiViewController.getGridPadding(getContext());
-        final int width = gridWidth + 2*gridPadding;
-        final  int spacing = 0;
+        final int width = gridWidth + 2 * gridPadding;
+        final int spacing = 0;
         final int padding = gridPadding;
 
         setColumnWidth(width);
@@ -109,8 +103,7 @@ class EmojiGridInner extends GridView {
         // ------------------------------------
 
 
-
-        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiArrayAdapterGeneral(getContext(), emojis,emojiViewController);
+        EmojiArrayAdapterGeneral emojiArrayAdapter = new EmojiArrayAdapterGeneral(getContext(), emojis, emojiViewController);
 
 //        emojiArrayAdapterWR =new WeakReference<>(emojiArrayAdapter);
         emojiArrayAdapterG = emojiArrayAdapter;
@@ -122,7 +115,7 @@ class EmojiGridInner extends GridView {
                                @NonNull final RecentEmoji recentEmoji) {
         isRecentEmojiGridView = true;
 
-        recentEmojisWR =new WeakReference<>(recentEmoji);
+        recentEmojisWR = new WeakReference<>(recentEmoji);
 
         final Collection<Emoji> emojis = recentEmoji.getRecentEmojis();
         initInner(emojiViewController, emojis.toArray(new Emoji[0]));
@@ -145,11 +138,11 @@ class EmojiGridInner extends GridView {
 
         if (isRecentEmojiGridView) {
 
-            if(recentEmojisWR == null) return;
-            EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
+            if (recentEmojisWR == null) return;
+            EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
             RecentEmoji recentEmojis = recentEmojisWR.get();
 
-            if(emojiArrayAdapter == null || recentEmojis == null) return;
+            if (emojiArrayAdapter == null || recentEmojis == null) return;
 
             emojiArrayAdapter.updateEmojis(recentEmojis.getRecentEmojis());
         }
@@ -164,32 +157,30 @@ class EmojiGridInner extends GridView {
     }
 
 
-
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
+        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
         if (emojiArrayAdapter != null) {
             setAdapter(emojiArrayAdapter);
         }
     }
 
 
-
     @Override
     protected void onDraw(Canvas canvas) {
 
-        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter =emojiArrayAdapterG;
+        EmojiGridInner.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
         if (emojiArrayAdapter == null) return;
         super.onDraw(canvas);
     }
 
-    public void destroyItem(){
+    public void destroyItem() {
         emojiArrayAdapterG.clear();
         emojiArrayAdapterG = null;
         isRecentEmojiGridView = false;
-        recentEmojisWR= null;
+        recentEmojisWR = null;
 
 
     }
@@ -227,11 +218,46 @@ class EmojiGridInner extends GridView {
 
     }
 
+    private boolean isDisAllowParentVerticalScroll() {
+
+        boolean isDisAllowParentVerticalScroll = false;
+        if (emojiViewController != null) {
+            EmojiViewInner emojiViewInner = emojiViewController.getEmojiViewInner();
+            if (emojiViewInner != null) {
+                isDisAllowParentVerticalScroll = emojiViewInner.isDisAllowParentVerticalScroll();
+            }
+        }
+        return isDisAllowParentVerticalScroll;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        // Intercept touch events to prevent the parent view from scrolling when
+        // the user is scrolling the GridView
+        boolean intercepted = super.onInterceptTouchEvent(ev);
+//        Log.i("EmojiGridInner", intercepted +"|"+ canScrollVertically(-1) +" | "+ canScrollVertically(1));
+        if (intercepted) {
+
+            if (isDisAllowParentVerticalScroll() || canScrollVertically(-1) || canScrollVertically(1)) {
+                getParent().requestDisallowInterceptTouchEvent(true);
+                return true;
+            }
+        }
+        return intercepted;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+//        requestFocusFromTouch();
+        return super.onTouchEvent(ev);
+    }
 
     final static class EmojiArrayAdapterGeneral extends ArrayAdapter<Emoji> {
-        @Nullable private final VariantEmoji variantManager;
+        @Nullable
+        private final VariantEmoji variantManager;
 
-        @NonNull private final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
+        @NonNull
+        private final EmojiViewInner.EmojiViewBuildController<?> emojiViewController;
 
         EmojiArrayAdapterGeneral(@NonNull final Context context, @NonNull final Emoji[] emojis,
                                  @NonNull final EmojiViewInner.EmojiViewBuildController<?> emojiViewController) {
@@ -257,9 +283,7 @@ class EmojiGridInner extends GridView {
 
             emojiImageView.setBackgroundResource(0);
 
-            emojiImageView.setBackground(ResourcesCompat.getDrawable( context.getResources(), R.drawable.emoji_normal, null));
-
-
+            emojiImageView.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.emoji_normal, null));
 
 
             // Set padding
@@ -272,7 +296,9 @@ class EmojiGridInner extends GridView {
             return emojiImageView;
         }
 
-        @Override @NonNull public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
+        @Override
+        @NonNull
+        public View getView(final int position, final View convertView, @NonNull final ViewGroup parent) {
             EmojiImageViewGeneral image = (EmojiImageViewGeneral) convertView;
 
             final Context context = getContext();
@@ -282,7 +308,7 @@ class EmojiGridInner extends GridView {
                 image.init(emojiViewController);
             }
 
-            final Emoji emoji = checkNotNull(getItem(position), "emoji == null");
+            final Emoji emoji = Objects.requireNonNull(getItem(position), "emoji == null");
             final Emoji variantToUse = variantManager == null ? emoji : variantManager.getVariant(emoji);
             image.setContentDescription(emoji.getUnicode());
             image.setEmoji(variantToUse);
@@ -297,21 +323,5 @@ class EmojiGridInner extends GridView {
         }
 
 
-
     }
-
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        // Intercept touch events to prevent the parent view from scrolling when
-        // the user is scrolling the GridView
-        boolean intercepted = super.onInterceptTouchEvent(ev);
-        Log.i("EmojiGridInner", intercepted +"|"+ canScrollVertically(-1) +" | "+ canScrollVertically(1));
-        if (intercepted && (canScrollVertically(-1) || canScrollVertically(1)) ) {
-            getParent().requestDisallowInterceptTouchEvent(true);
-            return true;
-        }
-        return intercepted;
-    }
-
 }

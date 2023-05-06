@@ -4,6 +4,8 @@
   <color name="colorPrimaryDark">#303F9F</color>
   <color name="colorSecondary">#FF4081</color>
   <color name="chat_input_background">#FFFFFF</color>
+  <!--
   <color name="emoji_tool_color_normal">#969fa5</color>
   <color name="emoji_tool_color_selected">#505a66</color>
+  -->
 </resources>

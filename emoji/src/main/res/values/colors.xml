@@ -15,4 +15,7 @@
   <color name="emoji_variant_popup_bg1">#72FFFFFF</color>
   <color name="emoji_variant_popup_bg2">#30000000</color>
   <color name="emoji_variant_popup_bg3">#ffffff</color>
+
+  <color name="emoji_tool_color_normal">#969fa5</color>
+  <color name="emoji_tool_color_selected">#505a66</color>
 </resources>

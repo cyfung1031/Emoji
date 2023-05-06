@@ -17,9 +17,13 @@
 
 package com.vanniktech.emoji.emoji;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,133 +36,146 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-
 public abstract class Emoji implements Serializable {
-  private static final long serialVersionUID = 3L;
-  private static final List<Emoji> EMPTY_EMOJI_LIST = emptyList();
+    private static final long serialVersionUID = 3L;
+    private static final List<Emoji> EMPTY_EMOJI_LIST = emptyList();
 
-  @NonNull private final String unicode;
-  @NonNull private final String[] shortcodes;
-  @DrawableRes private final int iconResId;
-  private final boolean isDuplicate;
-  @NonNull private final List<Emoji> variants;
-  @Nullable private Emoji base;
-
-  public int getIconResId(){
-    return iconResId;
-  }
-
-
-  public abstract int getIconResIdX();
-
-  public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
-               @DrawableRes final int iconResId, final boolean isDuplicate) {
-    this(codePoints, shortcodes, iconResId, isDuplicate, new Emoji[0]);
-  }
-
-  public Emoji(final int codePoint, @NonNull final String[] shortcodes,
-               @DrawableRes final int iconResId, final boolean isDuplicate) {
-    this(codePoint, shortcodes, iconResId, isDuplicate, new Emoji[0]);
-  }
-
-  public Emoji(final int codePoint, @NonNull final String[] shortcodes,
-               @DrawableRes final int iconResId, final boolean isDuplicate,
-               final Emoji... variants) {
-    this(new int[]{codePoint}, shortcodes, iconResId, isDuplicate, variants);
-  }
-
-  public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
-               @DrawableRes final int iconResId, final boolean isDuplicate,
-               final Emoji... variants) {
-    this.unicode = new String(codePoints, 0, codePoints.length);
-    this.shortcodes = shortcodes;
-    this.iconResId = iconResId;
-    this.isDuplicate = isDuplicate;
-    this.variants = variants.length == 0 ? EMPTY_EMOJI_LIST : asList(variants);
-    for (final Emoji variant : variants) {
-      variant.base = this;
-    }
-  }
-
-  @NonNull public String getUnicode() {
-    return unicode;
-  }
-
-  @Nullable public List<String> getShortcodes() {
-    return asList(shortcodes);
-  }
-
-  @NonNull public Drawable getDrawable(final Context context) {
-    return Objects.requireNonNull(ResourcesCompat.getDrawable(context.getResources(), iconResId, null));
-  }
-
-  @NonNull public Drawable getDrawable(final Resources resources) {
-    return Objects.requireNonNull(ResourcesCompat.getDrawable(resources, iconResId, null));
-  }
-
-  WeakReference<Drawable> cacheDrawable = null;
-  public Drawable getCacheDrawable(){
-    return cacheDrawable != null ? cacheDrawable.get() : null;
-  }
-  public void setCacheDrawable(Drawable drawable){
-    if(drawable == null) cacheDrawable = null; else cacheDrawable = new WeakReference<>( drawable);
-  }
+    @NonNull
+    private final String unicode;
+    @NonNull
+    private final String[] shortcodes;
+    @DrawableRes
+    private final int iconResId;
+    private final boolean isDuplicate;
+    @NonNull
+    private final List<Emoji> variants;
+    WeakReference<Drawable> cacheDrawable = null;
+    @Nullable
+    private Emoji base;
 
 
-  public boolean isDuplicate() {
-    return isDuplicate;
-  }
-
-  @NonNull public List<Emoji> getVariants() {
-    return new ArrayList<>(variants);
-  }
-
-  @NonNull public Emoji getBase() {
-    Emoji result = this;
-
-    while (result.base != null) {
-      result = result.base;
+    public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
+                 @DrawableRes final int iconResId, final boolean isDuplicate) {
+        this(codePoints, shortcodes, iconResId, isDuplicate, new Emoji[0]);
     }
 
-    return result;
-  }
 
-  public int getLength() {
-    return unicode.length();
-  }
-
-  public boolean hasVariants() {
-    return !variants.isEmpty();
-  }
-
-  public void destroy() {
-    // For inheritors to override.
-  }
-
-  @Override public boolean equals(final Object o) {
-    if (this == o) {
-      return true;
+    public Emoji(final int codePoint, @NonNull final String[] shortcodes,
+                 @DrawableRes final int iconResId, final boolean isDuplicate) {
+        this(codePoint, shortcodes, iconResId, isDuplicate, new Emoji[0]);
     }
 
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+    public Emoji(final int codePoint, @NonNull final String[] shortcodes,
+                 @DrawableRes final int iconResId, final boolean isDuplicate,
+                 final Emoji... variants) {
+        this(new int[]{codePoint}, shortcodes, iconResId, isDuplicate, variants);
     }
 
-    final Emoji emoji = (Emoji) o;
+    public Emoji(@NonNull final int[] codePoints, @NonNull final String[] shortcodes,
+                 @DrawableRes final int iconResId, final boolean isDuplicate,
+                 final Emoji... variants) {
+        this.unicode = new String(codePoints, 0, codePoints.length);
+        this.shortcodes = shortcodes;
+        this.iconResId = iconResId;
+        this.isDuplicate = isDuplicate;
+        this.variants = variants.length == 0 ? EMPTY_EMOJI_LIST : asList(variants);
+        for (final Emoji variant : variants) {
+            variant.base = this;
+        }
+    }
 
-    return iconResId == emoji.iconResId
-            && unicode.equals(emoji.unicode)
-            && Arrays.equals(shortcodes, emoji.shortcodes)
-            && variants.equals(emoji.variants);
-  }
+    public int getIconResId() {
+        return iconResId;
+    }
 
-  @Override public int hashCode() {
-    int result = unicode.hashCode();
-    result = 31 * result + Arrays.hashCode(shortcodes);
-    result = 31 * result + iconResId;
-    result = 31 * result + variants.hashCode();
-    return result;
-  }
+    public abstract int getIconResIdX();
+
+    @NonNull
+    public String getUnicode() {
+        return unicode;
+    }
+
+    @Nullable
+    public List<String> getShortcodes() {
+        return asList(shortcodes);
+    }
+
+    @NonNull
+    public Drawable getDrawable(final Context context) {
+        return Objects.requireNonNull(ResourcesCompat.getDrawable(context.getResources(), iconResId, null));
+    }
+
+    @NonNull
+    public Drawable getDrawable(final Resources resources) {
+        return Objects.requireNonNull(ResourcesCompat.getDrawable(resources, iconResId, null));
+    }
+
+    public Drawable getCacheDrawable() {
+        return cacheDrawable != null ? cacheDrawable.get() : null;
+    }
+
+    public void setCacheDrawable(Drawable drawable) {
+        if (drawable == null) cacheDrawable = null;
+        else cacheDrawable = new WeakReference<>(drawable);
+    }
+
+
+    public boolean isDuplicate() {
+        return isDuplicate;
+    }
+
+    @NonNull
+    public List<Emoji> getVariants() {
+        return new ArrayList<>(variants);
+    }
+
+    @NonNull
+    public Emoji getBase() {
+        Emoji result = this;
+
+        while (result.base != null) {
+            result = result.base;
+        }
+
+        return result;
+    }
+
+    public int getLength() {
+        return unicode.length();
+    }
+
+    public boolean hasVariants() {
+        return !variants.isEmpty();
+    }
+
+    public void destroy() {
+        // For inheritors to override.
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Emoji emoji = (Emoji) o;
+
+        return iconResId == emoji.iconResId
+                && unicode.equals(emoji.unicode)
+                && Arrays.equals(shortcodes, emoji.shortcodes)
+                && variants.equals(emoji.variants);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = unicode.hashCode();
+        result = 31 * result + Arrays.hashCode(shortcodes);
+        result = 31 * result + iconResId;
+        result = 31 * result + variants.hashCode();
+        return result;
+    }
 }

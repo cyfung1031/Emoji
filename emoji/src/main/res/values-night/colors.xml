@@ -8,4 +8,7 @@
   <color name="emoji_variant_popup_bg1">#72171717</color>
   <color name="emoji_variant_popup_bg2">#30DDDDDD</color>
   <color name="emoji_variant_popup_bg3">#171717</color>
+
+  <color name="emoji_tool_color_normal">#6e787d</color>
+  <color name="emoji_tool_color_selected">#d3dade</color>
 </resources>

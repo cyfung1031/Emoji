@@ -37,12 +37,8 @@ final class Utils {
     if (attrs == null) {
       emojiSize = defaultEmojiSize;
     } else {
-      final TypedArray a = textView.getContext().obtainStyledAttributes(attrs, com.vanniktech.emoji.R.styleable.EmojiTextView);
-
-      try {
+      try (TypedArray a = textView.getContext().obtainStyledAttributes(attrs, com.vanniktech.emoji.R.styleable.EmojiTextView)) {
         emojiSize = a.getDimension(com.vanniktech.emoji.R.styleable.EmojiTextView_emojiSize, defaultEmojiSize);
-      } finally {
-        a.recycle();
       }
     }
 
