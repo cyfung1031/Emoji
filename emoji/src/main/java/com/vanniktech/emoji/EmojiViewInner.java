@@ -18,7 +18,9 @@
 package com.vanniktech.emoji;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -27,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -105,6 +108,12 @@ public class EmojiViewInner extends LinearLayout {
         if (d != null) {
             DrawableCompat.setTint(d, color);
         }
+    }
+    public static Drawable getTintedDrawable(Drawable inputDrawable, @ColorInt int color) {
+        Drawable wrapDrawable = DrawableCompat.wrap(inputDrawable.mutate());
+        DrawableCompat.setTint(wrapDrawable, color);
+        DrawableCompat.setTintMode(wrapDrawable, PorterDuff.Mode.SRC_IN);
+        return wrapDrawable;
     }
 
     public void init(@NonNull final EmojiViewBuildController<?> builder) {
@@ -230,7 +239,11 @@ public class EmojiViewInner extends LinearLayout {
         imageButton.setLayoutParams(layoutParams);
 
         // 3. Apply the background, padding, and scale type attributes
-        imageButton.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.emoji_bottom_line, null));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageButton.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.emoji_bottom_line, null));
+
+        }
         imageButton.setPadding(4, 4, 4, 4);
         imageButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
@@ -244,7 +257,9 @@ public class EmojiViewInner extends LinearLayout {
 
         Drawable d = ResourcesCompat.getDrawable(context.getResources(), btnDrawableResId, null);
         if (d != null) {
+            d = DrawableCompat.wrap(d.mutate());
             if (themeIconColor != 0) {
+                DrawableCompat.setTintMode(d, PorterDuff.Mode.SRC_IN);
                 DrawableCompat.setTint(d, themeIconColor);
             }
 
@@ -358,12 +373,15 @@ public class EmojiViewInner extends LinearLayout {
 
                 if (lastSelectedIndex >= 0 && lastSelectedIndex < v.emojiTabs.length) {
                     emojiTabs[lastSelectedIndex].setSelected(false);
+//                    emojiTabs[lastSelectedIndex].setImageDrawable(getTintedDrawable(emojiTabs[lastSelectedIndex].getDrawable(), v.themeIconColor));
                     tintImageView(emojiTabs[lastSelectedIndex], v.themeIconColor);
 
 //                    emojiTabs[lastSelectedIndex].setColorFilter(v.themeIconColor, PorterDuff.Mode.SRC_IN);
                 }
 
                 emojiTabs[i].setSelected(true);
+
+//                emojiTabs[i].setImageDrawable(getTintedDrawable(emojiTabs[i].getDrawable(), v.themeAccentColor));
                 tintImageView(emojiTabs[i], v.themeAccentColor);
 //                emojiTabs[i].setColorFilter(v.themeAccentColor, PorterDuff.Mode.SRC_IN);
 
@@ -465,7 +483,7 @@ public class EmojiViewInner extends LinearLayout {
             EmojiGrid v = new EmojiGrid(this.getContext());
 
 
-            v.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            v.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
             return v;
 
 
@@ -501,8 +519,9 @@ public class EmojiViewInner extends LinearLayout {
 
         @Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+            // View is EmojiGrid extended from GridView. So, AbsListView.LayoutParams
 
-            view.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            view.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, AbsListView.LayoutParams.MATCH_PARENT));
 
             final EmojiGrid newView = (EmojiGrid) view;
 

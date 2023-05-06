@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
@@ -270,10 +271,12 @@ class EmojiGrid extends GridView {
         public static EmojiImageViewG createEmojiImageView(Context context) {
             EmojiImageViewG emojiImageView = new EmojiImageViewG(context);
 
+            // for API 16, AbsListView instead ViewGroup. It is because it is under GridView.
+
             // Set layout parameters
-            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(
+                    AbsListView.LayoutParams.MATCH_PARENT,
+                    AbsListView.LayoutParams.WRAP_CONTENT);
             emojiImageView.setLayoutParams(layoutParams);
 
             // Set background

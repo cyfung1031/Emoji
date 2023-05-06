@@ -35,5 +35,6 @@ configurations.all {
     force 'androidx.core:core:1.3.2'
     force 'com.google.code.findbugs:jsr305:2.0.2'
     force 'com.google.guava:listenablefuture:1.0'
+    force 'androidx.recyclerview:recyclerview:1.2.1'
   }
 }
