@@ -21,7 +21,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiPopupGeneral;
+import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 
 // We don't care about duplicated code in the sample.
@@ -46,7 +45,7 @@ public class MainDialog5 extends DialogFragment {
   static final String TAG = "MainDialog";
 
   ChatAdapter chatAdapter;
-  EmojiPopupGeneral emojiPopup;
+  EmojiPopup emojiPopup;
 
   EmojiEditText editText;
   ViewGroup rootView;
@@ -105,7 +104,7 @@ public class MainDialog5 extends DialogFragment {
   }
 
   private void setUpEmojiPopup() {
-    emojiPopup = EmojiPopupGeneral.Builder.fromRootView(rootView)
+    emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
             /*
         .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
         .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))

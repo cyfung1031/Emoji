@@ -23,7 +23,7 @@ import android.widget.ImageView;
 import androidx.core.content.ContextCompat;
 
 // We don't care about duplicated code in the sample.
-public class MainActivityAutoCompeteTextView extends MainActivityBase {
+public class MainActivityAutoCompleteTextView extends MainActivityBase {
 
   AutoCompleteTextView editText;
 

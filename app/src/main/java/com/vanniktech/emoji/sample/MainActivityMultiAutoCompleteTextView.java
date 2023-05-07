@@ -23,7 +23,7 @@ import android.widget.MultiAutoCompleteTextView;
 import androidx.core.content.ContextCompat;
 
 // We don't care about duplicated code in the sample.
-public class MainActivityMultiAutoCompeteTextView extends MainActivityBase {
+public class MainActivityMultiAutoCompleteTextView extends MainActivityBase {
 
   MultiAutoCompleteTextView editText;
 

@@ -31,10 +31,10 @@
             android:name=".MainActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
-            android:name=".MainActivityAutoCompeteTextView"
+            android:name=".MainActivityAutoCompleteTextView"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
-            android:name=".MainActivityMultiAutoCompeteTextView"
+            android:name=".MainActivityMultiAutoCompleteTextView"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         -->
     </application>

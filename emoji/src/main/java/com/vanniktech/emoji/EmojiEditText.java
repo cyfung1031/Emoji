@@ -35,7 +35,7 @@ import java.lang.ref.WeakReference;
 /**
  * Reference implementation for an EditText with emoji support.
  */
-public class EmojiEditText extends AppCompatEditText implements IEmojiEditable {
+public class EmojiEditText extends AppCompatEditText implements IEmojiEditable, EmojiForceable {
     private float emojiSize;
     private boolean disableKeyboardInput;
     private boolean disableUX = true;
@@ -116,30 +116,16 @@ public class EmojiEditText extends AppCompatEditText implements IEmojiEditable {
         super.setOnFocusChangeListener(l);
     }
 
-    public boolean isKeyboardInputDisabled() {
+    @Override public boolean isKeyboardInputDisabled() {
         return disableKeyboardInput;
     }
 
-    /**
-     * Disables the keyboard input using a focus change listener and delegating to the previous focus change listener.
-     */
-    public void disableKeyboardInput(final IPopup emojiPopup) {
+    @Override public void disableKeyboardInput(final EmojiPopup emojiPopup) {
         disableKeyboardInput = true;
         super.setOnFocusChangeListener(new OnFocusChangeListenerForEmojisOnly(getOnFocusChangeListener(), emojiPopup));
     }
 
-    /**
-     * Disables the keyboard input using a focus change listener and delegating to the previous focus change listener.
-     */
-    public void disableKeyboardInput(final EmojiPopupGeneral emojiPopup) {
-        disableKeyboardInput = true;
-//    super.setOnFocusChangeListener(new OnFocusChangeListenerForEmojisOnly(getOnFocusChangeListener(), emojiPopup));
-    }
-
-    /**
-     * Enables the keyboard input. If it has been disabled before using {@link #disableKeyboardInput(IPopup)} the OnFocusChangeListener will be preserved.
-     */
-    public void enableKeyboardInput() {
+    @Override public void enableKeyboardInput() {
         disableKeyboardInput = false;
         final OnFocusChangeListener onFocusChangeListener = getOnFocusChangeListener();
 
@@ -149,10 +135,7 @@ public class EmojiEditText extends AppCompatEditText implements IEmojiEditable {
         }
     }
 
-    /**
-     * Forces this EditText to contain only one Emoji.
-     */
-    public void forceSingleEmoji() {
+    @Override public void forceSingleEmoji() {
         SingleEmojiTrait.install(this);
     }
 

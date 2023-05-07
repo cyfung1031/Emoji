@@ -45,6 +45,7 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
+import com.vanniktech.emoji.PrivateApi;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -61,7 +62,7 @@ import com.vanniktech.emoji.listeners.OnSoftKeyboardOpenListener;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-public final class EmojiPopupGeneral implements IPopup {
+public final class EmojiPopup implements IPopup {
     static final int MIN_KEYBOARD_HEIGHT = 50;
     static final int APPLY_WINDOW_INSETS_DURATION = 250;
     public WeakReference<EditText> editTextWR = null;
@@ -77,9 +78,9 @@ public final class EmojiPopupGeneral implements IPopup {
     final EmojiVariantPopupGeneral variantPopup;
     final PopupWindow popupWindow; // PopupWindow is holding mContext
 
-    private static EmojiResultReceiver createReceiver(EmojiPopupGeneral emojiPopupGeneral){
+    private static EmojiResultReceiver createReceiver(EmojiPopup emojiPopup){
 
-        final WeakReference<EmojiPopupGeneral> emojiPopupGeneralWR = new WeakReference<>(emojiPopupGeneral);
+        final WeakReference<EmojiPopup> emojiPopupGeneralWR = new WeakReference<>(emojiPopup);
         return new EmojiResultReceiver(new Handler(Looper.getMainLooper())) {
             @Override
             public void onReceiveResult(int resultCode, Bundle data) {
@@ -87,9 +88,9 @@ public final class EmojiPopupGeneral implements IPopup {
 
                 if (resultCode == 0 || resultCode == 1) {
                     this.enabled = false;
-                    final EmojiPopupGeneral emojiPopupGeneral = emojiPopupGeneralWR.get();
-                    if(emojiPopupGeneral != null) {
-                        emojiPopupGeneral.showAtBottom();
+                    final EmojiPopup emojiPopup = emojiPopupGeneralWR.get();
+                    if(emojiPopup != null) {
+                        emojiPopup.showAtBottom();
                     }
                 }
             }
@@ -136,7 +137,7 @@ public final class EmojiPopupGeneral implements IPopup {
 //  };
     private int delay;
 
-    EmojiPopupGeneral(@NonNull final EmojiPopupGeneral.Builder builder, @NonNull final EditText editText) {
+    EmojiPopup(@NonNull final EmojiPopup.Builder builder, @NonNull final EditText editText) {
         Activity context = Utils.asActivity(builder.rootView.getContext());
         View rootView = builder.rootView.getRootView();
         this.contextWR = new WeakReference<>(context);
@@ -190,7 +191,7 @@ public final class EmojiPopupGeneral implements IPopup {
     public void onPopupDismiss() {
         EditText editText = editTextWR != null ? editTextWR.get() : null;
 
-        if (editText instanceof EmojiEditText && ((EmojiEditText) editText).isKeyboardInputDisabled()) {
+        if (editText instanceof EmojiForceable && ((EmojiForceable) editText).isKeyboardInputDisabled()) {
             editText.clearFocus();
         }
         if (onEmojiPopupDismissListener != null) {
@@ -377,7 +378,7 @@ public final class EmojiPopupGeneral implements IPopup {
         }
     }
 
-    public void start() {
+    @PrivateApi public void start() {
 
         Activity context = contextWR != null ? contextWR.get() : null;
         if(context == null) return;
@@ -434,7 +435,7 @@ public final class EmojiPopupGeneral implements IPopup {
         /**
          * @param rootView The root View of your layout.xml which will be used for calculating the height
          *                 of the keyboard.
-         * @return builder For building the {@link EmojiPopupGeneral}.
+         * @return builder For building the {@link EmojiPopup}.
          */
         @CheckResult
         public static Builder fromRootView(final View rootView) {
@@ -633,11 +634,11 @@ public final class EmojiPopupGeneral implements IPopup {
 //        }
 
         @CheckResult
-        public EmojiPopupGeneral build(@NonNull final EditText editText) {
+        public EmojiPopup build(@NonNull final EditText editText) {
             EmojiManager.getInstance().verifyInstalled();
             Objects.requireNonNull(editText, "EditText can't be null");
 
-            final EmojiPopupGeneral emojiPopup = new EmojiPopupGeneral(this, editText);
+            final EmojiPopup emojiPopup = new EmojiPopup(this, editText);
       /*
       emojiPopup.onSoftKeyboardCloseListener = onSoftKeyboardCloseListener;
       emojiPopup.onEmojiClickListener = onEmojiClickListener;
@@ -653,15 +654,15 @@ public final class EmojiPopupGeneral implements IPopup {
     }
 
     static final class EmojiPopUpOnAttachStateChangeListener implements View.OnAttachStateChangeListener {
-        private final WeakReference<EmojiPopupGeneral> emojiPopup;
+        private final WeakReference<EmojiPopup> emojiPopup;
 
-        EmojiPopUpOnAttachStateChangeListener(final EmojiPopupGeneral emojiPopup) {
+        EmojiPopUpOnAttachStateChangeListener(final EmojiPopup emojiPopup) {
             this.emojiPopup = new WeakReference<>(emojiPopup);
         }
 
         @Override
         public void onViewAttachedToWindow(final View v) {
-            final EmojiPopupGeneral popup = emojiPopup.get();
+            final EmojiPopup popup = emojiPopup.get();
 
             if (popup != null) {
                 popup.start();
@@ -670,7 +671,7 @@ public final class EmojiPopupGeneral implements IPopup {
 
         @Override
         public void onViewDetachedFromWindow(final View v) {
-            final EmojiPopupGeneral popup = emojiPopup.get();
+            final EmojiPopup popup = emojiPopup.get();
 
             if (popup != null) {
                 popup.stop();
@@ -682,16 +683,16 @@ public final class EmojiPopupGeneral implements IPopup {
     }
 
     static final class EmojiPopUpOnApplyWindowInsetsListener implements OnApplyWindowInsetsListener {
-        private final WeakReference<EmojiPopupGeneral> emojiPopup;
+        private final WeakReference<EmojiPopup> emojiPopup;
         int previousOffset;
 
-        EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopupGeneral emojiPopup) {
+        EmojiPopUpOnApplyWindowInsetsListener(final EmojiPopup emojiPopup) {
             this.emojiPopup = new WeakReference<>(emojiPopup);
         }
 
         @Override
         public WindowInsetsCompat onApplyWindowInsets(final View v, final WindowInsetsCompat insets) {
-            final EmojiPopupGeneral popup = emojiPopup.get();
+            final EmojiPopup popup = emojiPopup.get();
 
             if (popup != null) {
                 final int offset;
@@ -723,7 +724,7 @@ public final class EmojiPopupGeneral implements IPopup {
 
     class MyEmojiView extends EmojiViewExtended {
 
-        public EmojiPopupGeneral.Builder popupBuilder = null;
+        public EmojiPopup.Builder popupBuilder = null;
 
         public MyEmojiView(Context context) {
             super(context);

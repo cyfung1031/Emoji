@@ -27,12 +27,10 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.vanniktech.emoji.EmojiImageViewG;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiPopupGeneral;
+import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiViewInner;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
-
-import com.vanniktech.emoji.sample.*;
 
 public class EmojiApplication extends Application {
   @Override
@@ -76,7 +74,7 @@ public class EmojiApplication extends Application {
               .setClassInstanceLimit(PopupWindow.class, 3)  // 设置某个类的实例上限，可用于内存泄露提示
               .setClassInstanceLimit(Emoji.class, 400)  // 设置某个类的实例上限，可用于内存泄露提示
               .setClassInstanceLimit(EmojiImageViewG.class, 3)  // 设置某个类的实例上限，可用于内存泄露提示
-              .setClassInstanceLimit(EmojiPopupGeneral.class, 3)  // 设置某个类的实例上限，可用于内存泄露提示
+              .setClassInstanceLimit(EmojiPopup.class, 3)  // 设置某个类的实例上限，可用于内存泄露提示
               .setClassInstanceLimit(EmojiViewInner.class, 3)  // 设置某个类的实例上限，可用于内存泄露提示
               .detectLeakedRegistrationObjects()  // 监测广播或者ServiceConnection是否有解注册
               .penaltyLog()

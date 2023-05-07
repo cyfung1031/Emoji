@@ -19,7 +19,6 @@ package com.vanniktech.emoji.sample;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,20 +26,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.provider.FontRequest;
 import androidx.emoji.text.EmojiCompat;
 import androidx.emoji.text.FontRequestEmojiCompatConfig;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiPopupGeneral;
+import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.facebook.FacebookEmojiProvider;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
@@ -53,7 +48,7 @@ public class MainActivityBase extends AppCompatActivity {
     static final String TAG = "MainActivity";
 
     ChatAdapter chatAdapter;
-    EmojiPopupGeneral emojiPopup;
+    EmojiPopup emojiPopup;
 
     public EditText getEditText() {
         return null;
@@ -186,7 +181,7 @@ public class MainActivityBase extends AppCompatActivity {
     private void setUpEmojiPopup() {
         final EditText editText = getEditText();
 
-        emojiPopup = EmojiPopupGeneral.Builder.fromRootView(rootView)
+        emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
                 /*
             .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
             .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
