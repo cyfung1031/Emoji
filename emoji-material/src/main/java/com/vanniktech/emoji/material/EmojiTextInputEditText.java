@@ -26,14 +26,14 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 import com.google.android.material.textfield.TextInputEditText;
-import com.vanniktech.emoji.EmojiForceable;
+import com.vanniktech.emoji.IEmojiForceable;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.IEmojiEditable;
 import com.vanniktech.emoji.SingleEmojiTrait;
 import com.vanniktech.emoji.emoji.Emoji;
 
-public class EmojiTextInputEditText extends TextInputEditText implements IEmojiEditable, EmojiForceable {
+public class EmojiTextInputEditText extends TextInputEditText implements IEmojiEditable, IEmojiForceable {
     private float emojiSize;
     private boolean disableKeyboardInput;
 

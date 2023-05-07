@@ -17,7 +17,7 @@
 
 package com.vanniktech.emoji;
 
-public interface EmojiForceable {
+public interface IEmojiForceable {
     /** Returns true when {@link #enableKeyboardInput()} was called and otherwise false. */
     boolean isKeyboardInputDisabled();
 

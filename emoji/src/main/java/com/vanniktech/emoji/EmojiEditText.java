@@ -35,7 +35,7 @@ import java.lang.ref.WeakReference;
 /**
  * Reference implementation for an EditText with emoji support.
  */
-public class EmojiEditText extends AppCompatEditText implements IEmojiEditable, EmojiForceable {
+public class EmojiEditText extends AppCompatEditText implements IEmojiEditable, IEmojiForceable {
     private float emojiSize;
     private boolean disableKeyboardInput;
     private boolean disableUX = true;

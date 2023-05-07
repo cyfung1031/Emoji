@@ -45,7 +45,6 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
-import com.vanniktech.emoji.PrivateApi;
 import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -191,7 +190,7 @@ public final class EmojiPopup implements IPopup {
     public void onPopupDismiss() {
         EditText editText = editTextWR != null ? editTextWR.get() : null;
 
-        if (editText instanceof EmojiForceable && ((EmojiForceable) editText).isKeyboardInputDisabled()) {
+        if (editText instanceof IEmojiForceable && ((IEmojiForceable) editText).isKeyboardInputDisabled()) {
             editText.clearFocus();
         }
         if (onEmojiPopupDismissListener != null) {
