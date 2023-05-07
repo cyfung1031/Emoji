@@ -21,7 +21,7 @@ import android.view.View;
 
 import androidx.viewpager2.widget.ViewPager2;
 
-public final class PageTransformer2 implements ViewPager2.PageTransformer {
+public final class PageTransformer implements ViewPager2.PageTransformer {
   private static final float MIN_SCALE = 0.9f;
   private static final float MIN_ALPHA = 0.1f;
 
