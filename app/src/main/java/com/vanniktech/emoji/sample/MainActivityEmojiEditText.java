@@ -20,6 +20,7 @@ package com.vanniktech.emoji.sample;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.text.Editable;
@@ -35,6 +36,7 @@ import com.vanniktech.emoji.EmojiEditText;
 // We don't care about duplicated code in the sample.
 public class MainActivityEmojiEditText extends MainActivityBase {
 
+  @SuppressLint("SetTextI18n")
   @Override
   public void setupOnCreate() {
 
