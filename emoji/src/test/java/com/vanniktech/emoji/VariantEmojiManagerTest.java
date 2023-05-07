@@ -17,14 +17,13 @@
 
 package com.vanniktech.emoji;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import androidx.test.core.app.ApplicationProvider;
 
 import com.vanniktech.emoji.emoji.Emoji;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -55,17 +54,18 @@ public final class VariantEmojiManagerTest {
 
     @Test
     public void getVariantDefault() {
-        assertThat(variantEmojiManager.getVariant(emoji)).isEqualTo(emoji);
+
+        Assertions.assertEquals(variantEmojiManager.getVariant(emoji), emoji);
     }
 
     @Test
     public void getVariantUsingOnlyVariants() {
         variantEmojiManager.addVariant(variant2);
 
-        assertThat(variantEmojiManager.getVariant(base)).isEqualTo(variant2);
-        assertThat(variantEmojiManager.getVariant(variant1)).isEqualTo(variant2);
-        assertThat(variantEmojiManager.getVariant(variant2)).isEqualTo(variant2);
-        assertThat(variantEmojiManager.getVariant(variant3)).isEqualTo(variant2);
+        Assertions.assertEquals(variantEmojiManager.getVariant(base), variant2);
+        Assertions.assertEquals(variantEmojiManager.getVariant(variant1), variant2);
+        Assertions.assertEquals(variantEmojiManager.getVariant(variant2), variant2);
+        Assertions.assertEquals(variantEmojiManager.getVariant(variant3), variant2);
     }
 
     @Test
@@ -73,7 +73,7 @@ public final class VariantEmojiManagerTest {
         variantEmojiManager.addVariant(variant1);
         variantEmojiManager.addVariant(base);
 
-        assertThat(variantEmojiManager.getVariant(variant1)).isEqualTo(base);
+        Assertions.assertEquals(variantEmojiManager.getVariant(variant1), base);
     }
 
     @Test
@@ -81,7 +81,7 @@ public final class VariantEmojiManagerTest {
         variantEmojiManager.addVariant(variant1);
         variantEmojiManager.addVariant(variant1);
 
-        assertThat(variantEmojiManager.getVariant(variant1)).isEqualTo(variant1);
+        Assertions.assertEquals(variantEmojiManager.getVariant(variant1), variant1);
     }
 
     @Test
@@ -94,7 +94,7 @@ public final class VariantEmojiManagerTest {
         EmojiManager.install(TestEmojiProvider.from(variant1, variant2));
         final VariantEmojiManager sharedPrefsManager = new VariantEmojiManager(ApplicationProvider.getApplicationContext());
 
-        assertThat(sharedPrefsManager.getVariant(base)).isEqualTo(variant2);
+        Assertions.assertEquals(sharedPrefsManager.getVariant(base), variant2);
     }
 
     @Test
@@ -104,6 +104,6 @@ public final class VariantEmojiManagerTest {
         EmojiManager.install(TestEmojiProvider.from(variant1, variant2));
         final VariantEmojiManager sharedPrefsManager = new VariantEmojiManager(ApplicationProvider.getApplicationContext());
 
-        assertThat(sharedPrefsManager.getVariant(base)).isEqualTo(base);
+        Assertions.assertEquals(sharedPrefsManager.getVariant(base), base);
     }
 }

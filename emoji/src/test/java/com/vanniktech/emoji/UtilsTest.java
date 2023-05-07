@@ -31,6 +31,8 @@ import com.pushtorefresh.private_constructor_checker.PrivateConstructorChecker;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.emoji.EmojiCategory;
 
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class UtilsTest {
                     .expectedExceptionMessage("No instances.")
                     .check()
     );
-    assertThat(thrown.getMessage()).isEqualTo("No instances.");
+    Assertions.assertEquals(thrown.getMessage(), "No instances.");
   }
 
   @Test public void checkNull() {

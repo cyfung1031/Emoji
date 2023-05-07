@@ -213,7 +213,7 @@ public class EmojiViewExtended extends EmojiViewInner{
         @ColorInt
         public int getBackgroundColor(Context context) {
 
-            return Utils.resolveColor(context, R.attr.emojiBackground, R.color.emoji_background);
+            return Utils.resolveColor(context, R.attr.emojiBackgroundColor, R.color.emoji_background_color);
 
         }
 
@@ -254,7 +254,7 @@ public class EmojiViewExtended extends EmojiViewInner{
         @ColorInt
         public int getDividerColor(Context context) {
 
-            return Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider);
+            return Utils.resolveColor(context, R.attr.emojiDividerColor, R.color.emoji_divider_color);
         }
 
         @Nullable

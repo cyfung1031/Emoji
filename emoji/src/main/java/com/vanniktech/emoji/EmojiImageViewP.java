@@ -70,7 +70,7 @@ public final class EmojiImageViewP extends EmojiImageViewE {
     setScaleType(ScaleType.FIT_CENTER);
     setFrame(0,0,mDesiredWidth,mDesiredHeight);
 
-    variantIndicatorPaint.setColor(Utils.resolveColor(context, R.attr.emojiDivider, R.color.emoji_divider));
+    variantIndicatorPaint.setColor(Utils.resolveColor(context, R.attr.emojiDividerColor, R.color.emoji_divider_color));
     variantIndicatorPaint.setStyle(Paint.Style.FILL);
     variantIndicatorPaint.setAntiAlias(true);
   }

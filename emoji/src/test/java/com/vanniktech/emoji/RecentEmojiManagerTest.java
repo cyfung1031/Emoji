@@ -30,7 +30,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 import java.util.Collection;
-import java.util.Objects;
 
 @Config(manifest = Config.NONE)
 @RunWith(RobolectricTestRunner.class)

@@ -141,8 +141,8 @@ public class EmojiViewInner extends LinearLayout {
 
         emojisPager2 = findViewById(R.id.emojiViewPager);
         emojisPager2.setSaveEnabled(false);
-        final View emojiDivider = findViewById(R.id.emojiViewDivider);
-        emojiDivider.setBackgroundColor(builder.getDividerColor(context));
+        final View emojiDividerColor = findViewById(R.id.emojiViewDivider);
+        emojiDividerColor.setBackgroundColor(builder.getDividerColor(context));
 
         ViewPager2.PageTransformer pt = builder.getPageTransformer(context);
         if (pt != null) {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <color name="emoji_background">@color/emoji_grey_900</color>
+  <color name="emoji_background_color">@color/emoji_grey_900</color>
   <color name="emoji_primary_color">@color/emoji_white</color>
-  <color name="emoji_divider">@color/emoji_gray70</color>
+  <color name="emoji_divider_color">@color/emoji_gray70</color>
 
 
   <color name="emoji_variant_popup_bg1">#72171717</color>

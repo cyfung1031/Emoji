@@ -97,7 +97,7 @@ ext {
           junit             : 'junit:junit:4.13.2',
           robolectric       : 'org.robolectric:robolectric:4.10.2',
           privateConstructor: 'com.pushtorefresh.java-private-constructor-checker:checker:1.2.0',
-          assertJ           : 'org.assertj:assertj-core:3.21.0'
+          assertJ           : 'org.assertj:assertj-core:3.23.1'
   ]
 
   javaVersion = JavaVersion.VERSION_1_8
