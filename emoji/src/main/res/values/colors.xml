@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
   <color name="emoji_background" tools:ignore="UnusedResources">@color/emoji_white_background</color>
-  <color name="emoji_icons" tools:ignore="UnusedResources">@color/emoji_black</color>
+  <color name="emoji_primary_color" tools:ignore="UnusedResources">@color/emoji_black</color>
   <color name="emoji_divider" tools:ignore="UnusedResources">@color/emoji_gray20</color>
 
   <color name="emoji_white">#ffffffff</color>

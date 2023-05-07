@@ -49,8 +49,8 @@ public class MainActivityEmojiEditText extends MainActivityBase {
     emojiButton = findViewById(R.id.main_activity_emoji);
     final ImageView sendButton = findViewById(R.id.main_activity_send);
 
-    emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
-    sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_icons), PorterDuff.Mode.SRC_IN);
+    emojiButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
+    sendButton.setColorFilter(ContextCompat.getColor(this, R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
 
     final CheckBox forceEmojisOnly = findViewById(R.id.main_activity_force_emojis_only);
     forceEmojisOnly.setOnCheckedChangeListener((ignore, isChecked) -> {

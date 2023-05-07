@@ -220,7 +220,7 @@ public class EmojiViewExtended extends EmojiViewInner{
         @ColorInt
         public int getIconColor(Context context) {
 
-//            return Utils.resolveColor(context, R.attr.emojiIcons, R.color.emoji_icons);
+//            return Utils.resolveColor(context, R.attr.emojiPrimaryColor, R.color.emoji_primary_color);
 
 
 
