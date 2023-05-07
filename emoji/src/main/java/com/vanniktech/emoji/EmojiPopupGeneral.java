@@ -75,19 +75,30 @@ public final class EmojiPopupGeneral implements IPopup {
     final IVariantEmoji variantEmoji;
     @NonNull
     final EmojiVariantPopupGeneral variantPopup;
-    final PopupWindow popupWindow;
-    final EmojiResultReceiver emojiResultReceiver = new EmojiResultReceiver(new Handler(Looper.getMainLooper())) {
-        @Override
-        public void onReceiveResult(int resultCode, Bundle data) {
-            if(!this.enabled) return;
+    final PopupWindow popupWindow; // PopupWindow is holding mContext
 
-            if (resultCode == 0 || resultCode == 1) {
+    private static EmojiResultReceiver createReceiver(EmojiPopupGeneral emojiPopupGeneral){
 
-                this.enabled = false;
-                EmojiPopupGeneral.this.showAtBottom();
+        final WeakReference<EmojiPopupGeneral> emojiPopupGeneralWR = new WeakReference<>(emojiPopupGeneral);
+        return new EmojiResultReceiver(new Handler(Looper.getMainLooper())) {
+            @Override
+            public void onReceiveResult(int resultCode, Bundle data) {
+                if(!this.enabled) return;
+
+                if (resultCode == 0 || resultCode == 1) {
+                    this.enabled = false;
+                    final EmojiPopupGeneral emojiPopupGeneral = emojiPopupGeneralWR.get();
+                    if(emojiPopupGeneral != null) {
+                        emojiPopupGeneral.showAtBottom();
+                    }
+                }
             }
-        }
-    };
+        };
+
+    }
+
+    final EmojiResultReceiver emojiResultReceiver = createReceiver(this);
+
     boolean isPendingOpen;
     boolean isKeyboardOpen;
     @Nullable

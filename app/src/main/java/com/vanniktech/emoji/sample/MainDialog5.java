@@ -22,6 +22,7 @@ import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -69,7 +70,9 @@ public class MainDialog5 extends DialogFragment {
   }
 
   private View buildView() {
-    final View result = View.inflate(getContext(), R.layout.dialog_main, null);
+    LayoutInflater inflater = LayoutInflater.from(getContext());
+
+    final View result = inflater.inflate(R.layout.dialog_main, (ViewGroup)null);
 
     editText = result.findViewById(R.id.main_dialog_chat_bottom_message_edittext);
     rootView = result.findViewById(R.id.main_dialog_root_view);

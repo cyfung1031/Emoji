@@ -123,8 +123,9 @@ public class EmojiViewInner extends LinearLayout {
         isTabButtonSmoothTransitionEnabled = builder.getTabButtonSmoothTransitionEnabled();
 
         Context context = getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
 
-        View.inflate(context, R.layout.emoji_view2, this);
+        inflater.inflate(R.layout.emoji_view2, this, true);
         setOrientation(VERTICAL);
 
         builder.setEmojiViewInner(this);

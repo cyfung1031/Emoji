@@ -93,13 +93,15 @@ public final class EmojiVariantPopupGeneral {
   }
 
   private View initView(@NonNull final Context context, @NonNull final Emoji emoji, final int width) {
-    final View result = View.inflate(context, R.layout.emoji_popup_window_skin, null);
+
+    LayoutInflater inflater = LayoutInflater.from(context);
+    final View result = inflater.inflate(R.layout.emoji_popup_window_skin, (ViewGroup) null);
     final LinearLayout imageContainer = result.findViewById(R.id.emojiPopupWindowSkinPopupContainer);
 
     final List<Emoji> variants = emoji.getBase().getVariants();
     variants.add(0, emoji.getBase());
 
-    final LayoutInflater inflater = LayoutInflater.from(context);
+//    final LayoutInflater inflater = LayoutInflater.from(context);
 
     for (final Emoji variant : variants) {
       final ImageView emojiImage = (ImageView) inflater.inflate(R.layout.emoji_adapter_item, imageContainer, false);

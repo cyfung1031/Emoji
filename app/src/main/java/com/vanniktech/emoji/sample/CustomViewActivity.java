@@ -20,7 +20,9 @@ package com.vanniktech.emoji.sample;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
@@ -45,7 +47,9 @@ public class CustomViewActivity extends AppCompatActivity {
 
     CustomView(final Context context, @Nullable final AttributeSet attrs) {
       super(context, attrs);
-      View.inflate(context, R.layout.view_custom, this);
+      LayoutInflater inflater = LayoutInflater.from(context);
+      inflater.inflate(R.layout.view_custom, (ViewGroup) this, true);
+//      View.inflate(context, R.layout.view_custom, this);
 
       emojiButton = findViewById(R.id.customViewButton);
       editText = findViewById(R.id.customViewEditText);
