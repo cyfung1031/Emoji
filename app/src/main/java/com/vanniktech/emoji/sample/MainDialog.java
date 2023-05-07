@@ -38,11 +38,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
+// import timber.log.Timber;
 
 // We don't care about duplicated code in the sample.
-public class MainDialog5 extends DialogFragment {
-  static final String FRAGMENT_MANAGER_TAG = "dialog_main";
-  static final String TAG = "MainDialog";
+public class MainDialog extends DialogFragment {
+  static final String FRAGMENT_MANAGER_TAG = "MainDialog";
 
   ChatAdapter chatAdapter;
   EmojiPopup emojiPopup;
@@ -52,7 +52,7 @@ public class MainDialog5 extends DialogFragment {
   ImageView emojiButton;
 
   public static void show(@NonNull final AppCompatActivity activity) {
-    new MainDialog5().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG + System.currentTimeMillis());
+    new MainDialog().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG + System.currentTimeMillis());
   }
 
   @Override public void onCreate(@Nullable final Bundle savedInstanceState) {

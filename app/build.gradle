@@ -74,6 +74,7 @@ dependencies {
   implementation project(':emoji-facebook')
   implementation project(':emoji-kotlin')
   implementation project(':emoji-material')
+  implementation libs.timber
 
   implementation rootProject.ext.supportAppCompat
   implementation rootProject.ext.supportRecyclerView

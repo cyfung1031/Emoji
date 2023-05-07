@@ -6,7 +6,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".MainDialog5"
+    tools:context=".MainDialog"
     >
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/main_dialog_recycler_view"

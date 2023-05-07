@@ -42,6 +42,7 @@ import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 import com.vanniktech.emoji.twitter.TwitterEmojiProvider;
+// import timber.log.Timber;
 
 // We don't care about duplicated code in the sample.
 public class MainActivityBase extends AppCompatActivity {
@@ -99,7 +100,7 @@ public class MainActivityBase extends AppCompatActivity {
 
         if (itemId == R.id.menuMainShowDialog) {
             emojiPopup.dismiss();
-            MainDialog5.show(this);
+            MainDialog.show(this);
             return true;
         } else if (itemId == R.id.menuMainVariantIos) {
             EmojiManager.destroy();

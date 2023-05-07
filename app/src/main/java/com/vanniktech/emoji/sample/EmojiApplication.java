@@ -31,6 +31,7 @@ import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiViewInner;
 import com.vanniktech.emoji.emoji.Emoji;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
+import timber.log.Timber;
 
 public class EmojiApplication extends Application {
   @Override
@@ -42,6 +43,7 @@ public class EmojiApplication extends Application {
     boolean isDebuggable = 0 != (getApplicationInfo().flags &= ApplicationInfo.FLAG_DEBUGGABLE);
     if (isDebuggable) {
       enableStrictMode();
+      Timber.plant(new Timber.DebugTree());
     }
   }
 
