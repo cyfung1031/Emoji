@@ -24,44 +24,49 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.vanniktech.emoji.EmojiEditText;
 import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiViewBoard;
 
 public class CustomViewActivity extends AppCompatActivity {
-  @Override protected void onCreate(@Nullable final Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    final CustomView customView = new CustomView(this, null);
-    setContentView(customView);
-    customView.setUpEmojiPopup();
-  }
-
-  static final class CustomView extends LinearLayout {
-
-    CustomView(final Context context, @Nullable final AttributeSet attrs) {
-      super(context, attrs);
-      LayoutInflater inflater = LayoutInflater.from(context);
-      inflater.inflate(R.layout.view_custom, (ViewGroup) this, true);
-      setOrientation(VERTICAL);
+        final CustomView customView = new CustomView(this, null);
+        setContentView(customView);
+        customView.setUpEmojiPopup();
     }
 
-    void setUpEmojiPopup() {
-      final EmojiEditText editText = findViewById(R.id.customViewEditText);
+    static final class CustomView extends LinearLayout {
 
-      final EmojiPopup emojiPopup = EmojiPopup.Builder.fromRootView(this)
-          .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-          .setPageTransformer(new PageTransformer())
-          .build(editText);
+        CustomView(final Context context, @Nullable final AttributeSet attrs) {
+            super(context, attrs);
+            LayoutInflater inflater = LayoutInflater.from(context);
+            inflater.inflate(R.layout.view_custom, (ViewGroup) this, true);
+            setOrientation(VERTICAL);
+        }
 
-      emojiPopup.emojiViewController.setPageTransformer(new PageTransformer());
+        void setUpEmojiPopup() {
+            final EmojiEditText editText = findViewById(R.id.customViewEditText);
 
-      final Button emojiButton = findViewById(R.id.customViewButton);
-      editText.disableKeyboardInput(emojiPopup);
-      editText.forceSingleEmoji();
-      emojiButton.setOnClickListener(ignore -> editText.requestFocus());
+            final EmojiPopup emojiPopup = EmojiPopup.create(this, editText);
 
+            EmojiViewBoard emojiViewBoard = emojiPopup.getEmojiViewBoard();
+            emojiPopup.setAnimationStyle(R.style.emoji_fade_animation_style);
+            emojiViewBoard.setPageTransformer(new PageTransformer());
+            emojiPopup.setup();
+
+
+            final Button emojiButton = findViewById(R.id.customViewButton);
+            editText.disableKeyboardInput(emojiPopup);
+            editText.forceSingleEmoji();
+            emojiButton.setOnClickListener(ignore -> editText.requestFocus());
+
+        }
     }
-  }
 }

@@ -38,7 +38,7 @@ public class RecentEmojiManagerTest {
 
     @Before
     public void setUp() {
-        recentEmojiManager = new RecentEmojiManager2(ApplicationProvider.getApplicationContext());
+        recentEmojiManager = new RecentEmojiManagerV8(ApplicationProvider.getApplicationContext());
     }
 
     @Test

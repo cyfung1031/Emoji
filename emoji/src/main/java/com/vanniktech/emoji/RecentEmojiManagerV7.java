@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public final class RecentEmojiManagerOriginal implements IRecentEmoji {
+public final class RecentEmojiManagerV7 implements IRecentEmoji {
   private static final String PREFERENCE_NAME = "emoji-recent-manager";
   private static final String TIME_DELIMITER = ";";
   private static final String EMOJI_DELIMITER = "~";
@@ -41,7 +41,7 @@ public final class RecentEmojiManagerOriginal implements IRecentEmoji {
   @NonNull private EmojiList emojiList = new EmojiList(0);
   @NonNull private final SharedPreferences sharedPreferences;
 
-  public RecentEmojiManagerOriginal(@NonNull final Context context) {
+  public RecentEmojiManagerV7(@NonNull final Context context) {
     sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
   }
 

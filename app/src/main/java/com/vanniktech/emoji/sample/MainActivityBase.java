@@ -50,6 +50,10 @@ public class MainActivityBase extends AppCompatActivity {
 
     ChatAdapter chatAdapter;
     EmojiPopup emojiPopup;
+    ViewGroup rootView;
+    ImageView emojiButton;
+    EmojiCompat emojiCompat;
+    private EditText mEditText;
 
     public EditText getEditText() {
         return null;
@@ -58,16 +62,13 @@ public class MainActivityBase extends AppCompatActivity {
     public void setEditText(EditText editText) {
     }
 
-    private EditText mEditText;
-    ViewGroup rootView;
-    ImageView emojiButton;
-    EmojiCompat emojiCompat;
-
-    public void setupOnCreate(){
+    public void setupOnCreate() {
 
     }
 
-    @Override @SuppressLint("SetTextI18n") protected void onCreate(@Nullable final Bundle savedInstanceState) {
+    @Override
+    @SuppressLint("SetTextI18n")
+    protected void onCreate(@Nullable final Bundle savedInstanceState) {
         getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory((LayoutInflater.Factory2) getDelegate()));
 
         super.onCreate(savedInstanceState);
@@ -78,25 +79,44 @@ public class MainActivityBase extends AppCompatActivity {
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        setUpEmojiPopup();
 
+        final EditText editText = getEditText();
+
+        emojiPopup = EmojiPopup.create(rootView, editText);
+
+        emojiPopup.getEmojiViewBoard().setPageTransformer(new PageTransformer());
+        emojiPopup.setup();
+                /*
+            .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
+            .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
+            .setOnEmojiPopupShownListener(() -> emojiButton.setImageResource(R.drawable.ic_keyboard))
+            .setOnSoftKeyboardOpenListener(ignore -> Log.d(TAG, "Opened soft keyboard"))
+            .setOnEmojiPopupDismissListener(() -> emojiButton.setImageResource(R.drawable.emoji_ios_category_smileysandpeople))
+            .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
+            .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
+                */
+        //.setRecentEmoji(NoRecentEmoji.INSTANCE) // Uncomment this to hide recent emojis.
+
+        // emojiPopup.getEmojiViewBoard().setPageTransformer(new PageTransformer());
 
 
     }
 
-    @Override public boolean onCreateOptionsMenu(final Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
-    public boolean customOptionsItemSelected(MenuItem item, int itemId){
+    public boolean customOptionsItemSelected(MenuItem item, int itemId) {
         return false;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
-        if(customOptionsItemSelected(item,itemId)) return true;
+        if (customOptionsItemSelected(item, itemId)) return true;
 
         if (itemId == R.id.menuMainShowDialog) {
             emojiPopup.dismiss();
@@ -149,7 +169,6 @@ public class MainActivityBase extends AppCompatActivity {
     }
 
 
-
     //    @Override
 //    public void recreate() {
 //        // Get a reference to the fragment manager
@@ -171,7 +190,8 @@ public class MainActivityBase extends AppCompatActivity {
 //    }
 
 
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         if (emojiPopup != null && emojiPopup.isShowing()) {
             emojiPopup.dismiss();
         } else {
@@ -179,21 +199,4 @@ public class MainActivityBase extends AppCompatActivity {
         }
     }
 
-    private void setUpEmojiPopup() {
-        final EditText editText = getEditText();
-
-        emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
-                /*
-            .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
-            .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
-            .setOnEmojiPopupShownListener(() -> emojiButton.setImageResource(R.drawable.ic_keyboard))
-            .setOnSoftKeyboardOpenListener(ignore -> Log.d(TAG, "Opened soft keyboard"))
-            .setOnEmojiPopupDismissListener(() -> emojiButton.setImageResource(R.drawable.emoji_ios_category_smileysandpeople))
-            .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
-            .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-                */
-                .setPageTransformer(new PageTransformer())
-                //.setRecentEmoji(NoRecentEmoji.INSTANCE) // Uncomment this to hide recent emojis.
-                .build(editText);
-    }
 }

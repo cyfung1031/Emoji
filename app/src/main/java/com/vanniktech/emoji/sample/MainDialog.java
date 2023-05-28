@@ -42,69 +42,69 @@ import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 
 // We don't care about duplicated code in the sample.
 public class MainDialog extends DialogFragment {
-  static final String FRAGMENT_MANAGER_TAG = "MainDialog";
+    static final String FRAGMENT_MANAGER_TAG = "MainDialog";
 
-  ChatAdapter chatAdapter;
-  EmojiPopup emojiPopup;
+    ChatAdapter chatAdapter;
+    EmojiPopup emojiPopup;
 
-  EmojiEditText editText;
-  ViewGroup rootView;
-  ImageView emojiButton;
+    EmojiEditText editText;
+    ViewGroup rootView;
+    ImageView emojiButton;
 
-  public static void show(@NonNull final AppCompatActivity activity) {
-    new MainDialog().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG + System.currentTimeMillis());
-  }
+    public static void show(@NonNull final AppCompatActivity activity) {
+        new MainDialog().show(activity.getSupportFragmentManager(), FRAGMENT_MANAGER_TAG + System.currentTimeMillis());
+    }
 
-  @Override public void onCreate(@Nullable final Bundle savedInstanceState) {
-    getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory(null));
-    super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(@Nullable final Bundle savedInstanceState) {
+        getLayoutInflater().setFactory2(new MaterialEmojiLayoutFactory(null));
+        super.onCreate(savedInstanceState);
 
-    chatAdapter = new ChatAdapter();
-  }
+        chatAdapter = new ChatAdapter();
+    }
 
-  @Override @NonNull public Dialog onCreateDialog(final Bundle savedInstanceState) {
-    return new AlertDialog.Builder(getContext())
-            .setView(buildView())
-            .create();
-  }
+    @Override
+    @NonNull
+    public Dialog onCreateDialog(final Bundle savedInstanceState) {
+        return new AlertDialog.Builder(getContext())
+                .setView(buildView())
+                .create();
+    }
 
-  private View buildView() {
-    LayoutInflater inflater = LayoutInflater.from(getContext());
+    private View buildView() {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
 
-    final View result = inflater.inflate(R.layout.dialog_main, (ViewGroup)null);
+        final View result = inflater.inflate(R.layout.dialog_main, (ViewGroup) null);
 
-    editText = result.findViewById(R.id.main_dialog_chat_bottom_message_edittext);
-    rootView = result.findViewById(R.id.main_dialog_root_view);
-    emojiButton = result.findViewById(R.id.main_dialog_emoji);
-    final ImageView sendButton = result.findViewById(R.id.main_dialog_send);
+        editText = result.findViewById(R.id.main_dialog_chat_bottom_message_edittext);
+        rootView = result.findViewById(R.id.main_dialog_root_view);
+        emojiButton = result.findViewById(R.id.main_dialog_emoji);
+        final ImageView sendButton = result.findViewById(R.id.main_dialog_send);
 
-    emojiButton.setColorFilter(ContextCompat.getColor(getContext(), R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
-    sendButton.setColorFilter(ContextCompat.getColor(getContext(), R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
+        emojiButton.setColorFilter(ContextCompat.getColor(getContext(), R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
+        sendButton.setColorFilter(ContextCompat.getColor(getContext(), R.color.emoji_primary_color), PorterDuff.Mode.SRC_IN);
 
-    emojiButton.setOnClickListener(ignore ->{
-      emojiPopup.toggle();
-    } );
-    sendButton.setOnClickListener(ignore -> {
-      final String text = editText.getText().toString().trim();
+        emojiButton.setOnClickListener(ignore -> {
+            emojiPopup.toggle();
+        });
+        sendButton.setOnClickListener(ignore -> {
+            final String text = editText.getText().toString().trim();
 
-      if (text.length() > 0) {
-        chatAdapter.add(text);
+            if (text.length() > 0) {
+                chatAdapter.add(text);
 
-        editText.setText("");
-      }
-    });
+                editText.setText("");
+            }
+        });
 
-    final RecyclerView recyclerView = result.findViewById(R.id.main_dialog_recycler_view);
-    recyclerView.setAdapter(chatAdapter);
-    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
+        final RecyclerView recyclerView = result.findViewById(R.id.main_dialog_recycler_view);
+        recyclerView.setAdapter(chatAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
-    setUpEmojiPopup();
+        emojiPopup = EmojiPopup.create(rootView, editText);
 
-    return rootView;
-  }
-
-  private void setUpEmojiPopup() {
-    emojiPopup = EmojiPopup.Builder.fromRootView(rootView)
+        emojiPopup.getEmojiViewBoard().setPageTransformer(new PageTransformer());
+        emojiPopup.setup();
             /*
         .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
         .setOnEmojiClickListener((ignore, ignore2) -> Log.d(TAG, "Clicked on emoji"))
@@ -114,17 +114,18 @@ public class MainDialog extends DialogFragment {
         .setOnSoftKeyboardCloseListener(() -> Log.d(TAG, "Closed soft keyboard"))
         .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
 
-            */     .setPageTransformer(new PageTransformer())
-        .build(editText);
-  }
+            */
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-  }
+        return rootView;
+    }
 
-  @Override
-  public void onDismiss(@NonNull DialogInterface dialog) {
-    super.onDismiss(dialog);
-  }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDismiss(@NonNull DialogInterface dialog) {
+        super.onDismiss(dialog);
+    }
 }

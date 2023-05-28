@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import androidx.annotation.NonNull;
@@ -18,13 +19,13 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiViewExtended;
+import com.vanniktech.emoji.EmojiViewBoard;
 import com.vanniktech.emoji.emoji.Emoji;
 
 public class MainActivityBasic extends AppCompatActivity {
 
 
-    private EmojiViewExtended emojiView;
+    private EmojiViewBoard emojiViewBoard;
     protected EmojiEditText emojiEditText;
 
     View mRootView = null;
@@ -36,18 +37,19 @@ public class MainActivityBasic extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
-        emojiView = new MyEmojiView(this);
-        emojiView.fillUpVerticalLinearView();
+        emojiViewBoard = new MyEmojiViewBoard(this);
+        LinearLayout frameView= emojiViewBoard.createFrameView();
+        emojiViewBoard.fillUpVerticalLinearView();
 
         emojiEditText = findViewById(R.id.emojiEditText);
         FrameLayout emojiViewContainer = findViewById(R.id.emojiViewContainer);
 
         mRootView = emojiViewContainer.getRootView();
 
-        emojiView.replaceView(emojiViewContainer);
+        emojiViewBoard.replaceView(emojiViewContainer);
 
 
-        emojiView.setup(mRootView);
+        emojiViewBoard.setup(mRootView);
 
         ((Button)findViewById(R.id.clickBtn)).setText("Click");
 
@@ -63,9 +65,10 @@ public class MainActivityBasic extends AppCompatActivity {
 
     public void showKeyboard(){
 
-        MyEmojiView customView = new MyEmojiView(this);
+        MyEmojiViewBoard viewBoard = new MyEmojiViewBoard(this);
+        LinearLayout frameView=  viewBoard.createFrameView();
 //        View customView = new Button(this);
-        PopupWindow popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        PopupWindow popupWindow = new PopupWindow(frameView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 // Set the PopupWindow's background to null to avoid any extra padding
         popupWindow.setBackgroundDrawable(null);
@@ -88,23 +91,15 @@ public class MainActivityBasic extends AppCompatActivity {
         rootView.getLayoutParams().height = originalHeight - popupWindow.getHeight();
         rootView.requestLayout();
 
-        emojiView.setup(rootView);
+        viewBoard.setup(rootView);
 
     }
 
-    public class MyEmojiView extends EmojiViewExtended {
+    public class MyEmojiViewBoard extends EmojiViewBoard {
 
 
-        public MyEmojiView(@NonNull Context context) {
+        public MyEmojiViewBoard(Context context) {
             super(context);
-        }
-
-        public MyEmojiView(@NonNull Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-        }
-
-        public MyEmojiView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
         }
 
         @Override

@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class EmojiUtils {
-  private static final Pattern SPACE_REMOVAL = Pattern.compile("[\\s]");
+  private static final Pattern SPACE_REMOVAL = Pattern.compile("\\s");
 
   /** returns true when the string contains only emojis. Note that whitespace will be filtered out. */
   public static boolean isOnlyEmojis(@Nullable final CharSequence text) {
