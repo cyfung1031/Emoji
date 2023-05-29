@@ -35,7 +35,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiPopupBoard;
 import com.vanniktech.emoji.facebook.FacebookEmojiProvider;
 import com.vanniktech.emoji.google.GoogleEmojiProvider;
 import com.vanniktech.emoji.googlecompat.GoogleCompatEmojiProvider;
@@ -49,7 +49,7 @@ public class MainActivityBase extends AppCompatActivity {
     static final String TAG = "MainActivity";
 
     ChatAdapter chatAdapter;
-    EmojiPopup emojiPopup;
+    EmojiPopupBoard emojiPopup;
     ViewGroup rootView;
     ImageView emojiButton;
     EmojiCompat emojiCompat;
@@ -82,9 +82,9 @@ public class MainActivityBase extends AppCompatActivity {
 
         final EditText editText = getEditText();
 
-        emojiPopup = EmojiPopup.create(rootView, editText);
+        emojiPopup = EmojiPopupBoard.create(rootView, editText);
 
-        emojiPopup.getEmojiViewBoard().setPageTransformer(new PageTransformer());
+        emojiPopup.setPageTransformer(new PageTransformer());
         emojiPopup.setup();
                 /*
             .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))

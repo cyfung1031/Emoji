@@ -1,26 +1,32 @@
 package com.vanniktech.emoji;
 
+import static android.view.View.MeasureSpec.makeMeasureSpec;
 import static com.vanniktech.emoji.Utils.asListWithoutDuplicates;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.view.ViewCompat;
@@ -68,17 +75,18 @@ public class EmojiViewBoard {
     protected ViewPager2 emojisPager2;
     IRecentEmoji recentEmoji = null;
     IVariantEmoji variantEmoji = null;
-    @NonNull
-    EmojiVariantPopupGeneral variantPopup;
+    @Nullable
+    EmojiVariantPopup variantPopup = null;
     int recentEmojiPageUpdateState = 0;
     WeakReference<EmojiGrid> recentEmojiGridViewWR = null;
-    PopupWindow popupWindow = null;
     @Nullable
     ViewPager2.PageTransformer pageTransformer2;
     boolean isTabButtonSmoothTransitionEnabled = false;
     boolean disAllowParentVerticalScroll = false;
     private WeakReference<LinearLayout> frameViewWR = null;
     private WeakReference<Context> mContextWR = null;
+    @Nullable
+    private WeakReference<View> containerViewWR = null;
 
     public EmojiViewBoard(Context context) {
         mContextWR = new WeakReference<>(context);
@@ -141,6 +149,7 @@ public class EmojiViewBoard {
         return 0; // otherwise, tell task number to create following task
     }
 
+    @Nullable
     public Context getContext() {
         return mContextWR != null ? mContextWR.get() : null;
     }
@@ -214,17 +223,6 @@ public class EmojiViewBoard {
     public void setRecentEmojiGridView(EmojiGrid newView) {
         recentEmojiGridViewWR = new WeakReference<>(newView);
 
-    }
-
-    public PopupWindow getPopupViewWindow() {
-        return popupWindow;
-    }
-
-    public void setPopupViewWindow(PopupWindow popupWindow) {
-        this.popupWindow = popupWindow;
-    }
-
-    private void initByContext(final Context context) {
     }
 
     @ColorInt
@@ -495,7 +493,9 @@ public class EmojiViewBoard {
 
     public void onEmojiLongClick(@NonNull final EmojiImageView.EmojiImageViewG view, @NonNull final Emoji emoji) {
 
-        variantPopup.show(view, emoji);
+        if (variantPopup != null) {
+            variantPopup.show(this, view, emoji);
+        }
     }
 
     public void onEmojiClick(@NonNull final EmojiImageView.EmojiImageViewG imageView, @NonNull final Emoji emoji) {
@@ -505,14 +505,11 @@ public class EmojiViewBoard {
         executeTask(nextTaskNum);
 
 
-//        if (onEmojiClickListener != null) {
-//            onEmojiClickListener.onEmojiClick(imageView, emoji);
-//        }
-        variantPopup.dismiss();
+        if (variantPopup != null) {
+            variantPopup.dismiss();
+        }
         this.backgroundUpdateRecentEmoji(imageView, emoji);
     }
-
-
 
     public void backgroundUpdateRecentEmoji(@NonNull final EmojiImageView.EmojiImageViewG imageView, @NonNull final Emoji emoji) {
 
@@ -533,16 +530,43 @@ public class EmojiViewBoard {
         });
     }
 
-    public void setup(@NonNull View container) {
+    @Nullable
+    public View getContainerRoot() {
+        View container = this.getContainer();
+        return container != null ? container.getRootView() : null;
+    }
+
+    @Nullable
+    public View getContainer() {
+        return containerViewWR != null ? containerViewWR.get() : null;
+    }
+
+    public void setContainerView(final @NonNull View containerView) {
+
+        this.containerViewWR = new WeakReference<>(containerView);
+    }
+
+    public void setup(final @NonNull View containerView) {
+
+
+        setContainerView(containerView);
+
+        setup();
+
+    }
+
+
+    public void setup() {
 
 
         final Context context = getContext();
+        assert context != null;
 
         this.recentEmoji = new RecentEmojiManagerV8(context);
         this.variantEmoji = new VariantEmojiManager(context);
 
 
-        variantPopup = new EmojiVariantPopupGeneral(container.getRootView(), this);
+        variantPopup = new EmojiViewBoard.EmojiVariantPopup();
         preSetup();
         this.init();
 
@@ -550,6 +574,7 @@ public class EmojiViewBoard {
 
 
     }
+
 
     //    private static class OnPageChangeListener implements  ViewPager.OnPageChangeListener{
     public static class OnPageChangeListener2 extends ViewPager2.OnPageChangeCallback {
@@ -843,9 +868,10 @@ public class EmojiViewBoard {
     }
 
     public static class EmojiGrid extends GridView {
+        static final int UPDATE_ON_ANY = 1;
+        static final int UPDATE_ON_CHANGED_FROM_EXTERNAL_ONLY = 2;
         protected EmojiViewBoard.EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapterG = null;
         boolean isRecentEmojiGridView = false;
-        private WeakReference<IRecentEmoji> recentEmojisWR = null;
         private EmojiViewBoard emojiViewBoard = null;
 
         EmojiGrid(final Context context) {
@@ -870,7 +896,6 @@ public class EmojiViewBoard {
                 emojiGrid.isRecentEmojiGridView = false;
             }
         }
-
 
         private void initInner(@NonNull EmojiViewBoard emojiViewBoard,
                                @NonNull Emoji[] emojis) {
@@ -915,9 +940,11 @@ public class EmojiViewBoard {
 
         public EmojiViewBoard.EmojiGrid init(@NonNull final EmojiViewBoard emojiViewBoard,
                                              @NonNull final IRecentEmoji recentEmoji) {
+
+            this.emojiViewBoard = emojiViewBoard;
+
             isRecentEmojiGridView = true;
 
-            recentEmojisWR = new WeakReference<>(recentEmoji);
 
             final Collection<Emoji> emojis = recentEmoji.getRecentEmojis();
             initInner(emojiViewBoard, emojis.toArray(new Emoji[0]));
@@ -925,28 +952,42 @@ public class EmojiViewBoard {
             return this;
         }
 
-
         public EmojiViewBoard.EmojiGrid init(@NonNull final EmojiViewBoard emojiViewBoard,
                                              @NonNull final EmojiCategory category) {
             isRecentEmojiGridView = false;
-            recentEmojisWR = null;
 
             initInner(emojiViewBoard, category.getEmojis());
 
             return this;
         }
 
-        public void invalidateEmojis() {
+        public void invalidateEmojis(int updateOn) {
 
             if (isRecentEmojiGridView) {
 
-                if (recentEmojisWR == null) return;
                 EmojiViewBoard.EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
-                IRecentEmoji recentEmojis = recentEmojisWR.get();
+                IRecentEmoji recentEmojis = emojiViewBoard.recentEmoji;
 
                 if (emojiArrayAdapter == null || recentEmojis == null) return;
 
-                emojiArrayAdapter.updateEmojis(recentEmojis.getRecentEmojis());
+                boolean updateFromExternal = recentEmojis.isUpdatedExternally();
+                if (updateFromExternal) {
+                    recentEmojis.clear(); // clear the emojis and force reload.
+                }
+                boolean update = false;
+                switch (updateOn) {
+                    case UPDATE_ON_ANY:
+                        update = true;
+                        break;
+                    case UPDATE_ON_CHANGED_FROM_EXTERNAL_ONLY:
+                        update = updateFromExternal;
+                        break;
+                }
+                if (update) {
+                    emojiArrayAdapter.updateEmojis(recentEmojis.getRecentEmojis());
+                }
+
+
             }
         }
 
@@ -962,6 +1003,11 @@ public class EmojiViewBoard {
         @Override
         protected void onAttachedToWindow() {
             super.onAttachedToWindow();
+
+            if (isRecentEmojiGridView) {
+
+                invalidateEmojis(UPDATE_ON_CHANGED_FROM_EXTERNAL_ONLY); // update according to the database
+            }
 
             EmojiViewBoard.EmojiGrid.EmojiArrayAdapterGeneral emojiArrayAdapter = emojiArrayAdapterG;
             if (emojiArrayAdapter != null) {
@@ -982,7 +1028,6 @@ public class EmojiViewBoard {
             emojiArrayAdapterG.clear();
             emojiArrayAdapterG = null;
             isRecentEmojiGridView = false;
-            recentEmojisWR = null;
 
 
         }
@@ -1202,7 +1247,7 @@ public class EmojiViewBoard {
             EmojiGrid recentEmojiGridView = emojiViewBoard.getRecentEmojiGridView();
 //            EmojiGridInner recentEmojiGridView = recentEmojiGridViewWR != null ? recentEmojiGridViewWR.get() : null;
             if (recentEmojiGridView != null) {
-                recentEmojiGridView.invalidateEmojis();
+                recentEmojiGridView.invalidateEmojis(EmojiGrid.UPDATE_ON_ANY);
             }
         }
 
@@ -1229,6 +1274,101 @@ public class EmojiViewBoard {
             }
             super.onViewDetachedFromWindow(holder);
         }
+    }
+
+
+    static public final class EmojiVariantPopup {
+        private static final int MARGIN = 2;
+        @Nullable
+        private PopupWindow popupWindow = null;
+
+        public EmojiVariantPopup() {
+        }
+
+        static EmojiImageView.EmojiImageViewP createImageBtn(Context context) {
+            EmojiImageView.EmojiImageViewP result = new EmojiImageView.EmojiImageViewP(context);
+
+            // set layout parameters
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            result.setLayoutParams(params);
+
+            // set padding
+            int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, context.getResources().getDisplayMetrics());
+            result.setPadding(padding, padding, padding, padding);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // set selectableItemBackgroundBorderless as the background
+                int[] attrs = new int[]{R.attr.selectableItemBackgroundBorderless};
+                TypedValue typedValue = new TypedValue();
+                context.getTheme().resolveAttribute(attrs[0], typedValue, true);
+                Drawable d = ContextCompat.getDrawable(context, typedValue.resourceId);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    result.setForeground(d);
+                } else {
+                    result.setBackground(d);
+                }
+            }
+            return result;
+        }
+
+        public void show(@NonNull final EmojiViewBoard emojiViewBoard, @NonNull final EmojiImageView.EmojiImageViewG clickedImage, @NonNull final Emoji emoji) {
+            dismiss();
+
+
+            View rootView = emojiViewBoard.getContainerRoot();
+            if (rootView == null) return;
+            @NonNull final Context context = clickedImage.getContext();
+            final int width = clickedImage.getWidth();
+
+
+            LayoutInflater inflater = LayoutInflater.from(context);
+            final View viewContent = inflater.inflate(R.layout.emoji_popup_window_skin, (ViewGroup) null);
+            final LinearLayout imageContainer = viewContent.findViewById(R.id.emojiPopupWindowSkinPopupContainer);
+
+            final List<Emoji> variants = emoji.getBase().getVariants();
+            variants.add(0, emoji.getBase());
+
+            for (final Emoji variant : variants) {
+                final EmojiImageView.EmojiImageViewP emojiImage = createImageBtn(context);
+                final ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) emojiImage.getLayoutParams();
+                final int margin = Utils.dpToPx(context, MARGIN);
+
+                // Use the same size for Emojis as in the picker.
+                layoutParams.width = width;
+                layoutParams.setMargins(margin, margin, margin, margin);
+                emojiImage.setImageDrawable(variant.getDrawable(context));
+
+                emojiImage.setOnClickListener(emojiViewBoard, clickedImage, variant);
+
+                imageContainer.addView(emojiImage);
+            }
+
+            popupWindow = new PopupWindow(viewContent, WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+            popupWindow.setFocusable(true);
+            popupWindow.setOutsideTouchable(true);
+            popupWindow.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
+            popupWindow.setBackgroundDrawable(new BitmapDrawable(context.getResources(), (Bitmap) null));
+
+            viewContent.measure(makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED), makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
+            final Point location = Utils.locationOnScreen(clickedImage);
+            final Point desiredLocation = new Point(
+                    location.x - viewContent.getMeasuredWidth() / 2 + width / 2,
+                    location.y - viewContent.getMeasuredHeight()
+            );
+            popupWindow.showAtLocation(rootView, Gravity.NO_GRAVITY, desiredLocation.x, desiredLocation.y);
+            clickedImage.getParent().requestDisallowInterceptTouchEvent(true);
+            Utils.fixPopupLocation(popupWindow, desiredLocation);
+        }
+
+        public void dismiss() {
+
+            if (popupWindow != null) {
+                popupWindow.dismiss();
+                popupWindow = null;
+            }
+        }
+
     }
 
 

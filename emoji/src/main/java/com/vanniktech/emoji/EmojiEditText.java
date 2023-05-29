@@ -120,7 +120,7 @@ public class EmojiEditText extends AppCompatEditText implements IEmojiEditable, 
         return disableKeyboardInput;
     }
 
-    @Override public void disableKeyboardInput(final EmojiPopup emojiPopup) {
+    @Override public void disableKeyboardInput(final EmojiPopupBoard emojiPopup) {
         disableKeyboardInput = true;
         super.setOnFocusChangeListener(new OnFocusChangeListenerForEmojisOnly(getOnFocusChangeListener(), emojiPopup));
     }

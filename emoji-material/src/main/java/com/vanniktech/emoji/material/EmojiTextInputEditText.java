@@ -26,9 +26,9 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 import com.google.android.material.textfield.TextInputEditText;
+import com.vanniktech.emoji.EmojiPopupBoard;
 import com.vanniktech.emoji.IEmojiForceable;
 import com.vanniktech.emoji.EmojiManager;
-import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.IEmojiEditable;
 import com.vanniktech.emoji.SingleEmojiTrait;
 import com.vanniktech.emoji.emoji.Emoji;
@@ -108,7 +108,7 @@ public class EmojiTextInputEditText extends TextInputEditText implements IEmojiE
         return disableKeyboardInput;
     }
 
-    @Override public void disableKeyboardInput(final EmojiPopup emojiPopup) {
+    @Override public void disableKeyboardInput(final EmojiPopupBoard emojiPopup) {
         disableKeyboardInput = true;
         super.setOnFocusChangeListener(new ForceEmojisOnlyFocusChangeListener(getOnFocusChangeListener(), emojiPopup));
     }
@@ -128,10 +128,10 @@ public class EmojiTextInputEditText extends TextInputEditText implements IEmojiE
     }
 
     static class ForceEmojisOnlyFocusChangeListener implements OnFocusChangeListener {
-        final EmojiPopup emojiPopup;
+        final EmojiPopupBoard emojiPopup;
         @Nullable final OnFocusChangeListener onFocusChangeListener;
 
-        ForceEmojisOnlyFocusChangeListener(@Nullable final OnFocusChangeListener onFocusChangeListener, final EmojiPopup emojiPopup) {
+        ForceEmojisOnlyFocusChangeListener(@Nullable final OnFocusChangeListener onFocusChangeListener, final EmojiPopupBoard emojiPopup) {
             this.emojiPopup = emojiPopup;
             this.onFocusChangeListener = onFocusChangeListener;
         }

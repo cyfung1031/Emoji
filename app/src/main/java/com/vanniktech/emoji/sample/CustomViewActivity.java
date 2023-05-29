@@ -29,8 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiPopup;
-import com.vanniktech.emoji.EmojiViewBoard;
+import com.vanniktech.emoji.EmojiPopupBoard;
 
 public class CustomViewActivity extends AppCompatActivity {
     @Override
@@ -54,11 +53,10 @@ public class CustomViewActivity extends AppCompatActivity {
         void setUpEmojiPopup() {
             final EmojiEditText editText = findViewById(R.id.customViewEditText);
 
-            final EmojiPopup emojiPopup = EmojiPopup.create(this, editText);
+            final EmojiPopupBoard emojiPopup = EmojiPopupBoard.create(this, editText);
 
-            EmojiViewBoard emojiViewBoard = emojiPopup.getEmojiViewBoard();
             emojiPopup.setAnimationStyle(R.style.emoji_fade_animation_style);
-            emojiViewBoard.setPageTransformer(new PageTransformer());
+            emojiPopup.setPageTransformer(new PageTransformer());
             emojiPopup.setup();
 
 

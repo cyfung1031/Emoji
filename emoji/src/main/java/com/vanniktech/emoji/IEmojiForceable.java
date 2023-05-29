@@ -21,11 +21,11 @@ public interface IEmojiForceable {
     /** Returns true when {@link #enableKeyboardInput()} was called and otherwise false. */
     boolean isKeyboardInputDisabled();
 
-    /** Enables the keyboard input. If it has been disabled before using {@link #disableKeyboardInput(EmojiPopup)} the OnFocusChangeListener will be preserved. */
+    /** Enables the keyboard input. If it has been disabled before using {@link #disableKeyboardInput(EmojiPopupBoard)} the OnFocusChangeListener will be preserved. */
     void enableKeyboardInput();
 
     /** Disables the keyboard input using a focus change listener and delegating to the previous focus change listener. */
-    void disableKeyboardInput(EmojiPopup emojiPopup);
+    void disableKeyboardInput(EmojiPopupBoard emojiPopup);
 
     /** Forces this EditText to contain only one Emoji. */
     void forceSingleEmoji();

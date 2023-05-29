@@ -31,6 +31,11 @@ public final class NoRecentEmoji implements IRecentEmoji {
         return Collections.emptyList();
     }
 
+    @Override
+    public boolean isUpdatedExternally() {
+        return false;
+    }
+
     @Override public void addEmoji(@NonNull final Emoji emoji) {
         // Do nothing.
     }
@@ -40,5 +45,10 @@ public final class NoRecentEmoji implements IRecentEmoji {
     }
     @Override public void clear() {
         // Do nothing.
+    }
+
+    @Override
+    public int size() {
+        return 0;
     }
 }

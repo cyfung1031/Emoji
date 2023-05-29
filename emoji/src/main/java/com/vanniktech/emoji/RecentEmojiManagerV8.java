@@ -19,6 +19,7 @@ package com.vanniktech.emoji;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -26,78 +27,105 @@ import com.vanniktech.emoji.emoji.Emoji;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
+import java.util.TreeSet;
 
 public final class RecentEmojiManagerV8 implements IRecentEmoji {
+    static final int EMOJI_GUESS_SIZE = 5;
+    static final int MAX_RECENTS = 40;
     private static final String PREFERENCE_NAME = "emoji-recent-manager";
     private static final String TIME_DELIMITER = ";";
     private static final String EMOJI_DELIMITER = "~";
     private static final String RECENT_EMOJIS = "recent-emojis";
-    static final int EMOJI_GUESS_SIZE = 5;
-    static final int MAX_RECENTS = 40;
+    @NonNull
+    private final SharedPreferences sharedPreferences;
+    private long totalAdd = 0L;
+    private long lastTimeStamp = 0L;
+    @NonNull
+    private EmojiSet emojiSet = new EmojiSet();
 
-    @NonNull private EmojiList emojiList = new EmojiList(0);
-    @NonNull private final SharedPreferences sharedPreferences;
+    private static long managerTimeStamp = 0L;
 
     public RecentEmojiManagerV8(@NonNull final Context context) {
         sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
     }
 
-    @NonNull public Collection<Emoji> getRecentEmojis() {
-        if (emojiList.size() == 0) {
+    public boolean isUpdatedExternally(){
+        return managerTimeStamp != lastTimeStamp;
+    }
+    @NonNull
+    public Collection<Emoji> getRecentEmojis() {
+        if (emojiSet.isEmpty()) {
+
             final String savedRecentEmojis = sharedPreferences.getString(RECENT_EMOJIS, "");
 
-            if (savedRecentEmojis.length() > 0) {
+            if (!savedRecentEmojis.isEmpty()) {
                 final StringTokenizer stringTokenizer = new StringTokenizer(savedRecentEmojis, EMOJI_DELIMITER);
-                emojiList = new EmojiList(stringTokenizer.countTokens());
 
                 while (stringTokenizer.hasMoreTokens()) {
                     final String token = stringTokenizer.nextToken();
 
                     final String[] parts = token.split(TIME_DELIMITER);
 
-                    if (parts.length == 3) {
+                    if (parts.length == 4) {
                         final Emoji emoji = EmojiManager.getInstance().findEmoji(parts[0]);
 
                         if (emoji != null && emoji.getLength() == parts[0].length()) {
                             final long timestamp = Long.parseLong(parts[1]);
-                            final int clickCount = Integer.parseInt(parts[2]);
+                            if (timestamp > lastTimeStamp) lastTimeStamp = timestamp;
+                            final long clickCount = Long.parseLong(parts[2]);
+                            final long indexRef = Long.parseLong(parts[3]);
 
-                            emojiList.add(emoji, timestamp, clickCount);
+                            emojiSet.add(new Data(emoji, timestamp, clickCount, indexRef));
                         }
+
+                        managerTimeStamp = lastTimeStamp;
                     }
                 }
-            } else {
-                emojiList = new EmojiList(0);
             }
         }
 
-        return emojiList.getEmojis();
+        return emojiSet.getEmojis();
     }
 
     public void clear() {
-        if(emojiList != null) emojiList.clear();
+        emojiSet.clear();
+        totalAdd = 0L;
     }
 
-    @Override public void addEmoji(@NonNull final Emoji emoji) {
-        emojiList.add(emoji);
+    @Override
+    public void addEmoji(@NonNull final Emoji emoji) {
+        long clickCount = 1;
+        if (emojiSet.size() > 0) {
+            long lastClickCount = emojiSet.last().clickCount;
+            if (clickCount < lastClickCount) clickCount = lastClickCount;
+        }
+        long timeStamp = System.currentTimeMillis();
+        if (timeStamp > lastTimeStamp) {
+            lastTimeStamp = timeStamp;
+            managerTimeStamp = timeStamp;
+            totalAdd = 0;
+        } else {
+            totalAdd++;
+        }
+        emojiSet.add(new Data(emoji, timeStamp, clickCount, totalAdd));
     }
 
-    @Override public void persist() {
-        if (emojiList.size() > 0) {
-            final StringBuilder stringBuilder = new StringBuilder(emojiList.size() * EMOJI_GUESS_SIZE);
+    @Override
+    public void persist() {
+        if (!emojiSet.isEmpty()) {
+            final StringBuilder stringBuilder = new StringBuilder(emojiSet.size() * EMOJI_GUESS_SIZE);
 
-            for (int i = 0; i < emojiList.size(); i++) {
-                final Data data = emojiList.get(i);
+            for (Data data : emojiSet) {
                 stringBuilder.append(data.emoji.getUnicode())
                         .append(TIME_DELIMITER)
                         .append(data.timestamp)
                         .append(TIME_DELIMITER)
                         .append(data.clickCount)
+                        .append(TIME_DELIMITER)
+                        .append(data.orderRef)
                         .append(EMOJI_DELIMITER);
             }
 
@@ -107,93 +135,85 @@ public final class RecentEmojiManagerV8 implements IRecentEmoji {
         }
     }
 
-    static class EmojiList {
-        static final Comparator<Data> COMPARATOR = new Comparator<Data>() {
-            @Override public int compare(final Data lhs, final Data rhs) {
-                int result = Integer.valueOf(rhs.clickCount).compareTo(lhs.clickCount);
-                if (result == 0) {
-                    result = Long.valueOf(rhs.timestamp).compareTo(lhs.timestamp);
-                }
-                return result;
+    public int size(){
+        return emojiSet.size();
+    }
+
+    private static class EmojiSet extends TreeSet<Data> {
+        private static final Comparator<Data> COMPARATOR = new Comparator<Data>() {
+            @Override
+            public int compare(Data data1, Data data2) {
+                int c;
+                c = Long.compare(data2.getClickCount(), data1.getClickCount());
+                if (c != 0) return c;
+                c = Long.compare(data2.getTimestamp(), data1.getTimestamp());
+                if (c != 0) return c;
+                return Long.compare(data2.getOrderRef(), data1.getOrderRef());
             }
         };
 
-        @NonNull final List<Data> emojis;
-
-        EmojiList(final int size) {
-            emojis = new ArrayList<>(size);
-        }
-
-        private static long lastAddTimeStamp = 0L;
-
-        void add(final Emoji emoji) {
-            add(emoji, System.currentTimeMillis());
-        }
-
-        void add(final Emoji emoji, final long timestamp) {
-            add(emoji, timestamp, 1);
-        }
-
-        void add(final Emoji emoji, long timestamp, final int clickCount) {
-            if (timestamp <= lastAddTimeStamp) {
-                timestamp = ++lastAddTimeStamp;
-            }
-            lastAddTimeStamp = timestamp;
-            final Iterator<Data> iterator = emojis.iterator();
-
-            final Emoji emojiBase = emoji.getBase();
-            boolean found = false;
-
-            while (iterator.hasNext()) {
-                final Data data = iterator.next();
-                if (data.emoji.getBase().equals(emojiBase)) {
-                    data.timestamp = timestamp;
-                    data.clickCount++;
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                emojis.add(new Data(emoji, timestamp, clickCount));
-            }
-
-            if (emojis.size() > MAX_RECENTS) {
-                emojis.remove(MAX_RECENTS);
-            }
+        EmojiSet() {
+            super(COMPARATOR);
         }
 
         Collection<Emoji> getEmojis() {
-            Collections.sort(emojis, COMPARATOR);
+            Collection<Emoji> sortedEmojis = new ArrayList<>(size());
 
-            final Collection<Emoji> sortedEmojis = new ArrayList<>(emojis.size());
-
-            for (final Data data : emojis) {
+            for (Data data : this) {
                 sortedEmojis.add(data.emoji);
             }
 
             return sortedEmojis;
         }
 
-        int size() {
-            return emojis.size();
-        }
+        @Override
+        public boolean add(Data data) {
+            Iterator<Data> iterator = iterator();
 
-        Data get(final int index) {
-            return emojis.get(index);
+            Data found = null;
+            while (iterator.hasNext()) {
+                Data existingData = iterator.next();
+                if (existingData.emoji.getBase().equals(data.emoji.getBase())) {
+                    found = existingData;
+                    iterator.remove();
+                    break;
+                }
+            }
+            if (found != null) {
+                found.timestamp = data.timestamp;
+                found.clickCount++;
+                data = found;
+            } else if (size() >= MAX_RECENTS) {
+                remove(last());
+            }
+            return super.add(data);
         }
-        void clear(){emojis.clear();}
     }
 
     static class Data {
         final Emoji emoji;
         long timestamp;
-        int clickCount;
+        long clickCount;
+        long orderRef;
 
-        Data(final Emoji emoji, final long timestamp, final int clickCount) {
+        Data(final Emoji emoji, final long timestamp, final long clickCount, final long orderRef) {
             this.emoji = emoji;
             this.timestamp = timestamp;
             this.clickCount = clickCount;
+            this.orderRef = orderRef;
+        }
+
+
+        long getTimestamp() {
+            return timestamp;
+        }
+
+        long getClickCount() {
+            return clickCount;
+        }
+
+        long getOrderRef() {
+            return orderRef;
         }
     }
 }

@@ -45,6 +45,13 @@ public final class RecentEmojiManagerV7 implements IRecentEmoji {
     sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
   }
 
+  public boolean isUpdatedExternally(){
+    return false; // not available in V7
+  }
+  public int size(){
+    return emojiList.size();
+  }
+
   @NonNull public Collection<Emoji> getRecentEmojis() {
     if (emojiList.size() == 0) {
       final String savedRecentEmojis = sharedPreferences.getString(RECENT_EMOJIS, "");

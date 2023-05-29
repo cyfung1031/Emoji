@@ -341,6 +341,27 @@ public class EmojiImageView {
         }
 
 
+        EmojiImageViewG clickedImage = null;
+        Emoji variant = null;
+        EmojiViewBoard emojiViewBoard = null;
+        public void setOnClickListener(EmojiViewBoard emojiViewBoard, EmojiImageViewG clickedImage, Emoji variant) {
+            this.clickedImage = clickedImage;
+            this.variant = variant;
+            this.emojiViewBoard = emojiViewBoard;
+            this.setOnClickListener(this::onClick);
+        }
+
+
+        public void onClick(final View view) {
+            if(emojiViewBoard!=null){
+                emojiViewBoard.setPopupRootImageView(clickedImage);
+                emojiViewBoard.setPopupVariant(variant);
+
+                emojiViewBoard.controller(0x3041);
+
+            }
+        }
+
     }
 
 

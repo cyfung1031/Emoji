@@ -36,7 +36,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.vanniktech.emoji.EmojiEditText;
-import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiPopupBoard;
 import com.vanniktech.emoji.material.MaterialEmojiLayoutFactory;
 // import timber.log.Timber;
 
@@ -45,7 +45,7 @@ public class MainDialog extends DialogFragment {
     static final String FRAGMENT_MANAGER_TAG = "MainDialog";
 
     ChatAdapter chatAdapter;
-    EmojiPopup emojiPopup;
+    EmojiPopupBoard emojiPopup;
 
     EmojiEditText editText;
     ViewGroup rootView;
@@ -101,9 +101,9 @@ public class MainDialog extends DialogFragment {
         recyclerView.setAdapter(chatAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), RecyclerView.VERTICAL, false));
 
-        emojiPopup = EmojiPopup.create(rootView, editText);
+        emojiPopup = EmojiPopupBoard.create(rootView, editText);
 
-        emojiPopup.getEmojiViewBoard().setPageTransformer(new PageTransformer());
+        emojiPopup.setPageTransformer(new PageTransformer());
         emojiPopup.setup();
             /*
         .setOnEmojiBackspaceClickListener(ignore -> Log.d(TAG, "Clicked on Backspace"))
